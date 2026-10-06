@@ -89,10 +89,17 @@
 
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 4px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
     
+    /* Audit Sheet Styles */
+    .audit-sheet { background: #ffffff; border: 2px solid #8e0000; border-radius: 8px; padding: 16px; font-size: 12px; color: #222; }
+    .audit-table { width: 100%; border-collapse: collapse; margin-top: 8px; margin-bottom: 14px; }
+    .audit-table th, .audit-table td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; font-size: 11px; }
+    .audit-table th { background: #fdf2e9; color: #8e0000; font-weight: bold; }
+    .audit-sec-hdr { font-size: 13px; font-weight: bold; color: #8e0000; margin-top: 10px; margin-bottom: 4px; border-bottom: 1.5px solid #d32f2f; padding-bottom: 2px; }
+
     @media print {
       body * { visibility: hidden; }
-      #print-area, #print-area * { visibility: visible; }
-      #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-area, #print-area *, #audit-capture-target, #audit-capture-target * { visibility: visible; }
+      #print-area, #audit-capture-target { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
@@ -220,6 +227,10 @@
       <div class="menu-box" style="background: #00796b;" onclick="exportReceiptsToCSV()">
         <div style="font-size: 22px;">📊</div>Excel / CSV
       </div>
+      <!-- नया ऑडिट सारांश बटन -->
+      <div class="menu-box" style="background: #b71c1c; grid-column: span 2;" onclick="openAuditSummaryScreen()">
+        <div style="font-size: 22px;">📑</div>ऑडिट रिपोर्ट PDF (वित्तीय क्लोजिंग)
+      </div>
       <div class="menu-box" style="background: #f57c00; grid-column: span 2;" onclick="showScreen('screen-settings')">
         <div style="font-size: 22px;">⚙️</div>Settings & UPI QR
       </div>
@@ -279,7 +290,7 @@
     </div>
 
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
-      <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏️ नई रसीद बनाएं (रुपये / वस्तु)</button>
+      <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏️️ नई रसीद बनाएं (रुपये / वस्तु)</button>
       <button class="btn" style="background: #1976d2;" onclick="openReceiptsList()">📋 मेरी काटी हुई सभी रसीदें</button>
     </div>
 
@@ -587,6 +598,116 @@
     </div>
 
     <div id="expense-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
+  </div>
+
+  <!-- 7.3 FINANCIAL AUDIT SUMMARY SCREEN -->
+  <div id="screen-audit-summary" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> वित्तीय ऑडिट सारांश</h2>
+    </div>
+
+    <div style="padding: 12px; flex: 1; overflow-y: auto;">
+      
+      <!-- कैप्चर टार्गेट शीट -->
+      <div class="audit-sheet" id="audit-capture-target">
+        <div style="text-align: center; border-bottom: 2px double #8e0000; padding-bottom: 8px; margin-bottom: 10px;">
+          <h2 style="color: #8e0000; font-size: 18px;">नवयुवा दुर्गा पूजा समिति</h2>
+          <p style="font-size: 11px; color: #444; font-weight: bold;">रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.)</p>
+          <div style="display: inline-block; background: #8e0000; color: #ffea00; font-weight: bold; font-size: 11px; padding: 2px 10px; border-radius: 4px; margin-top: 4px;">
+            📑 वार्षिक आय-व्यय एवं वित्तीय ऑडिट रिपोर्ट
+          </div>
+          <p style="font-size: 10px; color: #666; margin-top: 3px;">रिपोर्ट दिनांक: <span id="audit-rep-date">-</span></p>
+        </div>
+
+        <div class="audit-sec-hdr">1. मुख्य वित्तीय सारांश (Balance Overview)</div>
+        <table class="audit-table">
+          <tr>
+            <td style="width: 60%;">💵 कुल नकद चंदा (Cash Collection)</td>
+            <td style="font-weight: bold; color: #2e7d32;" id="aud-cash">रु. 0</td>
+          </tr>
+          <tr>
+            <td>📱 कुल ऑनलाइन चंदा (UPI Collection)</td>
+            <td style="font-weight: bold; color: #1976d2;" id="aud-online">रु. 0</td>
+          </tr>
+          <tr style="background: #f1f8e9;">
+            <td style="font-weight: bold;">💰 कुल सकल आय (Total Collection)</td>
+            <td style="font-weight: 900; color: #1b5e20;" id="aud-tot-income">रु. 0</td>
+          </tr>
+          <tr>
+            <td>💸 कुल पूजा व्यय (Total Expenses)</td>
+            <td style="font-weight: bold; color: #c2185b;" id="aud-tot-expense">रु. 0</td>
+          </tr>
+          <tr style="background: #fff8e1;">
+            <td style="font-weight: bold; font-size: 12px;">⚖️ शुद्ध शेष बचत / (घाटा) (Net Balance)</td>
+            <td style="font-weight: 900; font-size: 13px;" id="aud-net-balance">रु. 0</td>
+          </tr>
+          <tr>
+            <td>⏳ कार्यकर्ताओं के पास शेष बकाया राशि</td>
+            <td style="font-weight: bold; color: #d32f2f;" id="aud-pending-cash">रु. 0</td>
+          </tr>
+          <tr>
+            <td>📦 प्राप्त कुल भौतिक दान (Physical Items)</td>
+            <td style="font-weight: bold; color: #e65100;" id="aud-items-count">0 वस्तुएं</td>
+          </tr>
+        </table>
+
+        <div class="audit-sec-hdr">2. मद-वार खर्च विवरण (Expense Details)</div>
+        <table class="audit-table" id="aud-exp-table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">दिनांक</th>
+              <th>खर्च विवरण / मद</th>
+              <th style="width: 30%; text-align: right;">राशि (रु.)</th>
+            </tr>
+          </thead>
+          <tbody id="aud-exp-rows"></tbody>
+        </table>
+
+        <div class="audit-sec-hdr">3. कार्यकर्ता चंदा संग्रह व चुकता रिपोर्ट</div>
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>कोड</th>
+              <th>कार्यकर्ता</th>
+              <th>कुल काटा</th>
+              <th>जमा किया</th>
+              <th>बकाया</th>
+            </tr>
+          </thead>
+          <tbody id="aud-usr-rows"></tbody>
+        </table>
+
+        <!-- सत्यापन व हस्ताक्षर ब्लॉक -->
+        <div style="margin-top: 25px; padding-top: 10px; border-top: 1px dashed #aaa; display: flex; justify-content: space-between; align-items: flex-end; font-size: 10px; font-weight: bold; color: #333; text-align: center;">
+          <div>
+            <div style="height: 35px;"></div>
+            .................................<br>
+            लेखा परीक्षक (Auditor)
+          </div>
+          <div>
+            <div style="height: 35px;"></div>
+            .................................<br>
+            कोषाध्यक्ष (Cashier)
+          </div>
+          <div>
+            <div style="height: 35px;"></div>
+            .................................<br>
+            अध्यक्ष (President)
+          </div>
+        </div>
+
+      </div>
+
+      <!-- एक्शन बटन -->
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+        <button class="btn" style="background: #b71c1c;" id="btn-dl-audit-pdf" onclick="downloadAuditReportPDF()">
+          📥 Download Audit Report PDF
+        </button>
+        <button class="btn" style="background: #546e7a;" onclick="window.print()">🖨️ रिपोर्ट प्रिंट करें</button>
+        <button class="btn" style="background: #424242;" onclick="showScreen('screen-admin')">⬅️ एडमिन पैनल पर लौटें</button>
+      </div>
+
+    </div>
   </div>
 
   <!-- 8. CREATE USER SCREEN -->
@@ -1718,7 +1839,149 @@
     });
   }
 
-  // Users & हिसाब: कार्यकर्ता के नाम के साथ उसका रसीद कोड स्पष्ट दिखेगा
+  // =========================================================================
+  // FINANCIAL AUDIT REPORT GENERATION
+  // =========================================================================
+  function openAuditSummaryScreen() {
+    var d = new Date();
+    var dateStr = String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
+    document.getElementById('audit-rep-date').innerText = dateStr;
+
+    var cashTot = 0;
+    var onlineTot = 0;
+    var itemsCount = 0;
+
+    receipts.forEach(function(r) {
+      if (checkIsItem(r)) {
+        itemsCount++;
+      } else {
+        if (r.mode === 'Online') {
+          onlineTot += Number(r.amt || 0);
+        } else {
+          cashTot += Number(r.amt || 0);
+        }
+      }
+    });
+
+    var grossIncome = cashTot + onlineTot;
+    var expTot = 0;
+    expenses.forEach(function(e) { expTot += Number(e.amt || 0); });
+    var netBalance = grossIncome - expTot;
+
+    var totalUserCash = 0;
+    var totalUserPaid = 0;
+    users.forEach(function(u) {
+      totalUserPaid += Number(u.paidAmt || 0);
+      receipts.forEach(function(rec) {
+        if (String(rec.code).toUpperCase() === String(u.code).toUpperCase() && !checkIsItem(rec) && rec.mode !== 'Online') {
+          totalUserCash += Number(rec.amt || 0);
+        }
+      });
+    });
+    var pendingTot = Math.max(0, totalUserCash - totalUserPaid);
+
+    document.getElementById('aud-cash').innerText = 'रु. ' + cashTot;
+    document.getElementById('aud-online').innerText = 'रु. ' + onlineTot;
+    document.getElementById('aud-tot-income').innerText = 'रु. ' + grossIncome;
+    document.getElementById('aud-tot-expense').innerText = 'रु. ' + expTot;
+    
+    var netEl = document.getElementById('aud-net-balance');
+    netEl.innerText = 'रु. ' + netBalance + (netBalance >= 0 ? ' (बचत)' : ' (घाटा)');
+    netEl.style.color = (netBalance >= 0 ? '#2e7d32' : '#d32f2f');
+
+    document.getElementById('aud-pending-cash').innerText = 'रु. ' + pendingTot;
+    document.getElementById('aud-items-count').innerText = itemsCount + ' वस्तुएं';
+
+    // खर्च विवरण तालिका भरना
+    var expTbody = document.getElementById('aud-exp-rows');
+    expTbody.innerHTML = '';
+    if (expenses.length === 0) {
+      expTbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#888;">कोई खर्च दर्ज नहीं है</td></tr>';
+    } else {
+      expenses.forEach(function(e) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = `<td>${e.date}</td><td>${e.title}</td><td style="text-align:right; font-weight:bold;">रु. ${e.amt}</td>`;
+        expTbody.appendChild(tr);
+      });
+      var totTr = document.createElement('tr');
+      totTr.style.background = '#fce4ec';
+      totTr.style.fontWeight = 'bold';
+      totTr.innerHTML = `<td colspan="2">कुल खर्च योग</td><td style="text-align:right; color:#c2185b;">रु. ${expTot}</td>`;
+      expTbody.appendChild(totTr);
+    }
+
+    // कार्यकर्ता तालिका भरना
+    var usrTbody = document.getElementById('aud-usr-rows');
+    usrTbody.innerHTML = '';
+    users.forEach(function(u) {
+      var uCash = 0;
+      receipts.forEach(function(r) {
+        if (String(r.code).toUpperCase() === String(u.code).toUpperCase() && !checkIsItem(r) && r.mode !== 'Online') {
+          uCash += Number(r.amt || 0);
+        }
+      });
+      var uPaid = Number(u.paidAmt || 0);
+      var uPend = Math.max(0, uCash - uPaid);
+
+      var tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="font-weight:bold; color:#b71c1c;">${u.code}</td>
+        <td>${u.name}</td>
+        <td>रु. ${uCash}</td>
+        <td style="color:#2e7d32; font-weight:bold;">रु. ${uPaid}</td>
+        <td style="color:${uPend > 0 ? '#d32f2f' : '#2e7d32'}; font-weight:bold;">रु. ${uPend}</td>
+      `;
+      usrTbody.appendChild(tr);
+    });
+
+    showScreen('screen-audit-summary');
+  }
+
+  async function downloadAuditReportPDF() {
+    var btn = document.getElementById('btn-dl-audit-pdf');
+    var origTxt = btn.innerText;
+    btn.innerText = "⏳ ऑडिट PDF तैयार हो रही है...";
+
+    var target = document.getElementById('audit-capture-target');
+
+    try {
+      var canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+      var pW = 210, pH = 297, margin = 10;
+      var maxW = pW - (margin * 2);
+      var maxH = pH - (margin * 2);
+
+      var imgW = maxW;
+      var imgH = (canvas.height * imgW) / canvas.width;
+      if (imgH > maxH) {
+        imgH = maxH;
+        imgW = (canvas.width * imgH) / canvas.height;
+      }
+
+      var x = margin + (maxW - imgW) / 2;
+      var y = margin;
+
+      pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+      pdf.save('वित्तीय_ऑडिट_रिपोर्ट_मारकुंडी_' + Date.now() + '.pdf');
+    } catch(err) {
+      console.error("Audit PDF Error:", err);
+      alert("PDF नहीं बन सकी। कृपया प्रिंट विकल्प से 'Save as PDF' चुनें।");
+      window.print();
+    } finally {
+      btn.innerText = origTxt;
+    }
+  }
+
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
