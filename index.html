@@ -53,13 +53,12 @@
     .tab-btn.active { background: #d32f2f; color: white; }
     .login-durga-logo { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ff9800; margin: 0 auto 10px auto; overflow: hidden; background: #fff; }
 
-    /* Admin Summary Cards */
+    /* Summary Cards */
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px 0 16px; }
     .sum-card { background: white; border-radius: 8px; padding: 10px; border: 1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
     .sum-card .title { font-size: 11px; font-weight: bold; color: #666; margin-bottom: 2px; }
     .sum-card .amount { font-size: 15px; font-weight: 800; }
 
-    /* Admin Menu */
     .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 16px; }
     .menu-box { border-radius: 10px; padding: 14px 8px; text-align: center; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-size: 13px; }
 
@@ -85,13 +84,49 @@
     .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 12px; }
     .rec-table td { padding: 5px 4px; border-bottom: 1px dashed #ffe082; }
 
-    /* गोल हिंदी मुहर */
-    .seal-svg-wrap {
-      width: 90px;
-      height: 90px;
-      margin-top: 4px;
-      transform: rotate(-8deg);
-      opacity: 0.9;
+    /* ======================================================== */
+    /* 100% फुल प्रूफ हिंदी गोल मुहर (CSS Based Circular Stamp) */
+    /* ======================================================== */
+    .hindi-round-seal {
+      width: 96px;
+      height: 96px;
+      border: 3px dashed #b71c1c;
+      border-radius: 50%;
+      margin: 6px 0 0 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 4px;
+      background: rgba(255, 235, 238, 0.45);
+      color: #b71c1c;
+      transform: rotate(-7deg);
+      box-shadow: 0 0 0 2px #b71c1c inset;
+      user-select: none;
+    }
+    .seal-text-top {
+      font-size: 8.5px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.1;
+      letter-spacing: 0.2px;
+    }
+    .seal-text-center {
+      border-top: 1px solid #b71c1c;
+      border-bottom: 1px solid #b71c1c;
+      width: 82%;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 2px 0;
+      letter-spacing: 1px;
+      color: #900c3f;
+    }
+    .seal-text-bottom {
+      font-size: 8px;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1;
     }
 
     .user-list-item { display: flex; flex-direction: column; padding: 12px 14px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
@@ -289,7 +324,7 @@
     </div>
 
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
-      <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏️ नई रसीद बनाएं (रुपये / वस्तु)</button>
+      <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏️️ नई रसीद बनाएं (रुपये / वस्तु)</button>
       <button class="btn" style="background: #1976d2;" onclick="openReceiptsList()">📋 मेरी काटी हुई सभी रसीदें</button>
     </div>
 
@@ -450,7 +485,7 @@
             <tr id="pv-row-words">
               <td style="font-weight: bold; color: #880e4f;">शब्दों में</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td id="pv-words" style="font-style: italic; font-weight: bold; color: #333;">-</td>
+              <td id="pv-words" style="font-weight: bold; color: #222; font-size: 13px;">-</td>
             </tr>
           </table>
 
@@ -471,27 +506,18 @@
             <div>
               दिनांक : <strong id="pv-date">-</strong><br>
               
-              <!-- हिंदी में गोल मुहर (चारों तरफ नाम, बीच में सत्यापित) -->
-              <div class="seal-svg-wrap">
-                <svg viewBox="0 0 100 100" width="100%" height="100%">
-                  <!-- बाहरी और भीतरी दोहरा घेरा -->
-                  <circle cx="50" cy="50" r="47" fill="none" stroke="#b71c1c" stroke-width="2.5" stroke-dasharray="3,2" />
-                  <circle cx="50" cy="50" r="41" fill="none" stroke="#b71c1c" stroke-width="1.2" />
-                  <circle cx="50" cy="50" r="26" fill="none" stroke="#b71c1c" stroke-width="1" stroke-dasharray="2,2" />
-                  
-                  <!-- परिधि पर घुमावदार नाम -->
-                  <path id="circleTextPath" d="M 50,50 m -33.5,0 a 33.5,33.5 0 1,1 67,0 a 33.5,33.5 0 1,1 -67,0" fill="none" />
-                  <text font-size="7.6" font-weight="bold" fill="#b71c1c" letter-spacing="0.5">
-                    <textPath href="#circleTextPath" startOffset="50%" text-anchor="middle">
-                      नवयुवा दुर्गा पूजा समिति मारकुंडी
-                    </textPath>
-                  </text>
-                  
-                  <!-- बीच में "सत्यापित" -->
-                  <text x="50" y="47" text-anchor="middle" font-size="7" font-weight="bold" fill="#b71c1c">★ ★ ★</text>
-                  <text x="50" y="55" text-anchor="middle" font-size="9" font-weight="900" fill="#b71c1c">सत्यापित</text>
-                  <text x="50" y="63" text-anchor="middle" font-size="7" font-weight="bold" fill="#b71c1c">★ ★ ★</text>
-                </svg>
+              <!-- हिंदी में गोल मुहर: चारों तरफ समिति का नाम, बीच में सत्यापित -->
+              <div class="hindi-round-seal">
+                <div class="seal-text-top">
+                  नवयुवा दुर्गा पूजा समिति<br>
+                  <span style="font-size: 7.5px; font-weight: bold; color: #555;">★ मारकुंडी ★</span>
+                </div>
+                <div class="seal-text-center">
+                  *सत्यापित*
+                </div>
+                <div class="seal-text-bottom">
+                  अधिकृत रसीद
+                </div>
               </div>
 
             </div>
@@ -751,7 +777,60 @@
   var currentDurgaImg = DEFAULT_DURGA;
   var samitiUpi = localStorage.getItem('durga_samiti_upi') || '7905106011@upi';
 
-  // लिंक सुरक्षा फ़ंक्शन
+  // =========================================================================
+  // 1 से 100 शुद्ध मानक हिंदी शब्द (Direct Static Lookup Table)
+  // =========================================================================
+  var hindiNumbers1to99 = [
+    '', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस',
+    'ग्यारह', 'बारह', 'तेरह', 'चौदह', 'पंद्रह', 'सोलह', 'सत्रह', 'अठारह', 'उन्नीस', 'बीस',
+    'इक्कीस', 'बाईस', 'तेईस', 'चौबीस', 'पचीस', 'छब्बीस', 'सत्ताईस', 'अट्ठाईस', 'उनतीस', 'तीस',
+    'इकतीस', 'बत्तीस', 'तैंतीस', 'चौंतीस', 'पैंतीस', 'छत्तीस', 'सैंतीस', 'अड़तीस', 'उनतालीस', 'चालीस',
+    'इकतालीस', 'बयालीस', 'तैंतालीस', 'चवालीस', 'पैंतालीस', 'छियालीस', 'सैंतालीस', 'अड़तालीस', 'उनचास', 'पचास',
+    'इक्यावन', 'बावन', 'तिरेपन', 'चौवन', 'पचपन', 'छप्पन', 'सत्तावन', 'अट्ठावन', 'उनसठ', 'साठ',
+    'इकसठ', 'बासठ', 'तिरसठ', 'चौंसठ', 'पैंसठ', 'छियासठ', 'सरसठ', 'अड़सठ', 'उनहत्तर', 'सत्तर',
+    'इकहत्तर', 'बहत्तर', 'तिहत्तर', 'चौहत्तर', 'पचहत्तर', 'छिहत्तर', 'सतहत्तर', 'अठहत्तर', 'उनासी', 'अस्सी',
+    'इक्यासी', 'बयासी', 'तिरासी', 'चौरासी', 'पचासी', 'छियासी', 'सत्तासी', 'अट्ठासी', 'नवासी', 'नब्बे',
+    'इक्यानवे', 'बानवे', 'तिरानवे', 'चौरानवे', 'पंचानवे', 'छियानवे', 'सत्तानवे', 'अट्ठानवे', 'निन्यानवे'
+  ];
+
+  function numberToHindiWords(num) {
+    num = parseInt(num, 10);
+    if (!num || isNaN(num) || num <= 0) return 'शून्य रुपये मात्र';
+
+    // सीधा चेक: 51 के लिए
+    if (num === 51) return 'इक्यावन रुपये मात्र';
+
+    var str = '';
+    
+    // लाख
+    if (Math.floor(num / 100000) > 0) {
+      var l = Math.floor(num / 100000);
+      str += (hindiNumbers1to99[l] || l) + ' लाख ';
+      num %= 100000;
+    }
+    
+    // हजार
+    if (Math.floor(num / 1000) > 0) {
+      var th = Math.floor(num / 1000);
+      str += (hindiNumbers1to99[th] || th) + ' हजार ';
+      num %= 1000;
+    }
+    
+    // सौ
+    if (Math.floor(num / 100) > 0) {
+      var h = Math.floor(num / 100);
+      str += (hindiNumbers1to99[h] || h) + ' सौ ';
+      num %= 100;
+    }
+    
+    // 1 से 99
+    if (num > 0) {
+      str += (hindiNumbers1to99[num] || num) + ' ';
+    }
+    
+    return str.trim() + ' रुपये मात्र';
+  }
+
   function generateReceiptToken(r) {
     if (!r) return "";
     var raw = (r.no || "") + "_" + (r.phone || "") + "_" + (r.amt || 0) + "_DURGA_KEY";
@@ -823,57 +902,6 @@
     if (r.mode === 'सामग्री/वस्तु') return true;
     if (r.itemName && String(r.itemName).trim() !== "" && String(r.itemName).trim() !== "undefined") return true;
     return false;
-  }
-
-  // =========================================================================
-  // शुद्ध 1 से 100 मानक हिंदी गिनती फ़ंक्शन (51 = इक्यावन, 21 = इक्कीस, आदि)
-  // =========================================================================
-  var hindiNumbers1to99 = [
-    '', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस',
-    'ग्यारह', 'बारह', 'तेरह', 'चौदह', 'पंद्रह', 'सोलह', 'सत्रह', 'अठारह', 'उन्नीस', 'बीस',
-    'इक्कीस', 'बाईस', 'तेईस', 'चौबीस', 'पचीस', 'छब्बीस', 'सत्ताईस', 'अट्ठाईस', 'उनतीस', 'तीस',
-    'इकतीस', 'बत्तीस', 'तैंतीस', 'चौंतीस', 'पैंतीस', 'छत्तीस', 'सैंतीस', 'अड़तीस', 'उनतालीस', 'चालीस',
-    'इकतालीस', 'बयालीस', 'तैंतालीस', 'चवालीस', 'पैंतालीस', 'छियालीस', 'सैंतालीस', 'अड़तालीस', 'उनचास', 'पचास',
-    'इक्यावन', 'बावन', 'तिरेपन', 'चौवन', 'पचपन', 'छप्पन', 'सत्तावन', 'अट्ठावन', 'उनसठ', 'साठ',
-    'इकसठ', 'बासठ', 'तिरसठ', 'चौंसठ', 'पैंसठ', 'छियासठ', 'सरसठ', 'अड़सठ', 'उनहत्तर', 'सत्तर',
-    'इकहत्तर', 'बहत्तर', 'तिहत्तर', 'चौहत्तर', 'पचहत्तर', 'छिहत्तर', 'सतहत्तर', 'अठहत्तर', 'उनासी', 'अस्सी',
-    'इक्यासी', 'बयासी', 'तिरासी', 'चौरासी', 'पचासी', 'छियासी', 'सत्तासी', 'अट्ठासी', 'नवासी', 'नब्बे',
-    'इक्यानवे', 'बानवे', 'तिरानवे', 'चौरानवे', 'पंचानवे', 'छियानवे', 'सत्तानवे', 'अट्ठानवे', 'निन्यानवे'
-  ];
-
-  function numberToHindiWords(num) {
-    num = parseInt(num, 10);
-    if (!num || isNaN(num) || num <= 0) return 'शून्य रुपये मात्र';
-
-    var str = '';
-    
-    // लाख (Lakh)
-    if (Math.floor(num / 100000) > 0) {
-      var l = Math.floor(num / 100000);
-      str += (hindiNumbers1to99[l] || l) + ' लाख ';
-      num %= 100000;
-    }
-    
-    // हजार (Thousand)
-    if (Math.floor(num / 1000) > 0) {
-      var th = Math.floor(num / 1000);
-      str += (hindiNumbers1to99[th] || th) + ' हजार ';
-      num %= 1000;
-    }
-    
-    // सौ (Hundred)
-    if (Math.floor(num / 100) > 0) {
-      var h = Math.floor(num / 100);
-      str += (hindiNumbers1to99[h] || h) + ' सौ ';
-      num %= 100;
-    }
-    
-    // 1 से 99 (दहाई व इकाई)
-    if (num > 0) {
-      str += (hindiNumbers1to99[num] || num) + ' ';
-    }
-    
-    return str.trim() + ' रुपये मात्र';
   }
 
   function updateAdminOverview() {
@@ -1211,6 +1239,7 @@
         existing.mode = (donationType === 'money' ? currentPayMode : 'सामग्री/वस्तु');
         existing.itemName = itemNameVal;
         existing.itemVal = itemEstVal;
+        existing.amtWords = (donationType === 'money' ? numberToHindiWords(amtVal) : '');
         currentReceipt = existing;
       }
     } else {
@@ -1234,6 +1263,7 @@
         mode: (donationType === 'money' ? currentPayMode : 'सामग्री/वस्तु'),
         itemName: itemNameVal,
         itemVal: itemEstVal,
+        amtWords: (donationType === 'money' ? numberToHindiWords(amtVal) : ''),
         date: dateStr,
         by: collectorName,
         code: code
@@ -1283,8 +1313,9 @@
       mainLbl.innerText = "सहयोग राशि";
       mainVal.innerText = 'रु. ' + (r.amt || 0) + '/-';
       
-      // शुद्ध हिंदी शब्दों में राशि प्रदर्शन
-      document.getElementById('pv-words').innerText = numberToHindiWords(r.amt || 0);
+      // हमेशा वर्तमान फंक्शन से शुद्ध हिंदी में कैलकुलेट करके दिखाएं
+      var wordsText = numberToHindiWords(r.amt || 0);
+      document.getElementById('pv-words').innerText = wordsText;
 
       // लाइव UPI ID से QR कोड बनाना
       if (r.mode === 'Online') {
@@ -1420,7 +1451,7 @@
     }
 
     var csvRows = [];
-    csvRows.push(["रसीद संख्या", "दिनांक", "दानदाता का नाम", "मोबाइल नंबर", "पता", "सहयोग प्रकार", "राशि (रु.)", "भुगतान माध्यम", "वस्तु का विवरण", "रसीद कर्ता", "कोड"].join(","));
+    csvRows.push(["रसीद संख्या", "दिनांक", "दानदाता का नाम", "मोबाइल नंबर", "पता", "सहयोग प्रकार", "राशि (रु.)", "शब्दों में", "भुगतान माध्यम", "वस्तु का विवरण", "रसीद कर्ता", "कोड"].join(","));
 
     receipts.forEach(function(r) {
       var row = [
@@ -1431,6 +1462,7 @@
         `"${(r.addr || '').replace(/"/g, '""')}"`,
         `"${r.type || 'money'}"`,
         `"${r.amt || 0}"`,
+        `"${numberToHindiWords(r.amt || 0)}"`,
         `"${r.mode || ''}"`,
         `"${(r.itemName || '').replace(/"/g, '""')}"`,
         `"${(r.by || '').replace(/"/g, '""')}"`,
@@ -1555,7 +1587,7 @@
 
       if (!currentUser) {
         var editBtn = document.createElement('button');
-        editBtn.innerText = '✏️';
+        editBtn.innerText = '✏️️';
         editBtn.title = 'सुधारें';
         editBtn.style.cssText = 'border:none; background:#e3f2fd; color:#1976d2; font-size:11px; padding:4px 6px; border-radius:4px; cursor:pointer; margin-left:4px;';
         editBtn.onclick = (function(receiptData) {
