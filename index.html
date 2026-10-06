@@ -753,7 +753,7 @@
   var samitiUpi = localStorage.getItem('durga_samiti_upi') || '7905106011@upi';
 
   // =========================================================================
-  // 1 से 100 शुद्ध मानक हिंदी शब्द प्रणाली (51 = इक्यावन, 21 = इक्कीस, आदि)
+  // 1 से 100 शुद्ध मानक हिंदी शब्द प्रणाली
   // =========================================================================
   var hindiNumbers = [
     '', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस',
@@ -942,6 +942,7 @@
     }
   }
 
+  // संशोधित doLogin: केवल वर्तमान एक्टिव पासवर्ड से लॉगिन की अनुमति
   function doLogin() {
     var m = document.getElementById('inp-mobile').value.trim();
     var p = document.getElementById('inp-pass').value.trim();
@@ -952,7 +953,8 @@
     }
 
     if (currentRole === 'admin') {
-      if ((m.toLowerCase() === 'admin' || m === '7905106011') && (p === adminPass || p === '7905106011')) {
+      // केवल वर्तमान adminPass मान्य होगा
+      if ((m.toLowerCase() === 'admin' || m === '7905106011') && p === adminPass) {
         currentUser = null;
         clearLoginFields();
         updateAdminOverview();
@@ -976,7 +978,9 @@
         return;
       }
 
-      if (found.pass === p || p === '1234') {
+      // केवल यूजर का वर्तमान असाइन्ड पासवर्ड मान्य होगा
+      var validUserPass = found.pass || '1234';
+      if (p === validUserPass) {
         currentUser = found;
         document.getElementById('usr-name-show').innerText = found.name;
         document.getElementById('usr-code-show').innerText = found.code;
@@ -1023,7 +1027,9 @@
       alert("कृपया सभी फ़ील्ड भरें!");
       return;
     }
-    if (oldP !== currentUser.pass && !(currentUser.pass === undefined && oldP === '1234')) {
+    
+    var currentValidUserPass = currentUser.pass || '1234';
+    if (oldP !== currentValidUserPass) {
       alert("वर्तमान (पुराना) पासवर्ड गलत है!");
       return;
     }
@@ -1275,10 +1281,8 @@
       mainLbl.innerText = "सहयोग राशि";
       mainVal.innerText = 'रु. ' + (r.amt || 0) + '/-';
       
-      // 51 को इक्यावन और अन्य सभी संख्याओं के लिए शब्दों में रूपांतरण
       document.getElementById('pv-words').innerText = numberToHindiWords(r.amt || 0);
 
-      // लाइव UPI QR कोड प्रदर्शन
       if (r.mode === 'Online') {
         qrWrap.style.display = 'block';
         var qrBox = document.getElementById('pv-qrcode-box');
@@ -1885,11 +1889,12 @@
     alert("समिति UPI ID (" + samitiUpi + ") सफलतापूर्वक अपडेट हो गई!\nअब सभी ऑनलाइन रसीदों पर यही QR कोड बनेगा।");
   }
 
+  // संशोधित changeAdminPass: केवल वर्तमान पासवर्ड ही मान्य
   function changeAdminPass() {
     var oldP = document.getElementById('set-old-pass').value.trim();
     var newP = document.getElementById('set-new-pass').value.trim();
 
-    if (oldP !== adminPass && oldP !== '7905106011') {
+    if (oldP !== adminPass) {
       alert("वर्तमान पुराना पासवर्ड गलत है!");
       return;
     }
