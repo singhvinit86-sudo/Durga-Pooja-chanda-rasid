@@ -1017,7 +1017,6 @@
     showScreen('screen-user-change-pass');
   }
 
-  // यूजर द्वारा खुद पासवर्ड बदलना: isPrivatePass = true (एडमिन को पासवर्ड नहीं दिखेगा)
   function changeOwnPassword() {
     if (!currentUser) return;
     var oldP = document.getElementById('u-old-pass').value.trim();
@@ -1046,7 +1045,7 @@
     for (var i = 0; i < users.length; i++) {
       if (users[i].id === currentUser.id || String(users[i].code).toUpperCase() === String(currentUser.code).toUpperCase()) {
         users[i].pass = newP;
-        users[i].isPrivatePass = true; // एडमिन से छिपाने का फ्लैग
+        users[i].isPrivatePass = true;
         currentUser.pass = newP;
         currentUser.isPrivatePass = true;
         break;
@@ -1719,7 +1718,7 @@
     });
   }
 
-  // Users & हिसाब: अगर यूजर ने खुद पासवर्ड बदला है तो एडमिन को '•••••• (सुरक्षित)' दिखेगा
+  // Users & हिसाब: कार्यकर्ता के नाम के साथ उसका रसीद कोड स्पष्ट दिखेगा
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -1761,7 +1760,6 @@
         }).join('');
       }
 
-      // पासवर्ड दृश्यता नियंत्रण
       var passDisplay = "";
       if (u.isPrivatePass) {
         passDisplay = '<span style="color:#e65100; font-size:11px;">•••••• (सुरक्षित / यूजर द्वारा बदला गया)</span>';
@@ -1777,7 +1775,8 @@
             <div class="user-circle" style="background:${isAct ? '#1976d2' : '#757575'};">${u.code}</div>
             <div>
               <strong>${u.name}</strong> 
-              <span style="font-size:11px; font-weight:bold; color:${isAct ? '#2e7d32' : '#d32f2f'};">${isAct ? '● Active' : '● Blocked'}</span><br>
+              <span style="background:#ffebee; color:#b71c1c; font-size:11px; font-weight:bold; padding:1px 6px; border-radius:4px; border:1px solid #ffcdd2; margin-left:4px;">कोड: ${u.code}</span>
+              <span style="font-size:11px; font-weight:bold; color:${isAct ? '#2e7d32' : '#d32f2f'}; margin-left:4px;">${isAct ? '● Active' : '● Blocked'}</span><br>
               <small style="color:#666;">${u.mobile} • पास: ${passDisplay}</small>
             </div>
           </div>
@@ -1823,7 +1822,6 @@
     }
   }
 
-  // एडमिन द्वारा यूजर का पासवर्ड रीसेट करना (भूल जाने की स्थिति में): isPrivatePass = false
   function changeUserPass(id) {
     var u = users.find(function(x) { return x.id === id; });
     if (!u) return;
@@ -1833,7 +1831,7 @@
     
     if (newP !== null && newP.trim() !== '') {
       u.pass = newP.trim();
-      u.isPrivatePass = false; // एडमिन द्वारा बदला गया, अतः एडमिन को यह पासवर्ड दिखेगा
+      u.isPrivatePass = false;
       localStorage.setItem('durga_users', JSON.stringify(users));
       syncToFirebase("users", users);
       openUsersList();
@@ -1895,8 +1893,8 @@
       code: code, 
       addr: addr, 
       isActive: true, 
-      paidAmt: 0,
-      isPrivatePass: false // नए यूजर का पासवर्ड शुरुआत में एडमिन को दिखता है
+      paidAmt: 0, 
+      isPrivatePass: false 
     });
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
