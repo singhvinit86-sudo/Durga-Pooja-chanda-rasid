@@ -80,6 +80,11 @@
     .user-list-item { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
     .user-circle { width: 40px; height: 40px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; }
 
+    /* Modal for Material Inspection */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 999; justify-content: center; align-items: center; padding: 16px; }
+    .modal-overlay.active { display: flex !important; }
+    .modal-content { background: #fff; width: 100%; max-width: 400px; border-radius: 12px; overflow: hidden; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
     /* Live Sync Bar */
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 4px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
 
@@ -207,6 +212,7 @@
       </button>
     </div>
 
+    <!-- नकद/ऑनलाइन पासबुक -->
     <div class="collector-passbook">
       <div style="font-weight: bold; font-size: 13px; color: #b71c1c; border-bottom: 1px dashed #ffe082; padding-bottom: 4px;">
         📋 मेरा चंदा हिसाब पासबुक (कैश/ऑनलाइन)
@@ -227,9 +233,20 @@
       </div>
     </div>
 
-    <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px;">
+    <!-- कार्यकर्ता वस्तु/सामग्री चंदा बॉक्स -->
+    <div style="margin: 0 16px 12px 16px; background: #fff8e1; border: 1.5px solid #ffe082; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <div style="font-size: 12px; color: #666; font-weight: bold;">📦 मेरे द्वारा प्राप्त भौतिक सामग्री</div>
+        <div style="font-size: 16px; font-weight: 900; color: #e65100;" id="usr-stat-items-count">0 वस्तुएं दर्ज</div>
+      </div>
+      <button onclick="openMyItemsModal()" style="background: #e65100; color: white; border: none; padding: 7px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">
+        विवरण देखें ➔
+      </button>
+    </div>
+
+    <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
       <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏️ नई रसीद बनाएं (रुपये / वस्तु)</button>
-      <button class="btn" style="background: #1976d2;" onclick="openReceiptsList()">📋 मेरी काटी हुई रसीदें</button>
+      <button class="btn" style="background: #1976d2;" onclick="openReceiptsList()">📋 मेरी काटी हुई सभी रसीदें</button>
     </div>
 
     <div style="padding: 16px; margin-top: auto;">
@@ -269,7 +286,7 @@
   <!-- 5. CREATE RECEIPT FORM -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="backToHome()">⬅️️</button> रसीद बनाएं</h2>
+      <h2><button class="icon-btn" onclick="backToHome()">⬅</button> रसीद बनाएं</h2>
     </div>
 
     <div style="padding: 20px; flex: 1;">
@@ -389,7 +406,6 @@
               <td style="font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-paymode" style="font-weight: bold; color: #1976d2;">-</td>
             </tr>
-            <!-- राशि या सामग्री विवरण रो -->
             <tr style="background: #ffe082;">
               <td id="pv-main-lbl" style="font-weight: bold; color: #b71c1c; font-size: 14px;">सहयोग राशि</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
@@ -452,16 +468,23 @@
   <!-- 7.1 PHYSICAL ITEMS LIST (सामग्री/वस्तु दान रजिस्टर) -->
   <div id="screen-items-list" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> वस्तु/सामग्री दान रजिस्टर</h2>
+      <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> वस्तु/सामग्री दान रजिस्टर</h2>
     </div>
 
-    <div style="padding: 10px 14px; background: #fff3e0; border-bottom: 1px solid #ffe082; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
-      <span>कुल वस्तु दान: <span id="tot-item-count">0</span> रसीदें</span>
-      <span style="color: #e65100;">📦 भौतिक सामग्री</span>
-    </div>
-
-    <div style="padding: 10px 14px; background: #fff; border-bottom: 1px solid #eee;">
+    <!-- एडमिन फ़िल्टर बॉक्स -->
+    <div id="admin-item-filter-wrap" style="padding: 10px 14px; background: #fff3e0; border-bottom: 1px solid #ffe082; display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <span style="font-size: 12px; font-weight: bold; color: #e65100; white-space: nowrap;">कार्यकर्ता:</span>
+        <select id="sel-item-user-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderItemsList()">
+          <option value="ALL">📋 सभी का सामान (ALL)</option>
+        </select>
+      </div>
       <input type="text" id="inp-search-item" class="form-input" style="padding: 8px 10px; font-size: 13px;" placeholder="🔍 सामग्री या दानदाता से खोजें..." onkeyup="renderItemsList()" />
+    </div>
+
+    <div style="padding: 8px 14px; background: #fbe9e7; border-bottom: 1px solid #ffccbc; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
+      <span>कुल वस्तुएं: <span id="tot-item-count" style="color:#b71c1c;">0</span> रसीदें</span>
+      <span style="color: #e65100;">📦 भौतिक सामग्री भंडार</span>
     </div>
 
     <div id="items-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
@@ -538,6 +561,22 @@
         </button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- 11. MATERIAL MODAL (किसी विशेष कार्यकर्ता का सामान पॉपअप) -->
+  <div class="modal-overlay" id="material-modal" onclick="closeMaterialModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div style="background: #e65100; color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="modal-user-title" style="font-size: 15px; font-weight: bold;">📦 कार्यकर्ता सामग्री विवरण</h3>
+        <button onclick="document.getElementById('material-modal').classList.remove('active')" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">✕</button>
+      </div>
+      <div id="modal-material-body" style="padding: 14px; overflow-y: auto; flex: 1; max-height: 60vh;">
+        <!-- सूची डायनेमिक आएगी -->
+      </div>
+      <div style="padding: 10px; background: #f8f9fa; text-align: right; border-top: 1px solid #eee;">
+        <button onclick="document.getElementById('material-modal').classList.remove('active')" style="background: #333; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer;">बंद करें</button>
+      </div>
     </div>
   </div>
 
@@ -622,8 +661,8 @@
   var currentRole = 'admin';
   var currentUser = null;
   var currentReceipt = null;
-  var donationType = 'money'; // 'money' या 'item'
-  var currentPayMode = 'Cash'; // 'Cash' या 'Online'
+  var donationType = 'money';
+  var currentPayMode = 'Cash';
   var adminPass = localStorage.getItem('durga_admin_pass') || '7905106011';
 
   var users = [
@@ -768,17 +807,23 @@
     showScreen('screen-user');
   }
 
+  // कार्यकर्ता की पासबुक और सामान का सटीक हिसाब अपडेट करना
   function updateUserPassbook() {
     if (!currentUser) return;
     
     var freshU = users.find(function(x) { return x.code === currentUser.code; }) || currentUser;
     
     var tot = 0;
+    var itemCount = 0;
     for (var i = 0; i < receipts.length; i++) {
       var r = receipts[i];
-      var isItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
-      if (r.code === freshU.code && !isItem) {
-        tot += Number(r.amt || 0);
+      if (r.code === freshU.code) {
+        var isItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
+        if (isItem) {
+          itemCount++;
+        } else {
+          tot += Number(r.amt || 0);
+        }
       }
     }
     
@@ -788,6 +833,7 @@
     document.getElementById('usr-stat-total').innerText = 'रु. ' + tot;
     document.getElementById('usr-stat-paid').innerText = 'रु. ' + paid;
     document.getElementById('usr-stat-pending').innerText = 'रु. ' + pend;
+    document.getElementById('usr-stat-items-count').innerText = itemCount + ' वस्तुएं दर्ज';
   }
 
   function selectDonationType(type) {
@@ -866,7 +912,7 @@
 
     currentReceipt = {
       no: num,
-      type: donationType, // 'money' या 'item'
+      type: donationType,
       name: name,
       phone: phone,
       addr: addr || 'मारकुंडी',
@@ -886,7 +932,6 @@
     showPreview(currentReceipt, false);
   }
 
-  // रसीद प्रिव्यू व लिंक से देखने का सटीक फ़ंक्शन
   function showPreview(r, isDonorView) {
     currentReceipt = r;
     document.getElementById('pv-no').innerText = r.no;
@@ -899,7 +944,6 @@
     var mainLbl = document.getElementById('pv-main-lbl');
     var mainVal = document.getElementById('pv-amt');
 
-    // जांचें कि क्या रसीद सामग्री/वस्तु की है
     var isPhysicalItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
 
     if (isPhysicalItem) {
@@ -992,7 +1036,6 @@
     }
   }
 
-  // व्हाट्सएप मैसेज जनरेशन (भौतिक सामग्री के लिए शुद्ध टेक्स्ट)
   function shareWhatsApp() {
     if (!currentReceipt) return;
 
@@ -1146,7 +1189,17 @@
     }
   }
 
+  // वस्तु/सामग्री दान रजिस्टर (Admin View)
   function openPhysicalItemsList() {
+    var userSelect = document.getElementById('sel-item-user-filter');
+    userSelect.innerHTML = '<option value="ALL">📋 सभी का सामान (ALL)</option><option value="ADM">👑 एडमिन (ADM)</option>';
+    for (var u = 0; u < users.length; u++) {
+      var opt = document.createElement('option');
+      opt.value = users[u].code;
+      opt.innerText = '👤 ' + users[u].name + ' (' + users[u].code + ')';
+      userSelect.appendChild(opt);
+    }
+    document.getElementById('inp-search-item').value = '';
     renderItemsList();
     showScreen('screen-items-list');
   }
@@ -1155,6 +1208,7 @@
     var box = document.getElementById('items-list-box');
     box.innerHTML = '';
 
+    var selectedUser = document.getElementById('sel-item-user-filter') ? document.getElementById('sel-item-user-filter').value : 'ALL';
     var searchText = (document.getElementById('inp-search-item') ? document.getElementById('inp-search-item').value : '').toLowerCase().trim();
 
     var itemReceipts = [];
@@ -1162,19 +1216,21 @@
       var r = receipts[i];
       var isItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
       if (isItem) {
-        var match = !searchText || 
+        var matchUser = (selectedUser === 'ALL') || (r.code === selectedUser);
+        var matchSearch = !searchText || 
           (r.itemName && r.itemName.toLowerCase().indexOf(searchText) !== -1) ||
           (r.name && r.name.toLowerCase().indexOf(searchText) !== -1) ||
           (r.phone && r.phone.indexOf(searchText) !== -1) ||
-          (r.no && r.no.toLowerCase().indexOf(searchText) !== -1);
-        if (match) itemReceipts.push(r);
+          (r.no && r.no.toLowerCase().indexOf(searchText) !== -1) ||
+          (r.by && r.by.toLowerCase().indexOf(searchText) !== -1);
+        if (matchUser && matchSearch) itemReceipts.push(r);
       }
     }
 
     document.getElementById('tot-item-count').innerText = itemReceipts.length;
 
     if (itemReceipts.length === 0) {
-      box.innerHTML = '<p style="text-align:center; color:#888; padding:30px;">कोई वस्तु/सामग्री दान दर्ज नहीं है।</p>';
+      box.innerHTML = '<p style="text-align:center; color:#888; padding:30px;">कोई वस्तु/सामग्री दान नहीं मिला।</p>';
       return;
     }
 
@@ -1191,7 +1247,7 @@
           पता: ${itm.addr || 'मारकुंडी'} • दिनांक: ${itm.date}
         </div>
         <div style="font-size:11px; color:#666; margin-top:2px;">
-          रसीद संख्या: <strong>${itm.no}</strong> | प्राप्तकर्ता: ${itm.by} (${itm.code})
+          रसीद सं.: <strong>${itm.no}</strong> | प्राप्तकर्ता: <strong>${itm.by} (${itm.code})</strong>
           ${itm.itemVal ? `<span style="color:#2e7d32; font-weight:bold;"> | अनुमानित: रु. ${itm.itemVal}</span>` : ''}
         </div>
       `;
@@ -1209,6 +1265,61 @@
     }
   }
 
+  // कार्यकर्ता द्वारा अपनी वस्तुएं देखने का पॉपअप
+  function openMyItemsModal() {
+    if (!currentUser) return;
+    showUserItemsModal(currentUser.code, currentUser.name);
+  }
+
+  // किसी भी कार्यकर्ता की वस्तु सूची पॉपअप में दिखाना (Admin & User दोनों के लिए)
+  function showUserItemsModal(code, userName) {
+    document.getElementById('modal-user-title').innerText = "📦 " + userName + " द्वारा ली गई सामग्री";
+    var body = document.getElementById('modal-material-body');
+    body.innerHTML = '';
+
+    var userItems = [];
+    for (var i = 0; i < receipts.length; i++) {
+      var r = receipts[i];
+      var isItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
+      if (r.code === code && isItem) {
+        userItems.push(r);
+      }
+    }
+
+    if (userItems.length === 0) {
+      body.innerHTML = '<p style="text-align:center; color:#888; padding:20px;">इस कार्यकर्ता द्वारा कोई भौतिक वस्तु दान दर्ज नहीं किया गया है।</p>';
+    } else {
+      for (var j = 0; j < userItems.length; j++) {
+        var itm = userItems[j];
+        var itemDiv = document.createElement('div');
+        itemDiv.style.cssText = 'background:#fff8e1; border:1px solid #ffe082; border-radius:8px; padding:10px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;';
+        
+        itemDiv.innerHTML = `
+          <div>
+            <div style="font-size:14px; font-weight:bold; color:#b71c1c;">📦 ${itm.itemName}</div>
+            <div style="font-size:11px; color:#555; margin-top:2px;">
+              दानदाता: <strong>${itm.name}</strong> • ${itm.phone}<br>
+              दिनांक: ${itm.date} • रसीद: <strong>${itm.no}</strong>
+              ${itm.itemVal ? `<br><span style="color:#2e7d32; font-weight:bold;">अनुमानित मूल्य: रु. ${itm.itemVal}</span>` : ''}
+            </div>
+          </div>
+          <div>
+            <button onclick="document.getElementById('material-modal').classList.remove('active'); showPreview(receipts.find(x => x.no === '${itm.no}'), false);" style="background:#e65100; color:white; border:none; padding:5px 8px; border-radius:4px; font-size:11px; font-weight:bold; cursor:pointer;">रसीद</button>
+          </div>
+        `;
+        body.appendChild(itemDiv);
+      }
+    }
+
+    document.getElementById('material-modal').classList.add('active');
+  }
+
+  function closeMaterialModal(e) {
+    if (e.target.id === 'material-modal') {
+      document.getElementById('material-modal').classList.remove('active');
+    }
+  }
+
   function deleteReceiptByIndex(idx) {
     if (receipts[idx]) {
       var recNum = receipts[idx].no;
@@ -1223,6 +1334,7 @@
     }
   }
 
+  // Users & हिसाब: एडमिन को कैश और सामग्री दोनों का अलग-अलग संपूर्ण विवरण
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -1231,7 +1343,7 @@
       var u = users[i];
       var isAct = (u.isActive !== false);
 
-      var tot = 0;
+      var totCash = 0;
       var itemCount = 0;
       for (var j = 0; j < receipts.length; j++) {
         var r = receipts[j];
@@ -1240,13 +1352,13 @@
           if (isItem) {
             itemCount++;
           } else {
-            tot += Number(r.amt || 0);
+            totCash += Number(r.amt || 0);
           }
         }
       }
 
       var paid = Number(u.paidAmt || 0);
-      var pend = Math.max(0, tot - paid);
+      var pend = Math.max(0, totCash - paid);
 
       var div = document.createElement('div');
       div.className = 'user-list-item';
@@ -1268,13 +1380,22 @@
             <span onclick="deleteUser(${u.id})" style="cursor:pointer; font-size:16px;" title="यूज़र हटाएं">🗑️</span>
           </div>
         </div>
+
+        <!-- नकद/ऑनलाइन वित्तीय हिसाब -->
         <div style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
           <div>
-            काटा चंदा: <strong>रु. ${tot}</strong> | जमा: <strong style="color:#2e7d32;">रु. ${paid}</strong> | 
+            कुल चंदा: <strong>रु. ${totCash}</strong> | जमा: <strong style="color:#2e7d32;">रु. ${paid}</strong> | 
             <span style="color:${pend > 0 ? '#d32f2f' : '#2e7d32'}; font-weight:bold;">बकाया: रु. ${pend}</span>
-            ${itemCount > 0 ? `<br><small style="color:#e65100; font-weight:bold;">📦 कुल वस्तु दान रसीदें: ${itemCount}</small>` : ''}
           </div>
           ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}',${pend})" style="background:#2e7d32; color:white; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">💰 पैसा जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
+        </div>
+
+        <!-- सामग्री/वस्तु चंदा हिसाब -->
+        <div style="background:#fff8e1; border:1px dashed #ffa000; border-radius:6px; padding:6px 10px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+          <div>
+            📦 भौतिक सामग्री रसीदें: <strong style="color:#e65100;">${itemCount} वस्तुएं</strong>
+          </div>
+          ${itemCount > 0 ? `<button onclick="showUserItemsModal('${u.code}', '${u.name}')" style="background:#e65100; color:white; border:none; padding:3px 8px; border-radius:4px; font-weight:bold; font-size:11px; cursor:pointer;">सामान विवरण देखें ➔</button>` : `<span style="color:#888; font-size:11px;">कोई सामान नहीं</span>`}
         </div>
       `;
       box.appendChild(div);
@@ -1425,7 +1546,6 @@
     }
   }
 
-  // पेज लोड होने पर URL पैरामीटर (?id=...) की जांच
   window.addEventListener('load', function() {
     if (!currentDurgaImg) {
       currentDurgaImg = DEFAULT_DURGA;
