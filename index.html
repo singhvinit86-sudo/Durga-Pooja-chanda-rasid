@@ -89,7 +89,7 @@
 
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 4px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
     
-    /* Audit Sheet Styles */
+    /* Audit & Report Sheet Styles */
     .audit-sheet { background: #ffffff; border: 2px solid #8e0000; border-radius: 8px; padding: 16px; font-size: 12px; color: #222; }
     .audit-table { width: 100%; border-collapse: collapse; margin-top: 8px; margin-bottom: 14px; }
     .audit-table th, .audit-table td { border: 1px solid #ddd; padding: 6px 8px; text-align: left; font-size: 11px; }
@@ -98,8 +98,8 @@
 
     @media print {
       body * { visibility: hidden; }
-      #print-area, #print-area *, #audit-capture-target, #audit-capture-target * { visibility: visible; }
-      #print-area, #audit-capture-target { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-area, #print-area *, #audit-capture-target, #audit-capture-target *, #day-report-capture, #day-report-capture * { visibility: visible; }
+      #print-area, #audit-capture-target, #day-report-capture { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
@@ -227,10 +227,17 @@
       <div class="menu-box" style="background: #00796b;" onclick="exportReceiptsToCSV()">
         <div style="font-size: 22px;">📊</div>Excel / CSV
       </div>
-      <!-- नया ऑडिट सारांश बटन -->
+      
+      <!-- नया: दैनिक डे-एंड रिपोर्ट बटन -->
+      <div class="menu-box" style="background: #0288d1; grid-column: span 2;" onclick="openDayEndReportScreen()">
+        <div style="font-size: 22px;">📅</div>दैनिक डे-एंड रिपोर्ट (Daily Closing)
+      </div>
+
+      <!-- ऑडिट सारांश बटन -->
       <div class="menu-box" style="background: #b71c1c; grid-column: span 2;" onclick="openAuditSummaryScreen()">
         <div style="font-size: 22px;">📑</div>ऑडिट रिपोर्ट PDF (वित्तीय क्लोजिंग)
       </div>
+
       <div class="menu-box" style="background: #f57c00; grid-column: span 2;" onclick="showScreen('screen-settings')">
         <div style="font-size: 22px;">⚙️</div>Settings & UPI QR
       </div>
@@ -290,7 +297,7 @@
     </div>
 
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
-      <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏️️ नई रसीद बनाएं (रुपये / वस्तु)</button>
+      <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏ नई रसीद बनाएं (रुपये / वस्तु)</button>
       <button class="btn" style="background: #1976d2;" onclick="openReceiptsList()">📋 मेरी काटी हुई सभी रसीदें</button>
     </div>
 
@@ -600,6 +607,106 @@
     <div id="expense-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
+  <!-- 7.4 DAILY DAY-END REPORT SCREEN (NEW) -->
+  <div id="screen-day-end" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> दैनिक डे-एंड रिपोर्ट</h2>
+    </div>
+
+    <div style="padding: 12px; flex: 1; overflow-y: auto;">
+      
+      <!-- दिनांक चयन बार -->
+      <div style="background: #e1f5fe; border: 1.5px solid #81d4fa; border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+        <span style="font-size: 12px; font-weight: bold; color: #0277bd;">तारीख चुनें:</span>
+        <input type="date" id="day-report-date-picker" class="form-input" style="padding: 6px 8px; font-size: 13px; flex: 1; max-width: 170px;" onchange="loadDayEndReport()" />
+        <button onclick="setTodayDayReport()" style="background: #0288d1; color: white; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">आज</button>
+      </div>
+
+      <!-- रिपोर्ट कार्ड (प्रिंट व कैप्चर क्षेत्र) -->
+      <div class="audit-sheet" id="day-report-capture" style="border-color: #0288d1;">
+        <div style="text-align: center; border-bottom: 2px double #0288d1; padding-bottom: 6px; margin-bottom: 8px;">
+          <h2 style="color: #0277bd; font-size: 17px;">नवयुवा दुर्गा पूजा समिति, मारकुंडी</h2>
+          <div style="display: inline-block; background: #0288d1; color: white; font-weight: bold; font-size: 11px; padding: 2px 10px; border-radius: 4px; margin-top: 3px;">
+            📅 दैनिक क्लोजिंग व कलेक्शन रिपोर्ट
+          </div>
+          <p style="font-size: 12px; font-weight: bold; color: #b71c1c; margin-top: 4px;">दिनांक: <span id="day-rep-date-show">-</span></p>
+        </div>
+
+        <div class="audit-sec-hdr" style="color: #0277bd; border-color: #0288d1;">1. दैनिक वित्तीय सारांश</div>
+        <table class="audit-table">
+          <tr>
+            <td style="width: 60%;">💵 आज का नकद चंदा (Cash)</td>
+            <td style="font-weight: bold; color: #2e7d32;" id="day-cash">रु. 0</td>
+          </tr>
+          <tr>
+            <td>📱 आज का ऑनलाइन चंदा (UPI)</td>
+            <td style="font-weight: bold; color: #1976d2;" id="day-online">रु. 0</td>
+          </tr>
+          <tr style="background: #e8f5e9;">
+            <td style="font-weight: bold;">💰 आज का कुल कलेक्शन</td>
+            <td style="font-weight: 900; color: #1b5e20;" id="day-tot-col">रु. 0</td>
+          </tr>
+          <tr>
+            <td>💸 आज का कुल खर्च</td>
+            <td style="font-weight: bold; color: #c2185b;" id="day-tot-exp">रु. 0</td>
+          </tr>
+          <tr style="background: #fff8e1;">
+            <td style="font-weight: bold;">⚖️ आज की शुद्ध बचत / शेष</td>
+            <td style="font-weight: 900; font-size: 13px;" id="day-net-bal">रु. 0</td>
+          </tr>
+          <tr>
+            <td>📄 आज कटी कुल रसीदें</td>
+            <td style="font-weight: bold;" id="day-rec-count">0 रसीदें</td>
+          </tr>
+          <tr>
+            <td>📦 आज प्राप्त सामग्री दान</td>
+            <td style="font-weight: bold; color: #e65100;" id="day-item-count">0 वस्तुएं</td>
+          </tr>
+        </table>
+
+        <div class="audit-sec-hdr" style="color: #0277bd; border-color: #0288d1;">2. कार्यकर्ता-वार आज का कलेक्शन</div>
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>कोड</th>
+              <th>कार्यकर्ता</th>
+              <th>रसीदें</th>
+              <th>नकद</th>
+              <th>UPI</th>
+              <th>कुल</th>
+            </tr>
+          </thead>
+          <tbody id="day-usr-rows"></tbody>
+        </table>
+
+        <div class="audit-sec-hdr" style="color: #0277bd; border-color: #0288d1;">3. आज का खर्च विवरण</div>
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>खर्च मद</th>
+              <th style="width: 35%; text-align: right;">राशि (रु.)</th>
+            </tr>
+          </thead>
+          <tbody id="day-exp-rows"></tbody>
+        </table>
+
+        <div style="margin-top: 18px; padding-top: 8px; border-top: 1px dashed #aaa; display: flex; justify-content: space-between; font-size: 10px; font-weight: bold; color: #555; text-align: center;">
+          <div>...........................<br>कोषाध्यक्ष (Cashier)</div>
+          <div>...........................<br>समिति एडमिन / अध्यक्ष</div>
+        </div>
+      </div>
+
+      <!-- एक्शन बटन -->
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+        <button class="btn btn-green" onclick="shareDayReportWhatsApp()">💬 WhatsApp पर आज की समरी भेजें</button>
+        <button class="btn" style="background: #0288d1;" onclick="downloadDayReportPDF()">📥 Download Day Report PDF</button>
+        <button class="btn" style="background: #546e7a;" onclick="window.print()">🖨️ रिपोर्ट प्रिंट करें</button>
+        <button class="btn" style="background: #424242;" onclick="showScreen('screen-admin')">⬅️ एडमिन पैनल पर लौटें</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- 7.3 FINANCIAL AUDIT SUMMARY SCREEN -->
   <div id="screen-audit-summary" class="screen">
     <div class="top-bar">
@@ -608,7 +715,6 @@
 
     <div style="padding: 12px; flex: 1; overflow-y: auto;">
       
-      <!-- कैप्चर टार्गेट शीट -->
       <div class="audit-sheet" id="audit-capture-target">
         <div style="text-align: center; border-bottom: 2px double #8e0000; padding-bottom: 8px; margin-bottom: 10px;">
           <h2 style="color: #8e0000; font-size: 18px;">नवयुवा दुर्गा पूजा समिति</h2>
@@ -677,28 +783,13 @@
           <tbody id="aud-usr-rows"></tbody>
         </table>
 
-        <!-- सत्यापन व हस्ताक्षर ब्लॉक -->
         <div style="margin-top: 25px; padding-top: 10px; border-top: 1px dashed #aaa; display: flex; justify-content: space-between; align-items: flex-end; font-size: 10px; font-weight: bold; color: #333; text-align: center;">
-          <div>
-            <div style="height: 35px;"></div>
-            .................................<br>
-            लेखा परीक्षक (Auditor)
-          </div>
-          <div>
-            <div style="height: 35px;"></div>
-            .................................<br>
-            कोषाध्यक्ष (Cashier)
-          </div>
-          <div>
-            <div style="height: 35px;"></div>
-            .................................<br>
-            अध्यक्ष (President)
-          </div>
+          <div><div style="height: 35px;"></div>.................................<br>लेखा परीक्षक (Auditor)</div>
+          <div><div style="height: 35px;"></div>.................................<br>कोषाध्यक्ष (Cashier)</div>
+          <div><div style="height: 35px;"></div>.................................<br>अध्यक्ष (President)</div>
         </div>
-
       </div>
 
-      <!-- एक्शन बटन -->
       <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
         <button class="btn" style="background: #b71c1c;" id="btn-dl-audit-pdf" onclick="downloadAuditReportPDF()">
           📥 Download Audit Report PDF
@@ -713,7 +804,7 @@
   <!-- 8. CREATE USER SCREEN -->
   <div id="screen-create-user" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> नया यूज़र बनाएं</h2>
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️️</button> नया यूज़र बनाएं</h2>
     </div>
     <div style="padding: 20px;">
       <div class="form-group">
@@ -862,6 +953,7 @@
           if (document.getElementById('screen-items-list').classList.contains('active')) renderItemsList();
           if (document.getElementById('screen-users-list').classList.contains('active')) openUsersList();
           if (document.getElementById('screen-expenses').classList.contains('active')) renderExpensesList();
+          if (document.getElementById('screen-day-end').classList.contains('active')) loadDayEndReport();
           if (currentUser) updateUserPassbook();
         }
       }).catch(function(e) {});
@@ -1840,6 +1932,233 @@
   }
 
   // =========================================================================
+  // DAILY DAY-END REPORT MODULE (NEW)
+  // =========================================================================
+  function getTodayDateFormatted() {
+    var d = new Date();
+    return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
+  }
+
+  function getTodayDateISO() {
+    var d = new Date();
+    var yyyy = d.getFullYear();
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function openDayEndReportScreen() {
+    var picker = document.getElementById('day-report-date-picker');
+    if (picker && !picker.value) {
+      picker.value = getTodayDateISO();
+    }
+    loadDayEndReport();
+    showScreen('screen-day-end');
+  }
+
+  function setTodayDayReport() {
+    var picker = document.getElementById('day-report-date-picker');
+    if (picker) {
+      picker.value = getTodayDateISO();
+      loadDayEndReport();
+    }
+  }
+
+  var currentDayReportData = {};
+
+  function loadDayEndReport() {
+    var picker = document.getElementById('day-report-date-picker');
+    var selectedDateStr = "";
+
+    if (picker && picker.value) {
+      var parts = picker.value.split('-'); // YYYY-MM-DD
+      selectedDateStr = parts[2] + '-' + parts[1] + '-' + parts[0]; // DD-MM-YYYY
+    } else {
+      selectedDateStr = getTodayDateFormatted();
+    }
+
+    document.getElementById('day-rep-date-show').innerText = selectedDateStr;
+
+    var dayCash = 0;
+    var dayOnline = 0;
+    var dayRecCount = 0;
+    var dayItemCount = 0;
+    var dayUserMap = {};
+
+    users.forEach(function(u) {
+      dayUserMap[String(u.code).toUpperCase()] = { name: u.name, code: u.code, count: 0, cash: 0, online: 0, items: 0 };
+    });
+    dayUserMap['ADM'] = { name: 'एडमिन / समिति', code: 'ADM', count: 0, cash: 0, online: 0, items: 0 };
+
+    receipts.forEach(function(r) {
+      if (r.date === selectedDateStr) {
+        dayRecCount++;
+        var uCode = String(r.code || 'ADM').toUpperCase();
+        if (!dayUserMap[uCode]) {
+          dayUserMap[uCode] = { name: r.by || 'कार्यकर्ता', code: uCode, count: 0, cash: 0, online: 0, items: 0 };
+        }
+        dayUserMap[uCode].count++;
+
+        if (checkIsItem(r)) {
+          dayItemCount++;
+          dayUserMap[uCode].items++;
+        } else {
+          var amt = Number(r.amt || 0);
+          if (r.mode === 'Online') {
+            dayOnline += amt;
+            dayUserMap[uCode].online += amt;
+          } else {
+            dayCash += amt;
+            dayUserMap[uCode].cash += amt;
+          }
+        }
+      }
+    });
+
+    var dayTotCol = dayCash + dayOnline;
+
+    var dayExp = 0;
+    var dayExpList = [];
+    expenses.forEach(function(e) {
+      if (e.date === selectedDateStr) {
+        var a = Number(e.amt || 0);
+        dayExp += a;
+        dayExpList.push(e);
+      }
+    });
+
+    var dayNet = dayTotCol - dayExp;
+
+    currentDayReportData = {
+      date: selectedDateStr,
+      cash: dayCash,
+      online: dayOnline,
+      total: dayTotCol,
+      exp: dayExp,
+      net: dayNet,
+      recCount: dayRecCount,
+      itemCount: dayItemCount
+    };
+
+    document.getElementById('day-cash').innerText = 'रु. ' + dayCash;
+    document.getElementById('day-online').innerText = 'रु. ' + dayOnline;
+    document.getElementById('day-tot-col').innerText = 'रु. ' + dayTotCol;
+    document.getElementById('day-tot-exp').innerText = 'रु. ' + dayExp;
+    
+    var netEl = document.getElementById('day-net-bal');
+    netEl.innerText = 'रु. ' + dayNet + (dayNet >= 0 ? ' (बचत)' : ' (घाटा)');
+    netEl.style.color = (dayNet >= 0 ? '#2e7d32' : '#d32f2f');
+
+    document.getElementById('day-rec-count').innerText = dayRecCount + ' रसीदें';
+    document.getElementById('day-item-count').innerText = dayItemCount + ' वस्तुएं';
+
+    // कार्यकर्ता तालिका
+    var uTbody = document.getElementById('day-usr-rows');
+    uTbody.innerHTML = '';
+    var activeWorkers = Object.values(dayUserMap).filter(function(w) { return w.count > 0; });
+
+    if (activeWorkers.length === 0) {
+      uTbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#888;">इस तारीख को कोई चंदा रसीद नहीं कटी।</td></tr>';
+    } else {
+      activeWorkers.forEach(function(w) {
+        var tot = w.cash + w.online;
+        var tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:bold; color:#b71c1c;">${w.code}</td>
+          <td>${w.name}</td>
+          <td>${w.count}</td>
+          <td style="color:#2e7d32; font-weight:bold;">रु. ${w.cash}</td>
+          <td style="color:#1976d2; font-weight:bold;">रु. ${w.online}</td>
+          <td style="font-weight:bold;">रु. ${tot}</td>
+        `;
+        uTbody.appendChild(tr);
+      });
+    }
+
+    // आज का खर्च तालिका
+    var eTbody = document.getElementById('day-exp-rows');
+    eTbody.innerHTML = '';
+    if (dayExpList.length === 0) {
+      eTbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#888;">इस तारीख को कोई खर्च दर्ज नहीं है।</td></tr>';
+    } else {
+      dayExpList.forEach(function(e) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = `<td>${e.title}</td><td style="text-align:right; font-weight:bold; color:#c2185b;">रु. ${e.amt}</td>`;
+        eTbody.appendChild(tr);
+      });
+      var totTr = document.createElement('tr');
+      totTr.style.background = '#fce4ec';
+      totTr.style.fontWeight = 'bold';
+      totTr.innerHTML = `<td>कुल खर्च</td><td style="text-align:right; color:#c2185b;">रु. ${dayExp}</td>`;
+      eTbody.appendChild(totTr);
+    }
+  }
+
+  function shareDayReportWhatsApp() {
+    var d = currentDayReportData;
+    if (!d || !d.date) return;
+
+    var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n" +
+      "📅 *दैनिक क्लोजिंग रिपोर्ट (" + d.date + ")*\n" +
+      "━━━━━━━━━━━━━━━━━━━\n" +
+      "💵 आज का नकद चंदा: *रु. " + d.cash + "/-*\n" +
+      "📱 आज का ऑनलाइन UPI: *रु. " + d.online + "/-*\n" +
+      "💰 *आज का कुल कलेक्शन: रु. " + d.total + "/-*\n" +
+      "💸 आज का कुल खर्च: *रु. " + d.exp + "/-*\n" +
+      "⚖️ *आज की शुद्ध बचत: रु. " + d.net + "/-*\n" +
+      "📄 कुल कटी रसीदें: *" + d.recCount + "* | सामग्री: *" + d.itemCount + "*\n" +
+      "━━━━━━━━━━━━━━━━━━━\n" +
+      "माँ भगवती की कृपा सब पर बनी रहे। 🙏";
+
+    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
+  }
+
+  async function downloadDayReportPDF() {
+    var btn = event ? event.target : null;
+    var origTxt = btn ? btn.innerText : "";
+    if (btn) btn.innerText = "⏳ PDF बन रही है...";
+
+    var target = document.getElementById('day-report-capture');
+
+    try {
+      var canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+      var pW = 210, pH = 297, margin = 10;
+      var maxW = pW - (margin * 2);
+      var maxH = pH - (margin * 2);
+
+      var imgW = maxW;
+      var imgH = (canvas.height * imgW) / canvas.width;
+      if (imgH > maxH) {
+        imgH = maxH;
+        imgW = (canvas.width * imgH) / canvas.height;
+      }
+
+      var x = margin + (maxW - imgW) / 2;
+      var y = margin;
+
+      pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+      pdf.save('दैनिक_क्लोजिंग_रिपोर्ट_' + (currentDayReportData.date || Date.now()) + '.pdf');
+    } catch(err) {
+      console.error("Day Report PDF Error:", err);
+      alert("PDF नहीं बन सकी। कृपया प्रिंट स्क्रीन से सेव करें।");
+      window.print();
+    } finally {
+      if (btn) btn.innerText = origTxt;
+    }
+  }
+
+  // =========================================================================
   // FINANCIAL AUDIT REPORT GENERATION
   // =========================================================================
   function openAuditSummaryScreen() {
@@ -1892,7 +2211,6 @@
     document.getElementById('aud-pending-cash').innerText = 'रु. ' + pendingTot;
     document.getElementById('aud-items-count').innerText = itemsCount + ' वस्तुएं';
 
-    // खर्च विवरण तालिका भरना
     var expTbody = document.getElementById('aud-exp-rows');
     expTbody.innerHTML = '';
     if (expenses.length === 0) {
@@ -1910,7 +2228,6 @@
       expTbody.appendChild(totTr);
     }
 
-    // कार्यकर्ता तालिका भरना
     var usrTbody = document.getElementById('aud-usr-rows');
     usrTbody.innerHTML = '';
     users.forEach(function(u) {
