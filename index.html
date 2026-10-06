@@ -141,7 +141,7 @@
 
       <div class="form-group">
         <label>📞 मोबाइल नंबर</label>
-        <input type="tel" id="inp-mobile" class="form-input" placeholder="Admin: 7905106011" maxlength="10" />
+        <input type="tel" id="inp-mobile" class="form-input" placeholder="Admin" maxlength="10" />
       </div>
 
       <div class="form-group">
@@ -238,7 +238,7 @@
           <span id="usr-stat-items-count">0 वस्तुएं</span>
         </div>
         <div id="usr-passbook-items-list">
-          <!-- डायनामिक वस्तुएं यहां लोड होंगी -->
+          <!-- डायनामिक वस्तुएं लोड होंगी -->
         </div>
       </div>
     </div>
@@ -517,7 +517,7 @@
   <!-- 9. USERS LIST & हिसाब (कैश + सामग्री का विवरण) -->
   <div id="screen-users-list" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️️</button> Users & हिसाब</h2>
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅</button> Users & हिसाब</h2>
     </div>
     <div id="users-list-box" style="padding: 14px; flex: 1; overflow-y: auto;"></div>
   </div>
@@ -595,10 +595,9 @@
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data) {
-          if (data.receipts) {
-            receipts = Array.isArray(data.receipts) ? data.receipts : Object.values(data.receipts);
-            localStorage.setItem('durga_receipts', JSON.stringify(receipts));
-          }
+          receipts = data.receipts ? (Array.isArray(data.receipts) ? data.receipts : Object.values(data.receipts)) : [];
+          localStorage.setItem('durga_receipts', JSON.stringify(receipts));
+
           if (data.users) {
             users = Array.isArray(data.users) ? data.users : Object.values(data.users);
             localStorage.setItem('durga_users', JSON.stringify(users));
@@ -607,6 +606,7 @@
             adminPass = data.adminPass;
             localStorage.setItem('durga_admin_pass', adminPass);
           }
+          
           if (document.getElementById('screen-receipts-list').classList.contains('active')) renderReceiptsList();
           if (document.getElementById('screen-items-list').classList.contains('active')) renderItemsList();
           if (document.getElementById('screen-users-list').classList.contains('active')) openUsersList();
@@ -666,7 +666,6 @@
     if (storedR) receipts = JSON.parse(storedR);
   } catch(e) {}
 
-  // मजबूत आइटम चेकर (सामग्री/वस्तु रसीद पहचानने के लिए)
   function checkIsItem(r) {
     if (!r) return false;
     if (r.type === 'item') return true;
@@ -682,7 +681,7 @@
     document.getElementById('inp-mobile').value = '';
     document.getElementById('inp-pass').value = '';
     if (role === 'admin') {
-      document.getElementById('inp-mobile').placeholder = 'Admin: 7905106011';
+      document.getElementById('inp-mobile').placeholder = 'Admin';
       document.getElementById('inp-pass').placeholder = 'Admin Password';
     } else {
       document.getElementById('inp-mobile').placeholder = 'User: 9876543210';
@@ -704,7 +703,7 @@
         currentUser = null;
         showScreen('screen-admin');
       } else {
-        alert("गलत Admin मोबाइल या पासवर्ड! (Default: 7905106011)");
+        alert("गलत Admin मोबाइल या पासवर्ड!");
       }
     } else {
       var found = null;
@@ -798,7 +797,6 @@
     showScreen('screen-user');
   }
 
-  // कार्यकर्ता की पासबुक और वस्तु दान का सटीक विवरण दिखाना
   function updateUserPassbook() {
     if (!currentUser) return;
     
@@ -827,7 +825,6 @@
     document.getElementById('usr-stat-pending').innerText = 'रु. ' + pend;
     document.getElementById('usr-stat-items-count').innerText = userItems.length + ' वस्तुएं';
 
-    // पासबुक के अंदर वस्तु सूची रेंडर करना
     var itemsBox = document.getElementById('usr-passbook-items-list');
     if (itemsBox) {
       itemsBox.innerHTML = '';
@@ -1277,7 +1274,6 @@
     }
   }
 
-  // Users & हिसाब: एडमिन को कैश और सामग्री दोनों का सम्पूर्ण विस्तृत इनलाइन विवरण
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -1302,7 +1298,6 @@
       var paid = Number(u.paidAmt || 0);
       var pend = Math.max(0, totCash - paid);
 
-      // सामग्री सूची का HTML
       var itemsRowsHtml = '';
       if (userItems.length === 0) {
         itemsRowsHtml = '<div style="font-size:11px; color:#888; padding:3px 0;">कोई भौतिक सामग्री जमा नहीं हुई है।</div>';
@@ -1336,12 +1331,11 @@
             <button onclick="toggleUserStatus(${u.id})" style="border:none; background:${isAct ? '#ffebee' : '#e8f5e9'}; color:${isAct ? '#d32f2f' : '#2e7d32'}; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
               ${isAct ? '🔴 OFF करें' : '🟢 ON करें'}
             </button>
-            <span onclick="changeUserPass(${u.id})" style="cursor:pointer; font-size:16px;" title="पासवर्ड बदलें">✏️️</span>
+            <span onclick="changeUserPass(${u.id})" style="cursor:pointer; font-size:16px;" title="पासवर्ड बदलें">✏</span>
             <span onclick="deleteUser(${u.id})" style="cursor:pointer; font-size:16px;" title="यूज़र हटाएं">🗑️</span>
           </div>
         </div>
 
-        <!-- नकद/ऑनलाइन वित्तीय हिसाब -->
         <div style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
           <div>
             कुल चंदा: <strong>रु. ${totCash}</strong> | जमा: <strong style="color:#2e7d32;">रु. ${paid}</strong> | 
@@ -1350,7 +1344,6 @@
           ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}',${pend})" style="background:#2e7d32; color:white; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">💰 पैसा जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
         </div>
 
-        <!-- सामग्री/वस्तु चंदा इनलाइन पासबुक लिस्ट -->
         <div style="background:#fff8e1; border:1px dashed #ffa000; border-radius:6px; padding:8px 10px;">
           <div style="font-size:12px; font-weight:bold; color:#e65100; margin-bottom:4px;">
             📦 प्राप्त सामग्री विवरण (${userItems.length} वस्तुएं):
@@ -1514,8 +1507,11 @@
         receipts.splice(idx, 1);
         localStorage.setItem('durga_receipts', JSON.stringify(receipts));
         syncToFirebase("receipts", receipts);
+        
         renderReceiptsList();
         if (document.getElementById('screen-items-list').classList.contains('active')) renderItemsList();
+        if (currentUser) updateUserPassbook();
+        
         alert("रसीद [" + recNum + "] सफलतापूर्वक हटा दी गई!");
       }
     }
