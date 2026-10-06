@@ -72,7 +72,7 @@
     .passbook-items-wrap { margin-top: 10px; border-top: 1px dashed #ffd54f; padding-top: 8px; }
     .passbook-item-row { background: #ffffff; border: 1px solid #ffecb3; border-radius: 6px; padding: 6px 8px; margin-top: 5px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Receipt & Official Seal */
+    /* Receipt */
     .receipt-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
     .receipt-border { width: 100%; background: #fffdf2; border: 3px solid #b71c1c; border-radius: 10px; padding: 8px; position: relative; }
     .receipt-inner { border: 2px dashed #d97706; padding: 14px 14px; background: #ffffff; border-radius: 6px; position: relative; }
@@ -85,11 +85,13 @@
     .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 12px; }
     .rec-table td { padding: 5px 4px; border-bottom: 1px dashed #ffe082; }
 
-    .official-seal {
-      width: 78px; height: 78px; border: 2.5px dashed #b71c1c; border-radius: 50%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: #b71c1c; transform: rotate(-10deg); opacity: 0.88; text-align: center;
-      line-height: 1; font-weight: bold; margin: 6px 0 0 0;
+    /* गोल हिंदी मुहर */
+    .seal-svg-wrap {
+      width: 90px;
+      height: 90px;
+      margin-top: 4px;
+      transform: rotate(-8deg);
+      opacity: 0.9;
     }
 
     .user-list-item { display: flex; flex-direction: column; padding: 12px 14px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
@@ -186,7 +188,6 @@
       <button class="icon-btn" onclick="doLogout()">⏻</button>
     </div>
 
-    <!-- त्वरित डैशबोर्ड रिपोर्ट कार्ड्स -->
     <div class="summary-grid">
       <div class="sum-card" style="border-left: 3.5px solid #2e7d32;">
         <div class="title">💵 कुल नकद (Cash)</div>
@@ -356,7 +357,7 @@
       <div id="section-money-fields">
         <div class="form-group">
           <label>सहयोग राशि (रु.) *</label>
-          <input type="number" id="r-amt" class="form-input" placeholder="501, 1100, 2100..." />
+          <input type="number" id="r-amt" class="form-input" placeholder="51, 101, 501, 1100..." />
         </div>
 
         <div class="form-group">
@@ -387,7 +388,7 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW (UPI QR + Digital Seal + Words) -->
+  <!-- 6. RECEIPT PREVIEW -->
   <div id="screen-preview" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" id="preview-back-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
@@ -445,6 +446,7 @@
               <td style="font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-amt" style="font-weight: 900; font-size: 16px; color: #b71c1c;">-</td>
             </tr>
+            <!-- शुद्ध हिंदी में शब्दों में राशि -->
             <tr id="pv-row-words">
               <td style="font-weight: bold; color: #880e4f;">शब्दों में</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
@@ -452,7 +454,7 @@
             </tr>
           </table>
 
-          <!-- लाइव UPI QR कोड ब्लॉक (एडमिन UPI सेटिंग से कनेक्टेड) -->
+          <!-- UPI QR कोड -->
           <div id="pv-qr-wrap" style="display: none; text-align: center; margin: 8px auto; padding: 6px; background: #fffde7; border: 1.5px dashed #fbc02d; border-radius: 6px;">
             <div id="pv-qrcode-box" style="display: inline-block; padding: 4px; background: white; border: 1px solid #ddd;"></div>
             <div style="font-size: 10px; color: #555; margin-top: 3px; font-weight: bold;">
@@ -468,11 +470,30 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px; font-size: 11px; font-weight: bold;">
             <div>
               दिनांक : <strong id="pv-date">-</strong><br>
-              <div class="official-seal">
-                <span style="font-size: 8px;">NAVYUVA</span>
-                <span style="font-size: 10px;">★ सत्यापित ★</span>
-                <span style="font-size: 8px;">समिति मुहर</span>
+              
+              <!-- हिंदी में गोल मुहर (चारों तरफ नाम, बीच में सत्यापित) -->
+              <div class="seal-svg-wrap">
+                <svg viewBox="0 0 100 100" width="100%" height="100%">
+                  <!-- बाहरी और भीतरी दोहरा घेरा -->
+                  <circle cx="50" cy="50" r="47" fill="none" stroke="#b71c1c" stroke-width="2.5" stroke-dasharray="3,2" />
+                  <circle cx="50" cy="50" r="41" fill="none" stroke="#b71c1c" stroke-width="1.2" />
+                  <circle cx="50" cy="50" r="26" fill="none" stroke="#b71c1c" stroke-width="1" stroke-dasharray="2,2" />
+                  
+                  <!-- परिधि पर घुमावदार नाम -->
+                  <path id="circleTextPath" d="M 50,50 m -33.5,0 a 33.5,33.5 0 1,1 67,0 a 33.5,33.5 0 1,1 -67,0" fill="none" />
+                  <text font-size="7.6" font-weight="bold" fill="#b71c1c" letter-spacing="0.5">
+                    <textPath href="#circleTextPath" startOffset="50%" text-anchor="middle">
+                      नवयुवा दुर्गा पूजा समिति मारकुंडी
+                    </textPath>
+                  </text>
+                  
+                  <!-- बीच में "सत्यापित" -->
+                  <text x="50" y="47" text-anchor="middle" font-size="7" font-weight="bold" fill="#b71c1c">★ ★ ★</text>
+                  <text x="50" y="55" text-anchor="middle" font-size="9" font-weight="900" fill="#b71c1c">सत्यापित</text>
+                  <text x="50" y="63" text-anchor="middle" font-size="7" font-weight="bold" fill="#b71c1c">★ ★ ★</text>
+                </svg>
               </div>
+
             </div>
             <div style="text-align: right;">
               <span style="font-size: 10px; color: #666;">अधिकृत रसीद कर्ता / Signature</span><br />
@@ -544,7 +565,7 @@
     <div id="items-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 7.2 EXPENSE SCREEN (समिति खर्च रजिस्टर) -->
+  <!-- 7.2 EXPENSE SCREEN -->
   <div id="screen-expenses" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> पूजा खर्च रजिस्टर</h2>
@@ -601,14 +622,13 @@
     <div id="users-list-box" style="padding: 14px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 10. SETTINGS & UPI QR MANAGEMENT -->
+  <!-- 10. SETTINGS & UPI QR -->
   <div id="screen-settings" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Settings & Data</h2>
     </div>
     <div style="padding: 18px; overflow-y: auto;">
       
-      <!-- लाइव UPI ID एवं QR कोड सेटिंग्स -->
       <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">💳 समिति UPI ID व QR प्रबंधन</h3>
       <div style="border: 1.5px solid #81c784; background: #f1f8e9; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
         <div class="form-group" style="margin-bottom: 8px;">
@@ -618,7 +638,6 @@
         <button class="btn btn-green" style="padding: 9px;" onclick="saveSamitiUpi()">💾 UPI ID अपडेट करें</button>
       </div>
 
-      <!-- बैकअप एवं रीस्टोर -->
       <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">💾 डेटा बैकअप एवं रीस्टोर</h3>
       <div style="border: 1px solid #bbdefb; background: #e3f2fd; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
         <p style="font-size: 11px; color: #555; margin-bottom: 8px;">फोन बदलने या डेटा सुरक्षित रखने के लिए JSON फाइल डाउनलोड करें।</p>
@@ -631,7 +650,6 @@
         </button>
       </div>
 
-      <!-- एडमिन पासवर्ड -->
       <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">🔒 एडमिन पासवर्ड बदलें</h3>
       <div style="border: 1px solid #ffe082; background: #fffdf5; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
         <div class="form-group">
@@ -645,8 +663,7 @@
         <button class="btn btn-green" style="padding: 8px;" onclick="changeAdminPass()">💾 पासवर्ड अपडेट करें</button>
       </div>
 
-      <!-- माँ दुर्गा फोटो प्रबंधन -->
-      <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">🖼️️ माँ दुर्गा फोटो प्रबंधन</h3>
+      <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">🖼 माँ दुर्गा फोटो प्रबंधन</h3>
       <div style="border: 2px dashed #b71c1c; border-radius: 8px; padding: 14px; text-align: center; background: #fffdf5;">
         <div style="width: 90px; height: 90px; border-radius: 50%; overflow: hidden; margin: 0 auto 8px auto; border: 3px solid #ff9800; background: #fff;">
           <img id="settings-preview-img" style="width: 100%; height: 100%; object-fit: cover;" alt="Preview" crossorigin="anonymous" />
@@ -734,9 +751,7 @@
   var currentDurgaImg = DEFAULT_DURGA;
   var samitiUpi = localStorage.getItem('durga_samiti_upi') || '7905106011@upi';
 
-  // =========================================================================
-  // लिंक सुरक्षा फ़ंक्शन (Tamper-Proof Verification Token Generator)
-  // =========================================================================
+  // लिंक सुरक्षा फ़ंक्शन
   function generateReceiptToken(r) {
     if (!r) return "";
     var raw = (r.no || "") + "_" + (r.phone || "") + "_" + (r.amt || 0) + "_DURGA_KEY";
@@ -810,36 +825,54 @@
     return false;
   }
 
+  // =========================================================================
+  // शुद्ध 1 से 100 मानक हिंदी गिनती फ़ंक्शन (51 = इक्यावन, 21 = इक्कीस, आदि)
+  // =========================================================================
+  var hindiNumbers1to99 = [
+    '', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस',
+    'ग्यारह', 'बारह', 'तेरह', 'चौदह', 'पंद्रह', 'सोलह', 'सत्रह', 'अठारह', 'उन्नीस', 'बीस',
+    'इक्कीस', 'बाईस', 'तेईस', 'चौबीस', 'पचीस', 'छब्बीस', 'सत्ताईस', 'अट्ठाईस', 'उनतीस', 'तीस',
+    'इकतीस', 'बत्तीस', 'तैंतीस', 'चौंतीस', 'पैंतीस', 'छत्तीस', 'सैंतीस', 'अड़तीस', 'उनतालीस', 'चालीस',
+    'इकतालीस', 'बयालीस', 'तैंतालीस', 'चवालीस', 'पैंतालीस', 'छियालीस', 'सैंतालीस', 'अड़तालीस', 'उनचास', 'पचास',
+    'इक्यावन', 'बावन', 'तिरेपन', 'चौवन', 'पचपन', 'छप्पन', 'सत्तावन', 'अट्ठावन', 'उनसठ', 'साठ',
+    'इकसठ', 'बासठ', 'तिरसठ', 'चौंसठ', 'पैंसठ', 'छियासठ', 'सरसठ', 'अड़सठ', 'उनहत्तर', 'सत्तर',
+    'इकहत्तर', 'बहत्तर', 'तिहत्तर', 'चौहत्तर', 'पचहत्तर', 'छिहत्तर', 'सतहत्तर', 'अठहत्तर', 'उनासी', 'अस्सी',
+    'इक्यासी', 'बयासी', 'तिरासी', 'चौरासी', 'पचासी', 'छियासी', 'सत्तासी', 'अट्ठासी', 'नवासी', 'नब्बे',
+    'इक्यानवे', 'बानवे', 'तिरानवे', 'चौरानवे', 'पंचानवे', 'छियानवे', 'सत्तानवे', 'अट्ठानवे', 'निन्यानवे'
+  ];
+
   function numberToHindiWords(num) {
-    var a = ['', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस', 'ग्यारह', 'बारह', 'तेरह', 'चौदह', 'पंद्रह', 'सोलह', 'सत्रह', 'अठारह', 'उन्नीस'];
-    var b = ['', '', 'बीस', 'तीस', 'चालीस', 'पचास', 'साठ', 'सत्तर', 'अस्सी', 'नब्बे'];
-    
     num = parseInt(num, 10);
     if (!num || isNaN(num) || num <= 0) return 'शून्य रुपये मात्र';
 
-    function convertTwoDigits(n) {
-      if (n < 20) return a[n];
-      var tens = Math.floor(n / 10);
-      var units = n % 10;
-      return b[tens] + (units ? ' ' + a[units] : '');
-    }
-
     var str = '';
+    
+    // लाख (Lakh)
     if (Math.floor(num / 100000) > 0) {
-      str += convertTwoDigits(Math.floor(num / 100000)) + ' लाख ';
+      var l = Math.floor(num / 100000);
+      str += (hindiNumbers1to99[l] || l) + ' लाख ';
       num %= 100000;
     }
+    
+    // हजार (Thousand)
     if (Math.floor(num / 1000) > 0) {
-      str += convertTwoDigits(Math.floor(num / 1000)) + ' हजार ';
+      var th = Math.floor(num / 1000);
+      str += (hindiNumbers1to99[th] || th) + ' हजार ';
       num %= 1000;
     }
+    
+    // सौ (Hundred)
     if (Math.floor(num / 100) > 0) {
-      str += a[Math.floor(num / 100)] + ' सौ ';
+      var h = Math.floor(num / 100);
+      str += (hindiNumbers1to99[h] || h) + ' सौ ';
       num %= 100;
     }
+    
+    // 1 से 99 (दहाई व इकाई)
     if (num > 0) {
-      str += convertTwoDigits(num) + ' ';
+      str += (hindiNumbers1to99[num] || num) + ' ';
     }
+    
     return str.trim() + ' रुपये मात्र';
   }
 
@@ -1249,9 +1282,11 @@
       document.getElementById('pv-paymode').innerText = modeDisplay;
       mainLbl.innerText = "सहयोग राशि";
       mainVal.innerText = 'रु. ' + (r.amt || 0) + '/-';
+      
+      // शुद्ध हिंदी शब्दों में राशि प्रदर्शन
       document.getElementById('pv-words').innerText = numberToHindiWords(r.amt || 0);
 
-      // लाइव UPI ID से QR कोड उत्पन्न करना
+      // लाइव UPI ID से QR कोड बनाना
       if (r.mode === 'Online') {
         qrWrap.style.display = 'block';
         var qrBox = document.getElementById('pv-qrcode-box');
@@ -1347,7 +1382,6 @@
     }
   }
 
-  // सिक्योर लिंक के साथ WhatsApp शेयरिंग
   function shareWhatsApp() {
     if (!currentReceipt) return;
 
@@ -1846,7 +1880,6 @@
     showScreen('screen-admin');
   }
 
-  // एडमिन द्वारा UPI ID तुरंत सेव करना
   function saveSamitiUpi() {
     var val = document.getElementById('set-samiti-upi').value.trim();
     if (!val) {
@@ -2002,9 +2035,6 @@
     }
   }
 
-  // =========================================================================
-  // पेज लोड सत्यापन (लिंक छेड़छाड़ सुरक्षा जांच)
-  // =========================================================================
   window.addEventListener('load', function() {
     if (!currentDurgaImg) currentDurgaImg = DEFAULT_DURGA;
     updateImages();
@@ -2031,7 +2061,6 @@
         }
 
         var correctToken = generateReceiptToken(targetRec);
-        // यदि टोकन मौजूद नहीं है या लिंक में रसीद संख्या बदलकर छेड़छाड़ की गई है
         if (!receivedKey || receivedKey !== correctToken) {
           alert("⚠️ अमान्य या छेड़छाड़ किया गया लिंक!\nइस रसीद का विवरण नहीं खोला जा सकता।");
           showScreen('screen-splash');
