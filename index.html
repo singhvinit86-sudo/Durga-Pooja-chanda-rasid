@@ -11,9 +11,10 @@
   <meta property="og:description" content="रसीद देखने एवं PDF डाउनलोड करने के लिए क्लिक करें।" />
   <meta property="og:image" content="https://i.ibb.co/r1fDwKY/image.jpg" />
 
-  <!-- PDF Generation Libraries -->
+  <!-- External Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -27,66 +28,76 @@
     .top-bar h2 { font-size: 18px; display: flex; align-items: center; gap: 8px; font-weight: bold; }
     .icon-btn { background: none; border: none; color: white; font-size: 18px; cursor: pointer; padding: 4px; }
 
-    .btn { background: linear-gradient(180deg, #d32f2f 0%, #b71c1c 100%); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
+    .btn { background: linear-gradient(180deg, #d32f2f 0%, #b71c1c 100%); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%; text-align: center; }
     .btn:active { background: #8e0000; }
     .btn-green { background: #2e7d32; }
 
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; margin-bottom: 5px; font-size: 14px; font-weight: bold; color: #333; }
-    .form-input { width: 100%; padding: 11px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 15px; outline: none; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #333; }
+    .form-input { width: 100%; padding: 10px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 14px; outline: none; }
     .form-input:focus { border-color: #d32f2f; }
 
     /* Type & Mode Pill Selectors */
     .pill-wrap { display: flex; gap: 8px; margin-top: 4px; }
-    .pill-btn { flex: 1; border: 1.5px solid #dcdde1; padding: 9px 6px; border-radius: 8px; text-align: center; font-size: 13px; font-weight: bold; cursor: pointer; background: #fff; color: #444; }
+    .pill-btn { flex: 1; border: 1.5px solid #dcdde1; padding: 8px 6px; border-radius: 8px; text-align: center; font-size: 13px; font-weight: bold; cursor: pointer; background: #fff; color: #444; }
     .pill-btn.active { border-color: #b71c1c; background: #fff3f3; color: #b71c1c; }
 
     /* Splash Screen */
     #screen-splash { background: linear-gradient(180deg, #4a0000 0%, #800000 40%, #b71c1c 100%); color: white; text-align: center; padding: 30px 20px; justify-content: space-between; align-items: center; }
-    .durga-circle { width: 190px; height: 190px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 5px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.7); background: #ffffff; }
+    .durga-circle { width: 180px; height: 180px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 5px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.7); background: #ffffff; }
     .durga-circle img, .login-durga-logo img, .receipt-header-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* Login Screen */
     .tab-wrap { display: flex; background: #f1f2f6; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
     .tab-btn { flex: 1; padding: 9px; border: none; background: transparent; font-weight: bold; border-radius: 6px; cursor: pointer; color: #555; }
     .tab-btn.active { background: #d32f2f; color: white; }
+    .login-durga-logo { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ff9800; margin: 0 auto 10px auto; overflow: hidden; background: #fff; }
 
-    .login-durga-logo { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #ff9800; margin: 0 auto 10px auto; overflow: hidden; background: #fff; }
+    /* Admin Summary Cards */
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px 0 16px; }
+    .sum-card { background: white; border-radius: 8px; padding: 10px; border: 1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .sum-card .title { font-size: 11px; font-weight: bold; color: #666; margin-bottom: 2px; }
+    .sum-card .amount { font-size: 15px; font-weight: 800; }
 
     /* Admin Menu */
-    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; }
-    .menu-box { border-radius: 10px; padding: 18px 10px; text-align: center; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 16px; }
+    .menu-box { border-radius: 10px; padding: 14px 8px; text-align: center; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-size: 13px; }
 
     /* Passbook */
     .collector-passbook { background: #fffdf5; border: 1.5px solid #ffe082; border-radius: 10px; padding: 12px 14px; margin: 12px 16px; }
     .passbook-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; gap: 6px; margin-top: 8px; }
     .passbook-item { padding: 6px 4px; border-radius: 6px; background: #ffffff; border: 1px solid #f1f2f6; }
-    .passbook-item .val { font-size: 15px; font-weight: 800; }
+    .passbook-item .val { font-size: 14px; font-weight: 800; }
     .passbook-item .lbl { font-size: 10px; color: #666; font-weight: 700; margin-top: 2px; }
-
-    /* Passbook Item List */
     .passbook-items-wrap { margin-top: 10px; border-top: 1px dashed #ffd54f; padding-top: 8px; }
     .passbook-item-row { background: #ffffff; border: 1px solid #ffecb3; border-radius: 6px; padding: 6px 8px; margin-top: 5px; font-size: 12px; display: flex; justify-content: space-between; align-items: center; }
 
-    /* Receipt */
-    .receipt-box { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
-    .receipt-border { width: 100%; background: #fffdf2; border: 3px solid #b71c1c; border-radius: 10px; padding: 10px; position: relative; }
-    .receipt-inner { border: 2px dashed #d97706; padding: 16px 18px; background: #ffffff; border-radius: 6px; position: relative; }
+    /* Receipt & Seal */
+    .receipt-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
+    .receipt-border { width: 100%; background: #fffdf2; border: 3px solid #b71c1c; border-radius: 10px; padding: 8px; position: relative; }
+    .receipt-inner { border: 2px dashed #d97706; padding: 14px 14px; background: #ffffff; border-radius: 6px; position: relative; }
     .corner-swastik { position: absolute; font-size: 14px; color: #b71c1c; font-weight: bold; line-height: 1; }
     .corner-tl { top: 4px; left: 5px; }
     .corner-tr { top: 4px; right: 5px; }
     .corner-bl { bottom: 4px; left: 5px; }
     .corner-br { bottom: 4px; right: 5px; }
-    .receipt-header-photo { width: 75px; height: 75px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ffb300; }
-    .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 13px; }
-    .rec-table td { padding: 6px 4px; border-bottom: 1px dashed #ffe082; }
+    .receipt-header-photo { width: 70px; height: 70px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ffb300; }
+    .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 12px; }
+    .rec-table td { padding: 5px 4px; border-bottom: 1px dashed #ffe082; }
 
-    .user-list-item { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
-    .user-circle { width: 40px; height: 40px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; }
+    /* Circular Official Seal */
+    .official-seal {
+      width: 78px; height: 78px; border: 2.5px dashed #b71c1c; border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #b71c1c; transform: rotate(-10deg); opacity: 0.88; text-align: center;
+      line-height: 1; font-weight: bold; margin: 4px auto 0 auto;
+    }
 
-    /* Live Sync Bar */
+    .user-list-item { display: flex; flex-direction: column; padding: 12px 14px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
+    .user-circle { width: 36px; height: 36px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
+
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 4px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
-
+    
     @media print {
       body * { visibility: hidden; }
       #print-area, #print-area * { visibility: visible; }
@@ -106,13 +117,13 @@
       <div class="durga-circle">
         <img id="splash-img" alt="माँ दुर्गा" crossorigin="anonymous" />
       </div>
-      <h1 style="font-size: 24px; color: #ffea00; margin-top: 10px;">नवयुवा दुर्गा पूजा समिति</h1>
-      <p style="font-size: 15px; margin-top: 4px;">रेलवे गेट, मारकुंडी</p>
+      <h1 style="font-size: 22px; color: #ffea00; margin-top: 10px;">नवयुवा दुर्गा पूजा समिति</h1>
+      <p style="font-size: 14px; margin-top: 4px;">रेलवे गेट, मारकुंडी</p>
     </div>
     
     <div style="width: 100%; margin-bottom: 20px;">
-      <p style="font-size: 18px; font-weight: bold; color: #ffea00; margin-bottom: 16px;">🚩 || जय माता दी || 🚩</p>
-      <button class="btn" style="background: #ffcc00; color: #8e0000; font-size: 18px;" onclick="showScreen('screen-login')">
+      <p style="font-size: 17px; font-weight: bold; color: #ffea00; margin-bottom: 16px;">🚩 || जय माता दी || 🚩</p>
+      <button class="btn" style="background: #ffcc00; color: #8e0000; font-size: 17px;" onclick="showScreen('screen-login')">
         आगे बढ़ें (Enter App) &nbsp;➔
       </button>
     </div>
@@ -130,8 +141,8 @@
         <div class="login-durga-logo">
           <img id="login-img" alt="माँ दुर्गा" crossorigin="anonymous" />
         </div>
-        <h2 style="color: #b71c1c; font-size: 20px;">नवयुवा दुर्गा पूजा समिति</h2>
-        <p style="color: #666; font-size: 13px;">रेलवे गेट, मारकुंडी</p>
+        <h2 style="color: #b71c1c; font-size: 19px;">नवयुवा दुर्गा पूजा समिति</h2>
+        <p style="color: #666; font-size: 12px;">रेलवे गेट, मारकुंडी</p>
       </div>
 
       <div class="tab-wrap">
@@ -141,7 +152,6 @@
 
       <div class="form-group">
         <label id="lbl-login-field">🔑 एडमिन आईडी / मोबाइल नंबर</label>
-        <!-- autocomplete off और dynamic focus trick ब्राउज़र का ऑटो-फिल रोकता है -->
         <input 
           type="text" 
           id="inp-mobile" 
@@ -177,34 +187,56 @@
       <button class="icon-btn" onclick="doLogout()">⏻</button>
     </div>
 
-    <div style="padding: 14px 16px 0 16px;">
-      <div style="background: #fff3f3; padding: 12px; border-radius: 8px; border: 1px solid #ffd6d6; margin-bottom: 12px;">
-        <div style="font-size: 13px; color: #666;">स्वागत है, एडमिन जी</div>
-        <div style="font-size: 16px; font-weight: bold; color: #111;">Admin Panel</div>
+    <!-- त्वरित डैशबोर्ड रिपोर्ट कार्ड्स -->
+    <div class="summary-grid">
+      <div class="sum-card" style="border-left: 3.5px solid #2e7d32;">
+        <div class="title">💵 कुल नकद (Cash)</div>
+        <div class="amount" style="color: #2e7d32;" id="adm-tot-cash">रु. 0</div>
       </div>
-      <button class="btn" onclick="openReceiptForm()">➕ रसीद बनाएं (Create Receipt)</button>
+      <div class="sum-card" style="border-left: 3.5px solid #1976d2;">
+        <div class="title">📱 कुल ऑनलाइन (UPI)</div>
+        <div class="amount" style="color: #1976d2;" id="adm-tot-online">रु. 0</div>
+      </div>
+      <div class="sum-card" style="border-left: 3.5px solid #d32f2f;">
+        <div class="title">⏳ कार्यकर्ताओं पर बकाया</div>
+        <div class="amount" style="color: #d32f2f;" id="adm-tot-pending">रु. 0</div>
+      </div>
+      <div class="sum-card" style="border-left: 3.5px solid #e65100;">
+        <div class="title">📉 कुल खर्च | बचत</div>
+        <div class="amount" style="color: #e65100; font-size:13px;" id="adm-tot-net">खर्च: 0 | बचत: 0</div>
+      </div>
+    </div>
+
+    <div style="padding: 12px 16px 0 16px;">
+      <button class="btn" onclick="openReceiptForm()">➕ नई रसीद बनाएं (Create Receipt)</button>
     </div>
 
     <div class="admin-grid">
       <div class="menu-box" style="background: #1976d2;" onclick="showScreen('screen-create-user')">
-        <div style="font-size: 24px;">➕</div>Create User
+        <div style="font-size: 22px;">➕</div>Create User
       </div>
       <div class="menu-box" style="background: #2e7d32;" onclick="openUsersList()">
-        <div style="font-size: 24px;">👥</div>Users & हिसाब (कैश+सामग्री)
+        <div style="font-size: 22px;">👥</div>Users & हिसाब
       </div>
       <div class="menu-box" style="background: #6a1b9a;" onclick="openReceiptsList()">
-        <div style="font-size: 24px;">📄</div>सभी रसीदें
+        <div style="font-size: 22px;">📄</div>सभी रसीदें
       </div>
       <div class="menu-box" style="background: #e65100;" onclick="openPhysicalItemsList()">
-        <div style="font-size: 24px;">📦</div>वस्तु/सामग्री रजिस्टर
+        <div style="font-size: 22px;">📦</div>वस्तु रजिस्टर
       </div>
-      <div class="menu-box" style="background: #f57c00;" onclick="showScreen('screen-settings')">
-        <div style="font-size: 24px;">⚙️</div>Settings
+      <div class="menu-box" style="background: #c2185b;" onclick="openExpenseScreen()">
+        <div style="font-size: 22px;">💸</div>खर्च रजिस्टर
+      </div>
+      <div class="menu-box" style="background: #00796b;" onclick="exportReceiptsToCSV()">
+        <div style="font-size: 22px;">📊</div>Excel / CSV
+      </div>
+      <div class="menu-box" style="background: #f57c00; grid-column: span 2;" onclick="showScreen('screen-settings')">
+        <div style="font-size: 22px;">⚙️</div>Settings & Backup
       </div>
     </div>
 
-    <div style="padding: 16px; margin-top: auto;">
-      <button class="btn" onclick="doLogout()">लॉगआउट</button>
+    <div style="padding: 14px 16px; margin-top: auto;">
+      <button class="btn" style="background: #424242;" onclick="doLogout()">लॉगआउट</button>
     </div>
   </div>
 
@@ -215,15 +247,15 @@
       <button class="icon-btn" onclick="doLogout()">⏻</button>
     </div>
 
-    <div style="padding: 14px 16px; background: #e8f5e9; margin: 12px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
-      <div style="display: flex; align-items: center; gap: 12px;">
+    <div style="padding: 12px 16px; background: #e8f5e9; margin: 12px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 10px;">
         <div class="user-circle" id="usr-code-avatar">A</div>
         <div>
-          <h3 id="usr-name-show" style="font-size: 17px;">कार्यकर्ता</h3>
-          <p style="font-size: 12px; color: #555;">रसीद कोड: <strong id="usr-code-show" style="color: #b71c1c;">A</strong></p>
+          <h3 id="usr-name-show" style="font-size: 16px;">कार्यकर्ता</h3>
+          <p style="font-size: 11px; color: #555;">रसीद कोड: <strong id="usr-code-show" style="color: #b71c1c;">A</strong></p>
         </div>
       </div>
-      <button onclick="openUserChangePass()" style="background: #fff; border: 1px solid #c8e6c9; border-radius: 6px; padding: 6px 10px; font-size: 12px; font-weight: bold; color: #2e7d32; cursor: pointer;">
+      <button onclick="openUserChangePass()" style="background: #fff; border: 1px solid #c8e6c9; border-radius: 6px; padding: 5px 8px; font-size: 11px; font-weight: bold; color: #2e7d32; cursor: pointer;">
         🔑 पासवर्ड बदलें
       </button>
     </div>
@@ -248,7 +280,6 @@
         </div>
       </div>
 
-      <!-- पासबुक में भौतिक सामग्री विवरण सूची -->
       <div class="passbook-items-wrap">
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #e65100; margin-bottom: 4px;">
           <span>📦 प्राप्त सामग्री विवरण:</span>
@@ -264,7 +295,7 @@
     </div>
 
     <div style="padding: 16px; margin-top: auto;">
-      <button class="btn" onclick="doLogout()">लॉगआउट</button>
+      <button class="btn" style="background: #424242;" onclick="doLogout()">लॉगआउट</button>
     </div>
   </div>
 
@@ -274,37 +305,31 @@
       <h2><button class="icon-btn" onclick="showScreen('screen-user')">⬅️</button> पासवर्ड बदलें</h2>
     </div>
     <div style="padding: 20px;">
-      <div style="background: #fff3e0; border-left: 4px solid #f57c00; padding: 10px 14px; border-radius: 4px; margin-bottom: 16px; font-size: 13px; color: #333;">
-        कृपया अपना वर्तमान (पुराना) पासवर्ड और नया पासवर्ड दर्ज करें।
-      </div>
-
       <div class="form-group">
         <label>पुराना पासवर्ड *</label>
         <input type="password" id="u-old-pass" class="form-input" placeholder="वर्तमान पासवर्ड" />
       </div>
-
       <div class="form-group">
         <label>नया पासवर्ड *</label>
-        <input type="password" id="u-new-pass" class="form-input" placeholder="नया पासवर्ड (उदा. 4 अंक)" />
+        <input type="password" id="u-new-pass" class="form-input" placeholder="नया पासवर्ड (कम से कम 4 अंक)" />
       </div>
-
       <div class="form-group">
         <label>नया पासवर्ड दोबारा दर्ज करें *</label>
         <input type="password" id="u-confirm-pass" class="form-input" placeholder="पासवर्ड कन्फर्म करें" />
       </div>
-
       <button class="btn btn-green" onclick="changeOwnPassword()">💾 पासवर्ड अपडेट करें</button>
     </div>
   </div>
 
-  <!-- 5. CREATE RECEIPT FORM -->
+  <!-- 5. CREATE / EDIT RECEIPT FORM -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="backToHome()">⬅</button> रसीद बनाएं</h2>
+      <h2><button class="icon-btn" onclick="backToHome()">⬅</button> <span id="form-receipt-title">रसीद बनाएं</span></h2>
     </div>
 
-    <div style="padding: 20px; flex: 1;">
-      
+    <div style="padding: 18px; flex: 1;">
+      <input type="hidden" id="edit-receipt-no" value="" />
+
       <div class="form-group">
         <label>सहयोग का प्रकार (Donation Type) *</label>
         <div class="pill-wrap">
@@ -351,8 +376,8 @@
 
       <div id="section-item-fields" style="display: none; background: #fff8e1; border: 1.5px dashed #ffa000; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
         <div class="form-group">
-          <label>दान की गई सामग्री / वस्तु का नाम व मात्रा *</label>
-          <input type="text" id="r-item-name" class="form-input" placeholder="उदा. 1 सीलिंग फैन, 5 किग्रा देशी घी, 2 बोरी चावल" />
+          <label>दान की गई सामग्री का नाम व मात्रा *</label>
+          <input type="text" id="r-item-name" class="form-input" placeholder="उदा. 1 पंखा, 5 किग्रा घी, 2 बोरी चावल" />
         </div>
         <div class="form-group" style="margin-bottom: 0;">
           <label>अनुमानित मूल्य रु. (वैकल्पिक / Optional)</label>
@@ -360,7 +385,7 @@
         </div>
       </div>
 
-      <button class="btn" style="margin-top: 10px;" onclick="saveReceipt()">Generate Receipt</button>
+      <button class="btn" style="margin-top: 10px;" id="btn-save-receipt-text" onclick="saveReceipt()">Generate Receipt</button>
     </div>
   </div>
 
@@ -384,17 +409,17 @@
             <img id="receipt-preview-img" alt="माँ दुर्गा" crossorigin="anonymous" />
           </div>
 
-          <h2 style="color: #b71c1c; text-align: center; font-size: 19px; line-height: 1.2;">नवयुवा दुर्गा पूजा समिति</h2>
-          <div style="text-align: center; font-size: 12px; color: #4a148c; font-weight: bold; margin-bottom: 6px;">🚩 रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.) 🚩</div>
+          <h2 style="color: #b71c1c; text-align: center; font-size: 18px; line-height: 1.2;">नवयुवा दुर्गा पूजा समिति</h2>
+          <div style="text-align: center; font-size: 11px; color: #4a148c; font-weight: bold; margin-bottom: 5px;">🚩 रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.) 🚩</div>
 
           <div style="text-align: center;">
-            <span id="pv-badge-title" style="background: linear-gradient(135deg, #b71c1c, #d32f2f); color: #ffea00; font-size: 13px; font-weight: bold; padding: 4px 18px; border-radius: 20px; display: inline-block; margin-bottom: 6px;">✨ चंदा सहयोग रसीद ✨</span>
+            <span id="pv-badge-title" style="background: linear-gradient(135deg, #b71c1c, #d32f2f); color: #ffea00; font-size: 12px; font-weight: bold; padding: 3px 14px; border-radius: 20px; display: inline-block; margin-bottom: 6px;">✨ चंदा सहयोग रसीद ✨</span>
           </div>
 
           <table class="rec-table">
             <tr>
-              <td style="width: 105px; font-weight: bold; color: #880e4f;">रसीद संख्या</td>
-              <td style="width: 8px; font-weight: bold; color: #b71c1c;">:</td>
+              <td style="width: 100px; font-weight: bold; color: #880e4f;">रसीद संख्या</td>
+              <td style="width: 6px; font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-no" style="font-weight: bold; color: #b71c1c;">-</td>
             </tr>
             <tr>
@@ -418,28 +443,47 @@
               <td id="pv-paymode" style="font-weight: bold; color: #1976d2;">-</td>
             </tr>
             <tr style="background: #ffe082;">
-              <td id="pv-main-lbl" style="font-weight: bold; color: #b71c1c; font-size: 14px;">सहयोग राशि</td>
+              <td id="pv-main-lbl" style="font-weight: bold; color: #b71c1c; font-size: 13px;">सहयोग राशि</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td id="pv-amt" style="font-weight: 900; font-size: 17px; color: #b71c1c;">-</td>
+              <td id="pv-amt" style="font-weight: 900; font-size: 16px; color: #b71c1c;">-</td>
+            </tr>
+            <tr id="pv-row-words">
+              <td style="font-weight: bold; color: #880e4f;">शब्दों में</td>
+              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td id="pv-words" style="font-style: italic; font-weight: bold; color: #333;">-</td>
             </tr>
           </table>
 
-          <div style="text-align: center; font-size: 12px; font-weight: bold; color: #b71c1c; border: 1px solid #ffcc80; padding: 6px; margin: 8px 0; background: #fff8e1; border-radius: 6px;">
+          <!-- ऑनलाइन रसीद के लिए UPI QR कोड ब्लॉक -->
+          <div id="pv-qr-wrap" style="display: none; text-align: center; margin: 8px auto; padding: 6px; background: #fffde7; border: 1px dashed #fbc02d; border-radius: 6px;">
+            <div id="pv-qrcode-box" style="display: inline-block; padding: 4px; background: white; border: 1px solid #ddd;"></div>
+            <div style="font-size: 10px; color: #555; margin-top: 3px; font-weight: bold;">समिति खाते में सीधे UPI द्वारा भुगतान करें</div>
+          </div>
+
+          <div style="text-align: center; font-size: 11px; font-weight: bold; color: #b71c1c; border: 1px solid #ffcc80; padding: 5px; margin: 6px 0; background: #fff8e1; border-radius: 6px;">
             🌺 माँ भगवती दुर्गा की कृपा आप एवं आपके परिवार पर सदैव बनी रहे। 🌺
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; font-size: 12px; font-weight: bold;">
-            <div>दिनांक : <strong id="pv-date">-</strong></div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px; font-size: 11px; font-weight: bold;">
+            <div>
+              दिनांक : <strong id="pv-date">-</strong><br>
+              <div class="official-seal">
+                <span style="font-size: 8px;">NAVYUVA</span>
+                <span style="font-size: 10px;">★ सत्यापित ★</span>
+                <span style="font-size: 8px;">समिति मुहर</span>
+              </div>
+            </div>
             <div style="text-align: right;">
               <span style="font-size: 10px; color: #666;">अधिकृत रसीद कर्ता / Signature</span><br />
-              <span id="pv-by" style="color: #b71c1c; font-size: 14px; font-weight: bold;">-</span>
+              <span id="pv-by" style="color: #b71c1c; font-size: 13px; font-weight: bold;">-</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+    <!-- बटन सेक्शन -->
+    <div style="padding: 14px; display: flex; flex-direction: column; gap: 8px;">
       <button class="btn" style="background: #b71c1c;" id="btn-dl-pdf" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
       </button>
@@ -499,6 +543,29 @@
     <div id="items-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
+  <!-- 7.2 EXPENSE SCREEN (समिति खर्च रजिस्टर) -->
+  <div id="screen-expenses" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> पूजा खर्च रजिस्टर</h2>
+    </div>
+
+    <div style="padding: 14px; background: #fce4ec; border-bottom: 1px solid #f8bbd0;">
+      <h3 style="font-size: 14px; color: #c2185b; margin-bottom: 8px;">➕ नया खर्च जोड़ें</h3>
+      <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+        <input type="text" id="exp-title" class="form-input" placeholder="खर्च मद (उदा. टेंट, साउंड, प्रसाद)" style="flex: 2;" />
+        <input type="number" id="exp-amt" class="form-input" placeholder="रु." style="flex: 1;" />
+      </div>
+      <button class="btn" style="background: #c2185b; padding: 8px;" onclick="addExpense()">खर्च दर्ज करें</button>
+    </div>
+
+    <div style="padding: 8px 14px; background: #f8bbd0; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
+      <span>कुल खर्च मद: <span id="tot-exp-count">0</span></span>
+      <span style="color: #c2185b;" id="tot-exp-amt">रु. 0</span>
+    </div>
+
+    <div id="expense-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
+  </div>
+
   <!-- 8. CREATE USER SCREEN -->
   <div id="screen-create-user" class="screen">
     <div class="top-bar">
@@ -533,15 +600,39 @@
     <div id="users-list-box" style="padding: 14px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 10. SETTINGS -->
+  <!-- 10. SETTINGS & BACKUP -->
   <div id="screen-settings" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Settings</h2>
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Settings & Data</h2>
     </div>
-    <div style="padding: 20px; overflow-y: auto;">
+    <div style="padding: 18px; overflow-y: auto;">
       
-      <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">🔒 एडमिन पासवर्ड बदलें</h3>
-      <div style="border: 1px solid #ffe082; background: #fffdf5; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
+      <!-- UPI ID सेटिंग्स -->
+      <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">💳 समिति UPI QR सेटिंग्स</h3>
+      <div style="border: 1px solid #c8e6c9; background: #f1f8e9; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+        <div class="form-group" style="margin-bottom: 8px;">
+          <label>समिति UPI ID (QR कोड हेतु)</label>
+          <input type="text" id="set-samiti-upi" class="form-input" placeholder="उदा. 7905106011@upi" />
+        </div>
+        <button class="btn btn-green" style="padding: 8px;" onclick="saveSamitiUpi()">💾 UPI ID सेव करें</button>
+      </div>
+
+      <!-- बैकअप एवं रीस्टोर -->
+      <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">💾 डेटा बैकअप एवं रीस्टोर</h3>
+      <div style="border: 1px solid #bbdefb; background: #e3f2fd; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+        <p style="font-size: 11px; color: #555; margin-bottom: 8px;">फोन बदलने या डेटा सुरक्षित रखने के लिए JSON फाइल डाउनलोड करें।</p>
+        <button class="btn" style="background: #1976d2; padding: 8px; margin-bottom: 8px;" onclick="downloadDataBackup()">
+          📥 संपूर्ण बैकअप डाउनलोड करें
+        </button>
+        <input type="file" id="restore-file-input" accept=".json" style="display: none;" onchange="handleRestoreBackup(event)" />
+        <button class="btn" style="background: #455a64; padding: 8px;" onclick="document.getElementById('restore-file-input').click()">
+          📤 बैकअप फाइल से रीस्टोर करें
+        </button>
+      </div>
+
+      <!-- एडमिन पासवर्ड -->
+      <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">🔒 एडमिन पासवर्ड बदलें</h3>
+      <div style="border: 1px solid #ffe082; background: #fffdf5; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
         <div class="form-group">
           <label>पुराना पासवर्ड</label>
           <input type="password" id="set-old-pass" class="form-input" placeholder="पुराना पासवर्ड डालें" />
@@ -550,22 +641,20 @@
           <label>नया पासवर्ड</label>
           <input type="password" id="set-new-pass" class="form-input" placeholder="नया पासवर्ड डालें" />
         </div>
-        <button class="btn btn-green" onclick="changeAdminPass()">💾 पासवर्ड अपडेट करें</button>
+        <button class="btn btn-green" style="padding: 8px;" onclick="changeAdminPass()">💾 पासवर्ड अपडेट करें</button>
       </div>
 
-      <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">🖼️ माँ दुर्गा फोटो प्रबंधन</h3>
-      <div style="border: 2px dashed #b71c1c; border-radius: 8px; padding: 16px; text-align: center; background: #fffdf5;">
-        <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto 10px auto; border: 3px solid #ff9800; background: #fff;">
+      <!-- माँ दुर्गा फोटो प्रबंधन -->
+      <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">🖼️ माँ दुर्गा फोटो प्रबंधन</h3>
+      <div style="border: 2px dashed #b71c1c; border-radius: 8px; padding: 14px; text-align: center; background: #fffdf5;">
+        <div style="width: 90px; height: 90px; border-radius: 50%; overflow: hidden; margin: 0 auto 8px auto; border: 3px solid #ff9800; background: #fff;">
           <img id="settings-preview-img" style="width: 100%; height: 100%; object-fit: cover;" alt="Preview" crossorigin="anonymous" />
         </div>
-        
         <input type="file" id="durga-file-input" accept="image/*" style="display: none;" onchange="handlePhotoUpload(event)" />
-        
-        <button class="btn" style="background: #1976d2; margin-bottom: 8px;" onclick="document.getElementById('durga-file-input').click()">
+        <button class="btn" style="background: #1976d2; margin-bottom: 8px; padding: 8px;" onclick="document.getElementById('durga-file-input').click()">
           🖼️ गैलरी से फोटो चुनें
         </button>
-
-        <button class="btn" style="background: #546e7a;" onclick="resetDefaultPhoto()">
+        <button class="btn" style="background: #546e7a; padding: 8px;" onclick="resetDefaultPhoto()">
           🔄 डिफ़ॉल्ट वास्तविक फोटो पर रीसेट करें
         </button>
       </div>
@@ -613,14 +702,24 @@
             users = Array.isArray(data.users) ? data.users : Object.values(data.users);
             localStorage.setItem('durga_users', JSON.stringify(users));
           }
+          if (data.expenses) {
+            expenses = Array.isArray(data.expenses) ? data.expenses : Object.values(data.expenses);
+            localStorage.setItem('durga_expenses', JSON.stringify(expenses));
+          }
           if (data.adminPass) {
             adminPass = data.adminPass;
             localStorage.setItem('durga_admin_pass', adminPass);
           }
+          if (data.samitiUpi) {
+            samitiUpi = data.samitiUpi;
+            localStorage.setItem('durga_samiti_upi', samitiUpi);
+          }
           
+          updateAdminOverview();
           if (document.getElementById('screen-receipts-list').classList.contains('active')) renderReceiptsList();
           if (document.getElementById('screen-items-list').classList.contains('active')) renderItemsList();
           if (document.getElementById('screen-users-list').classList.contains('active')) openUsersList();
+          if (document.getElementById('screen-expenses').classList.contains('active')) renderExpensesList();
           if (currentUser) updateUserPassbook();
         }
       }).catch(function(e) {});
@@ -630,6 +729,7 @@
 
   var DEFAULT_DURGA = "durga.png";
   var currentDurgaImg = DEFAULT_DURGA;
+  var samitiUpi = localStorage.getItem('durga_samiti_upi') || '7905106011@upi';
 
   function updateImages() {
     var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'settings-preview-img'];
@@ -649,10 +749,8 @@
       target.classList.add('active');
       window.scrollTo(0, 0);
     }
-    // लॉगिन स्क्रीन पर आते ही फ़ील्ड्स को खाली करना
-    if (id === 'screen-login') {
-      clearLoginFields();
-    }
+    if (id === 'screen-login') clearLoginFields();
+    if (id === 'screen-admin') updateAdminOverview();
   }
 
   var currentRole = 'admin';
@@ -681,12 +779,97 @@
     if (storedR) receipts = JSON.parse(storedR);
   } catch(e) {}
 
+  var expenses = [];
+  try {
+    var storedE = localStorage.getItem('durga_expenses');
+    if (storedE) expenses = JSON.parse(storedE);
+  } catch(e) {}
+
   function checkIsItem(r) {
     if (!r) return false;
     if (r.type === 'item') return true;
     if (r.mode === 'सामग्री/वस्तु') return true;
     if (r.itemName && String(r.itemName).trim() !== "" && String(r.itemName).trim() !== "undefined") return true;
     return false;
+  }
+
+  // भारतीय रुपये शब्दों में परिवर्तित करने का फ़ंक्शन
+  function numberToHindiWords(num) {
+    var a = ['', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस', 'ग्यारह', 'बारह', 'तेरह', 'चौदह', 'पंद्रह', 'सोलह', 'सत्रह', 'अठारह', 'उन्नीस'];
+    var b = ['', '', 'बीस', 'तीस', 'चालीस', 'पचास', 'साठ', 'सत्तर', 'अस्सी', 'नब्बे'];
+    
+    num = parseInt(num, 10);
+    if (!num || isNaN(num) || num <= 0) return 'शून्य रुपये मात्र';
+
+    function convertTwoDigits(n) {
+      if (n < 20) return a[n];
+      var tens = Math.floor(n / 10);
+      var units = n % 10;
+      return b[tens] + (units ? ' ' + a[units] : '');
+    }
+
+    var str = '';
+    if (Math.floor(num / 100000) > 0) {
+      str += convertTwoDigits(Math.floor(num / 100000)) + ' लाख ';
+      num %= 100000;
+    }
+    if (Math.floor(num / 1000) > 0) {
+      str += convertTwoDigits(Math.floor(num / 1000)) + ' हजार ';
+      num %= 1000;
+    }
+    if (Math.floor(num / 100) > 0) {
+      str += a[Math.floor(num / 100)] + ' सौ ';
+      num %= 100;
+    }
+    if (num > 0) {
+      str += convertTwoDigits(num) + ' ';
+    }
+    return str.trim() + ' रुपये मात्र';
+  }
+
+  // एडमिन ओवरव्यू डैशबोर्ड कार्ड्स अपडेट करना
+  function updateAdminOverview() {
+    var cashTot = 0;
+    var onlineTot = 0;
+
+    for (var i = 0; i < receipts.length; i++) {
+      var r = receipts[i];
+      if (!checkIsItem(r)) {
+        if (r.mode === 'Online') {
+          onlineTot += Number(r.amt || 0);
+        } else {
+          cashTot += Number(r.amt || 0);
+        }
+      }
+    }
+
+    var totalUserCash = 0;
+    var totalUserPaid = 0;
+    users.forEach(function(u) {
+      totalUserPaid += Number(u.paidAmt || 0);
+      receipts.forEach(function(rec) {
+        if (String(rec.code).toUpperCase() === String(u.code).toUpperCase() && !checkIsItem(rec) && rec.mode !== 'Online') {
+          totalUserCash += Number(rec.amt || 0);
+        }
+      });
+    });
+
+    var pendingTot = Math.max(0, totalUserCash - totalUserPaid);
+    
+    var expTot = 0;
+    expenses.forEach(function(e) { expTot += Number(e.amt || 0); });
+    var grandTotalCollected = cashTot + onlineTot;
+    var netSavings = grandTotalCollected - expTot;
+
+    var elCash = document.getElementById('adm-tot-cash');
+    var elOnl = document.getElementById('adm-tot-online');
+    var elPend = document.getElementById('adm-tot-pending');
+    var elNet = document.getElementById('adm-tot-net');
+
+    if (elCash) elCash.innerText = 'रु. ' + cashTot;
+    if (elOnl) elOnl.innerText = 'रु. ' + onlineTot;
+    if (elPend) elPend.innerText = 'रु. ' + pendingTot;
+    if (elNet) elNet.innerText = 'खर्च: ' + expTot + ' | बचत: ' + netSavings;
   }
 
   function clearLoginFields() {
@@ -703,7 +886,6 @@
     
     var inpM = document.getElementById('inp-mobile');
     var lbl = document.getElementById('lbl-login-field');
-    
     clearLoginFields();
 
     if (role === 'admin') {
@@ -733,10 +915,10 @@
     }
 
     if (currentRole === 'admin') {
-      // एडमिन 'admin' या '7905106011' दोनों से लॉगिन कर सकता है
       if ((m.toLowerCase() === 'admin' || m === '7905106011') && (p === adminPass || p === '7905106011')) {
         currentUser = null;
         clearLoginFields();
+        updateAdminOverview();
         showScreen('screen-admin');
       } else {
         alert("गलत Admin आईडी या पासवर्ड!");
@@ -753,7 +935,7 @@
       }
 
       if (found.isActive === false) {
-        alert("⚠️ आपकी आईडी एडमिन द्वारा बंद (OFF/Blocked) कर दी गई है!\nकृपया समिति एडमिन से संपर्क करें।");
+        alert("⚠️️ आपकी आईडी एडमिन द्वारा बंद (OFF/Blocked) कर दी गई है!\nकृपया समिति एडमिन से संपर्क करें।");
         return;
       }
 
@@ -782,6 +964,7 @@
       updateUserPassbook();
       showScreen('screen-user');
     } else {
+      updateAdminOverview();
       showScreen('screen-admin');
     }
   }
@@ -795,7 +978,6 @@
 
   function changeOwnPassword() {
     if (!currentUser) return;
-
     var oldP = document.getElementById('u-old-pass').value.trim();
     var newP = document.getElementById('u-new-pass').value.trim();
     var confP = document.getElementById('u-confirm-pass').value.trim();
@@ -804,17 +986,14 @@
       alert("कृपया सभी फ़ील्ड भरें!");
       return;
     }
-
     if (oldP !== currentUser.pass && !(currentUser.pass === undefined && oldP === '1234')) {
       alert("वर्तमान (पुराना) पासवर्ड गलत है!");
       return;
     }
-
     if (newP.length < 4) {
       alert("नया पासवर्ड कम से कम 4 अक्षरों का होना चाहिए!");
       return;
     }
-
     if (newP !== confP) {
       alert("नया पासवर्ड और कन्फर्म पासवर्ड मेल नहीं खा रहे हैं!");
       return;
@@ -830,14 +1009,12 @@
 
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
-
     alert("आपका पासवर्ड सफलतापूर्वक बदल दिया गया है!");
     showScreen('screen-user');
   }
 
   function updateUserPassbook() {
     if (!currentUser) return;
-    
     var freshU = users.find(function(x) { 
       return String(x.code).toUpperCase() === String(currentUser.code).toUpperCase(); 
     }) || currentUser;
@@ -907,6 +1084,10 @@
   }
 
   function openReceiptForm() {
+    document.getElementById('edit-receipt-no').value = '';
+    document.getElementById('form-receipt-title').innerText = 'रसीद बनाएं';
+    document.getElementById('btn-save-receipt-text').innerText = 'Generate Receipt';
+
     document.getElementById('r-name').value = '';
     document.getElementById('r-phone').value = '';
     document.getElementById('r-addr').value = '';
@@ -918,7 +1099,31 @@
     showScreen('screen-create-receipt');
   }
 
+  // रसीद एडिट करने के लिए फॉर्म खोलना
+  function editReceipt(rec) {
+    document.getElementById('edit-receipt-no').value = rec.no;
+    document.getElementById('form-receipt-title').innerText = 'रसीद सुधारें (' + rec.no + ')';
+    document.getElementById('btn-save-receipt-text').innerText = '💾 बदलाव सुरक्षित करें';
+
+    document.getElementById('r-name').value = rec.name || '';
+    document.getElementById('r-phone').value = rec.phone || '';
+    document.getElementById('r-addr').value = rec.addr || '';
+    
+    if (checkIsItem(rec)) {
+      selectDonationType('item');
+      document.getElementById('r-item-name').value = rec.itemName || '';
+      document.getElementById('r-item-val').value = rec.itemVal || '';
+    } else {
+      selectDonationType('money');
+      document.getElementById('r-amt').value = rec.amt || '';
+      selectPayMode(rec.mode === 'Online' ? 'Online' : 'Cash');
+    }
+
+    showScreen('screen-create-receipt');
+  }
+
   function saveReceipt() {
+    var editNo = document.getElementById('edit-receipt-no').value.trim();
     var name = document.getElementById('r-name').value.trim();
     var phone = document.getElementById('r-phone').value.trim();
     var addr = document.getElementById('r-addr').value.trim();
@@ -943,42 +1148,58 @@
       itemNameVal = document.getElementById('r-item-name').value.trim();
       var estValInput = document.getElementById('r-item-val').value.trim();
       if (!itemNameVal) {
-        alert("कृपया दान की गई वस्तु/सामग्री का विवरण दर्ज करें!");
+        alert("कृपया दान की गई सामग्री का विवरण दर्ज करें!");
         return;
       }
       itemEstVal = estValInput ? parseInt(estValInput, 10) : 0;
     }
 
-    var code = currentUser ? currentUser.code : 'ADM';
-    var count = 0;
-    for (var i = 0; i < receipts.length; i++) {
-      if (String(receipts[i].code).toUpperCase() === String(code).toUpperCase()) count++;
+    if (editNo) {
+      // एडिट मोड: पुरानी रसीद अपडेट करें
+      var existing = receipts.find(function(x) { return x.no === editNo; });
+      if (existing) {
+        existing.name = name;
+        existing.phone = phone;
+        existing.addr = addr || 'मारकुंडी';
+        existing.type = donationType;
+        existing.amt = amtVal;
+        existing.mode = (donationType === 'money' ? currentPayMode : 'सामग्री/वस्तु');
+        existing.itemName = itemNameVal;
+        existing.itemVal = itemEstVal;
+        currentReceipt = existing;
+      }
+    } else {
+      // नई रसीद बनाएं
+      var code = currentUser ? currentUser.code : 'ADM';
+      var count = 0;
+      for (var i = 0; i < receipts.length; i++) {
+        if (String(receipts[i].code).toUpperCase() === String(code).toUpperCase()) count++;
+      }
+      var num = code + String(count + 1).padStart(3, '0');
+      var d = new Date();
+      var dateStr = String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
+      var collectorName = currentUser ? currentUser.name : 'समिति अध्यक्ष / एडमिन';
+
+      currentReceipt = {
+        no: num,
+        type: donationType,
+        name: name,
+        phone: phone,
+        addr: addr || 'मारकुंडी',
+        amt: amtVal,
+        mode: (donationType === 'money' ? currentPayMode : 'सामग्री/वस्तु'),
+        itemName: itemNameVal,
+        itemVal: itemEstVal,
+        date: dateStr,
+        by: collectorName,
+        code: code
+      };
+      receipts.unshift(currentReceipt);
     }
-    var num = code + String(count + 1).padStart(3, '0');
-    var d = new Date();
-    var dateStr = String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
-    
-    var collectorName = currentUser ? currentUser.name : 'समिति अध्यक्ष / एडमिन';
 
-    currentReceipt = {
-      no: num,
-      type: donationType,
-      name: name,
-      phone: phone,
-      addr: addr || 'मारकुंडी',
-      amt: amtVal,
-      mode: (donationType === 'money' ? currentPayMode : 'सामग्री/वस्तु'),
-      itemName: itemNameVal,
-      itemVal: itemEstVal,
-      date: dateStr,
-      by: collectorName,
-      code: code
-    };
-
-    receipts.unshift(currentReceipt);
     localStorage.setItem('durga_receipts', JSON.stringify(receipts));
-
     syncToFirebase("receipts", receipts);
+    updateAdminOverview();
     showPreview(currentReceipt, false);
   }
 
@@ -993,25 +1214,51 @@
     var badgeTitle = document.getElementById('pv-badge-title');
     var mainLbl = document.getElementById('pv-main-lbl');
     var mainVal = document.getElementById('pv-amt');
+    var wordsRow = document.getElementById('pv-row-words');
+    var qrWrap = document.getElementById('pv-qr-wrap');
 
     var isPhysicalItem = checkIsItem(r);
 
     if (isPhysicalItem) {
       badgeTitle.innerText = "✨ वस्तु/सामग्री सहयोग रसीद ✨";
       modeRow.style.display = 'none';
+      wordsRow.style.display = 'none';
+      qrWrap.style.display = 'none';
       mainLbl.innerText = "सहयोग सामग्री";
       var displayItem = r.itemName || "वस्तु दान";
       if (r.itemVal && Number(r.itemVal) > 0) {
         displayItem += ' (अनुमानित मूल्य: रु. ' + r.itemVal + ')';
       }
-      mainVal.innerHTML = '<span style="font-size:16px; color:#b71c1c;">📦 ' + displayItem + '</span>';
+      mainVal.innerHTML = '<span style="font-size:15px; color:#b71c1c;">📦 ' + displayItem + '</span>';
     } else {
       badgeTitle.innerText = "✨ चंदा सहयोग रसीद ✨";
       modeRow.style.display = 'table-row';
-      var modeDisplay = (r.mode === 'Online') ? '📱 ऑनलाइन (UPI/Online)' : '💵 नकद (Cash)';
+      wordsRow.style.display = 'table-row';
+      var modeDisplay = (r.mode === 'Online') ? '📱 ऑनलाइन (UPI)' : '💵 नकद (Cash)';
       document.getElementById('pv-paymode').innerText = modeDisplay;
       mainLbl.innerText = "सहयोग राशि";
       mainVal.innerText = 'रु. ' + (r.amt || 0) + '/-';
+      document.getElementById('pv-words').innerText = numberToHindiWords(r.amt || 0);
+
+      // ऑनलाइन मोड के लिए UPI QR कोड बनाना
+      if (r.mode === 'Online') {
+        qrWrap.style.display = 'block';
+        var qrBox = document.getElementById('pv-qrcode-box');
+        qrBox.innerHTML = '';
+        var upiUrl = "upi://pay?pa=" + encodeURIComponent(samitiUpi) + "&pn=" + encodeURIComponent("Navyuva Durga Samiti") + "&am=" + (r.amt || '') + "&cu=INR&tn=" + encodeURIComponent("Chanda " + r.no);
+        try {
+          new QRCode(qrBox, {
+            text: upiUrl,
+            width: 100,
+            height: 100,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        } catch(e) {}
+      } else {
+        qrWrap.style.display = 'none';
+      }
     }
 
     document.getElementById('pv-date').innerText = r.date;
@@ -1091,7 +1338,6 @@
 
     var baseLink = window.location.href.split('?')[0];
     var link = baseLink + '?id=' + encodeURIComponent(currentReceipt.no);
-
     var isPhysicalItem = checkIsItem(currentReceipt);
 
     var detailStr = "";
@@ -1103,6 +1349,7 @@
     } else {
       var pModeText = (currentReceipt.mode === 'Online') ? 'ऑनलाइन (UPI/Online)' : 'नकद (Cash)';
       detailStr = "सहयोग राशि: *रु. " + currentReceipt.amt + "/-*\n" +
+                  "शब्दों में: *" + numberToHindiWords(currentReceipt.amt) + "*\n" +
                   "माध्यम: *" + pModeText + "*\n";
     }
 
@@ -1114,6 +1361,44 @@
       "📥 अपनी डिजिटल रसीद देखने व PDF डाउनलोड करने के लिए यहाँ क्लिक करें:\n" + link;
 
     window.open("https://api.whatsapp.com/send?phone=91" + currentReceipt.phone + "&text=" + encodeURIComponent(text), "_blank");
+  }
+
+  // Excel / CSV डाउनलोड फ़ंक्शन
+  function exportReceiptsToCSV() {
+    if (!receipts || receipts.length === 0) {
+      alert("डाउनलोड करने के लिए कोई रसीद नहीं है!");
+      return;
+    }
+
+    var csvRows = [];
+    csvRows.push(["रसीद संख्या", "दिनांक", "दानदाता का नाम", "मोबाइल नंबर", "पता", "सहयोग प्रकार", "राशि (रु.)", "भुगतान माध्यम", "वस्तु का विवरण", "रसीद कर्ता", "कोड"].join(","));
+
+    receipts.forEach(function(r) {
+      var row = [
+        `"${r.no || ''}"`,
+        `"${r.date || ''}"`,
+        `"${(r.name || '').replace(/"/g, '""')}"`,
+        `"${r.phone || ''}"`,
+        `"${(r.addr || '').replace(/"/g, '""')}"`,
+        `"${r.type || 'money'}"`,
+        `"${r.amt || 0}"`,
+        `"${r.mode || ''}"`,
+        `"${(r.itemName || '').replace(/"/g, '""')}"`,
+        `"${(r.by || '').replace(/"/g, '""')}"`,
+        `"${r.code || ''}"`
+      ];
+      csvRows.push(row.join(","));
+    });
+
+    var csvContent = "\uFEFF" + csvRows.join("\n");
+    var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "Navyuva_Durga_Chanda_Report.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   function openReceiptsList() {
@@ -1149,7 +1434,6 @@
 
     for (var k = 0; k < receipts.length; k++) {
       var r = receipts[k];
-
       if (currentUser) {
         if (String(r.code).toUpperCase() === String(currentUser.code).toUpperCase()) {
           visibleReceipts.push({ data: r, originalIndex: k });
@@ -1188,7 +1472,6 @@
       var item = visibleReceipts[i];
       var rec = item.data;
       var idx = item.originalIndex;
-
       var isItem = checkIsItem(rec);
 
       var pBadge = "";
@@ -1215,17 +1498,26 @@
 
       var viewBtn = document.createElement('button');
       viewBtn.innerText = 'देखें';
-      viewBtn.style.cssText = 'padding:4px 10px; border:none; background:#eee; border-radius:4px; font-weight:bold; cursor:pointer;';
+      viewBtn.style.cssText = 'padding:4px 8px; border:none; background:#eee; border-radius:4px; font-weight:bold; cursor:pointer; font-size:11px;';
       viewBtn.onclick = (function(receiptData) {
         return function() { showPreview(receiptData, false); };
       })(rec);
       actDiv.appendChild(viewBtn);
 
       if (!currentUser) {
+        var editBtn = document.createElement('button');
+        editBtn.innerText = '✏️';
+        editBtn.title = 'सुधारें';
+        editBtn.style.cssText = 'border:none; background:#e3f2fd; color:#1976d2; font-size:11px; padding:4px 6px; border-radius:4px; cursor:pointer; margin-left:4px;';
+        editBtn.onclick = (function(receiptData) {
+          return function() { editReceipt(receiptData); };
+        })(rec);
+        actDiv.appendChild(editBtn);
+
         var delBtn = document.createElement('button');
         delBtn.innerText = '🗑️';
         delBtn.title = 'रसीद हटाएं';
-        delBtn.style.cssText = 'border:none; background:#ffebee; color:#d32f2f; font-size:12px; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer; margin-left:6px;';
+        delBtn.style.cssText = 'border:none; background:#ffebee; color:#d32f2f; font-size:11px; padding:4px 6px; border-radius:4px; cursor:pointer; margin-left:4px;';
         delBtn.onclick = (function(realIdx) {
           return function() { deleteReceiptByIndex(realIdx); };
         })(idx);
@@ -1288,20 +1580,20 @@
 
       var info = document.createElement('div');
       info.innerHTML = `
-        <div style="font-size:15px; font-weight:bold; color:#b71c1c;">📦 ${itm.itemName}</div>
-        <div style="font-size:12px; color:#333; margin-top:3px;">
+        <div style="font-size:14px; font-weight:bold; color:#b71c1c;">📦 ${itm.itemName}</div>
+        <div style="font-size:11px; color:#333; margin-top:2px;">
           दानदाता: <strong>${itm.name}</strong> (${itm.phone})<br>
           पता: ${itm.addr || 'मारकुंडी'} • दिनांक: ${itm.date}
         </div>
-        <div style="font-size:11px; color:#666; margin-top:2px;">
-          रसीद सं.: <strong>${itm.no}</strong> | प्राप्तकर्ता: <strong>${itm.by} (${itm.code})</strong>
-          ${itm.itemVal ? `<span style="color:#2e7d32; font-weight:bold;"> | अनुमानित: रु. ${itm.itemVal}</span>` : ''}
+        <div style="font-size:10px; color:#666; margin-top:2px;">
+          रसीद: <strong>${itm.no}</strong> | प्राप्तकर्ता: <strong>${itm.by} (${itm.code})</strong>
+          ${itm.itemVal ? `<span style="color:#2e7d32; font-weight:bold;"> | रु. ${itm.itemVal}</span>` : ''}
         </div>
       `;
 
       var btn = document.createElement('button');
       btn.innerText = 'रसीद देखें';
-      btn.style.cssText = 'padding:6px 10px; border:none; background:#fff3e0; color:#e65100; border-radius:6px; font-weight:bold; cursor:pointer; font-size:12px; white-space:nowrap;';
+      btn.style.cssText = 'padding:5px 8px; border:none; background:#fff3e0; color:#e65100; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;';
       btn.onclick = (function(rData) {
         return function() { showPreview(rData, false); };
       })(itm);
@@ -1310,6 +1602,73 @@
       div.appendChild(btn);
       box.appendChild(div);
     }
+  }
+
+  // खर्च रजिस्टर फ़ंक्शन्स
+  function openExpenseScreen() {
+    renderExpensesList();
+    showScreen('screen-expenses');
+  }
+
+  function addExpense() {
+    var title = document.getElementById('exp-title').value.trim();
+    var amt = parseInt(document.getElementById('exp-amt').value.trim(), 10);
+
+    if (!title || isNaN(amt) || amt <= 0) {
+      alert("कृपया मान्य खर्च मद और राशि दर्ज करें!");
+      return;
+    }
+
+    var d = new Date();
+    var dateStr = String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
+
+    expenses.unshift({ id: Date.now(), title: title, amt: amt, date: dateStr });
+    localStorage.setItem('durga_expenses', JSON.stringify(expenses));
+    syncToFirebase("expenses", expenses);
+
+    document.getElementById('exp-title').value = '';
+    document.getElementById('exp-amt').value = '';
+    renderExpensesList();
+    updateAdminOverview();
+  }
+
+  function deleteExpense(id) {
+    if (confirm("क्या आप सच में इस खर्च को हटाना चाहते हैं?")) {
+      expenses = expenses.filter(function(e) { return e.id !== id; });
+      localStorage.setItem('durga_expenses', JSON.stringify(expenses));
+      syncToFirebase("expenses", expenses);
+      renderExpensesList();
+      updateAdminOverview();
+    }
+  }
+
+  function renderExpensesList() {
+    var box = document.getElementById('expense-list-box');
+    box.innerHTML = '';
+
+    var totE = 0;
+    expenses.forEach(function(e) { totE += Number(e.amt || 0); });
+    document.getElementById('tot-exp-count').innerText = expenses.length;
+    document.getElementById('tot-exp-amt').innerText = 'रु. ' + totE;
+
+    if (expenses.length === 0) {
+      box.innerHTML = '<p style="text-align:center; color:#888; padding:30px;">कोई खर्च दर्ज नहीं है।</p>';
+      return;
+    }
+
+    expenses.forEach(function(e) {
+      var div = document.createElement('div');
+      div.style.cssText = 'background:#fff; border-radius:8px; padding:10px 12px; margin-bottom:8px; border-left:4px solid #c2185b; box-shadow:0 1px 3px rgba(0,0,0,0.06); display:flex; justify-content:space-between; align-items:center;';
+      div.innerHTML = `
+        <div>
+          <strong style="color:#c2185b; font-size:14px;">${e.title}</strong><br>
+          <small style="color:#666;">दिनांक: ${e.date}</small><br>
+          <strong style="color:#333;">रु. ${e.amt}</strong>
+        </div>
+        <button onclick="deleteExpense(${e.id})" style="border:none; background:#ffebee; color:#d32f2f; padding:4px 8px; border-radius:4px; font-size:12px; cursor:pointer;">🗑️</button>
+      `;
+      box.appendChild(div);
+    });
   }
 
   function openUsersList() {
@@ -1342,7 +1701,7 @@
       } else {
         itemsRowsHtml = userItems.map(function(item) {
           return `
-            <div style="background:#fff; border:1px solid #ffe082; border-radius:5px; padding:5px 8px; margin-top:4px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="background:#fff; border:1px solid #ffe082; border-radius:5px; padding:4px 6px; margin-top:4px; font-size:11px; display:flex; justify-content:space-between; align-items:center;">
               <div>
                 <strong style="color:#b71c1c;">📦 ${item.itemName}</strong>
                 <span style="color:#555;"> (${item.name} - ${item.date})</span>
@@ -1366,24 +1725,24 @@
             </div>
           </div>
           <div style="display:flex; gap:8px; align-items:center;">
-            <button onclick="toggleUserStatus(${u.id})" style="border:none; background:${isAct ? '#ffebee' : '#e8f5e9'}; color:${isAct ? '#d32f2f' : '#2e7d32'}; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
-              ${isAct ? '🔴 OFF करें' : '🟢 ON करें'}
+            <button onclick="toggleUserStatus(${u.id})" style="border:none; background:${isAct ? '#ffebee' : '#e8f5e9'}; color:${isAct ? '#d32f2f' : '#2e7d32'}; padding:4px 6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
+              ${isAct ? '🔴 OFF' : '🟢 ON'}
             </button>
             <span onclick="changeUserPass(${u.id})" style="cursor:pointer; font-size:16px;" title="पासवर्ड बदलें">✏</span>
             <span onclick="deleteUser(${u.id})" style="cursor:pointer; font-size:16px;" title="यूज़र हटाएं">🗑️</span>
           </div>
         </div>
 
-        <div style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <div style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:6px 8px; display:flex; justify-content:space-between; align-items:center; font-size:11px;">
           <div>
-            कुल चंदा: <strong>रु. ${totCash}</strong> | जमा: <strong style="color:#2e7d32;">रु. ${paid}</strong> | 
+            कुल: <strong>रु. ${totCash}</strong> | जमा: <strong style="color:#2e7d32;">रु. ${paid}</strong> | 
             <span style="color:${pend > 0 ? '#d32f2f' : '#2e7d32'}; font-weight:bold;">बकाया: रु. ${pend}</span>
           </div>
-          ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}',${pend})" style="background:#2e7d32; color:white; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">💰 पैसा जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
+          ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}',${pend})" style="background:#2e7d32; color:white; border:none; padding:4px 6px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:10px;">💰 जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
         </div>
 
-        <div style="background:#fff8e1; border:1px dashed #ffa000; border-radius:6px; padding:8px 10px;">
-          <div style="font-size:12px; font-weight:bold; color:#e65100; margin-bottom:4px;">
+        <div style="background:#fff8e1; border:1px dashed #ffa000; border-radius:6px; padding:6px 8px;">
+          <div style="font-size:11px; font-weight:bold; color:#e65100; margin-bottom:2px;">
             📦 प्राप्त सामग्री विवरण (${userItems.length} वस्तुएं):
           </div>
           ${itemsRowsHtml}
@@ -1408,19 +1767,15 @@
   }
 
   function changeUserPass(id) {
-    var u = null;
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].id === id) { u = users[i]; break; }
-    }
+    var u = users.find(function(x) { return x.id === id; });
     if (!u) return;
-
     var newP = prompt("'" + u.name + "' के लिए नया पासवर्ड दर्ज करें:", u.pass || '1234');
     if (newP !== null && newP.trim() !== '') {
       u.pass = newP.trim();
       localStorage.setItem('durga_users', JSON.stringify(users));
       syncToFirebase("users", users);
       openUsersList();
-      alert("कार्यकर्ता '" + u.name + "' का पासवर्ड अपडेट हो गया!");
+      alert("कार्यकर्ता का पासवर्ड अपडेट हो गया!");
     }
   }
 
@@ -1452,9 +1807,10 @@
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
     openUsersList();
+    updateAdminOverview();
     
     var nayaBaki = Math.max(0, pending - amt);
-    alert("रु. " + amt + " सफलतापूर्वक जमा कर लिए गए!\nअब इस कार्यकर्ता का बकाया: रु. " + nayaBaki);
+    alert("रु. " + amt + " जमा कर लिए गए!\nअब बकाया: रु. " + nayaBaki);
   }
 
   function saveNewUser() {
@@ -1474,6 +1830,18 @@
     syncToFirebase("users", users);
     alert("यूज़र बन गया! रसीद कोड: " + code);
     showScreen('screen-admin');
+  }
+
+  function saveSamitiUpi() {
+    var val = document.getElementById('set-samiti-upi').value.trim();
+    if (!val) {
+      alert("कृपया वैध UPI ID दर्ज करें!");
+      return;
+    }
+    samitiUpi = val;
+    localStorage.setItem('durga_samiti_upi', samitiUpi);
+    syncToFirebase("samitiUpi", samitiUpi);
+    alert("समिति UPI ID सफलतापूर्वक सहेज ली गई!");
   }
 
   function changeAdminPass() {
@@ -1496,6 +1864,66 @@
     document.getElementById('set-new-pass').value = '';
     alert("एडमिन पासवर्ड सफलतापूर्वक अपडेट हो गया!");
     showScreen('screen-admin');
+  }
+
+  // संपूर्ण डेटा बैकअप डाउनलोड करना
+  function downloadDataBackup() {
+    var fullBackup = {
+      receipts: receipts,
+      users: users,
+      expenses: expenses,
+      adminPass: adminPass,
+      samitiUpi: samitiUpi,
+      backupDate: new Date().toISOString()
+    };
+
+    var blob = new Blob([JSON.stringify(fullBackup, null, 2)], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "Durga_Samiti_Backup_" + Date.now() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  // बैकअप फाइल रीस्टोर करना
+  function handleRestoreBackup(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var parsed = JSON.parse(e.target.result);
+        if (parsed && (parsed.receipts || parsed.users)) {
+          if (confirm("चेतावनी: यह बैकअप मौजूदा डेटा को बदल देगा। क्या आप आगे बढ़ना चाहते हैं?")) {
+            if (parsed.receipts) {
+              receipts = parsed.receipts;
+              localStorage.setItem('durga_receipts', JSON.stringify(receipts));
+              syncToFirebase("receipts", receipts);
+            }
+            if (parsed.users) {
+              users = parsed.users;
+              localStorage.setItem('durga_users', JSON.stringify(users));
+              syncToFirebase("users", users);
+            }
+            if (parsed.expenses) {
+              expenses = parsed.expenses;
+              localStorage.setItem('durga_expenses', JSON.stringify(expenses));
+              syncToFirebase("expenses", expenses);
+            }
+            updateAdminOverview();
+            alert("डेटा सफलतापूर्वक रीस्टोर कर दिया गया!");
+          }
+        } else {
+          alert("अमान्य बैकअप फाइल!");
+        }
+      } catch(err) {
+        alert("फाइल पढ़ने में त्रुटि हुई!");
+      }
+    };
+    reader.readAsText(file);
   }
 
   function handlePhotoUpload(event) {
@@ -1549,6 +1977,7 @@
         renderReceiptsList();
         if (document.getElementById('screen-items-list').classList.contains('active')) renderItemsList();
         if (currentUser) updateUserPassbook();
+        updateAdminOverview();
         
         alert("रसीद [" + recNum + "] सफलतापूर्वक हटा दी गई!");
       }
@@ -1556,12 +1985,14 @@
   }
 
   window.addEventListener('load', function() {
-    if (!currentDurgaImg) {
-      currentDurgaImg = DEFAULT_DURGA;
-    }
+    if (!currentDurgaImg) currentDurgaImg = DEFAULT_DURGA;
     updateImages();
     clearLoginFields();
     fetchFromFirebase();
+    updateAdminOverview();
+
+    var upiInput = document.getElementById('set-samiti-upi');
+    if (upiInput) upiInput.value = samitiUpi;
 
     var urlParams = new URLSearchParams(window.location.search);
     var recId = urlParams.get('id');
