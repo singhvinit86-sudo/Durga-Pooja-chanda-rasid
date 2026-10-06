@@ -928,21 +928,20 @@
     if (role === 'admin') {
       if (lbl) lbl.innerText = "🔑 एडमिन आईडी / मोबाइल नंबर";
       if (inpM) {
-        inpM.placeholder = 'Admin';
+        inpM.placeholder = 'Admin ID';
         inpM.removeAttribute('maxlength');
       }
       document.getElementById('inp-pass').placeholder = 'Admin Password';
     } else {
       if (lbl) lbl.innerText = "📞 मोबाइल नंबर";
       if (inpM) {
-        inpM.placeholder = 'User: 9876543210';
+        inpM.placeholder = '10 अंकों का मोबाइल नंबर';
         inpM.setAttribute('maxlength', '10');
       }
       document.getElementById('inp-pass').placeholder = 'User Password';
     }
   }
 
-  // संशोधित doLogin: केवल वर्तमान एक्टिव पासवर्ड से लॉगिन की अनुमति
   function doLogin() {
     var m = document.getElementById('inp-mobile').value.trim();
     var p = document.getElementById('inp-pass').value.trim();
@@ -953,7 +952,6 @@
     }
 
     if (currentRole === 'admin') {
-      // केवल वर्तमान adminPass मान्य होगा
       if ((m.toLowerCase() === 'admin' || m === '7905106011') && p === adminPass) {
         currentUser = null;
         clearLoginFields();
@@ -978,7 +976,6 @@
         return;
       }
 
-      // केवल यूजर का वर्तमान असाइन्ड पासवर्ड मान्य होगा
       var validUserPass = found.pass || '1234';
       if (p === validUserPass) {
         currentUser = found;
@@ -1437,6 +1434,7 @@
     });
 
     var csvContent = "\uFEFF" + csvRows.join("\n");
+    var blob = new Blob([JSON.stringify(csvRows)], { type: "text/csv;charset=utf-8;" });
     var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
@@ -1889,7 +1887,6 @@
     alert("समिति UPI ID (" + samitiUpi + ") सफलतापूर्वक अपडेट हो गई!\nअब सभी ऑनलाइन रसीदों पर यही QR कोड बनेगा।");
   }
 
-  // संशोधित changeAdminPass: केवल वर्तमान पासवर्ड ही मान्य
   function changeAdminPass() {
     var oldP = document.getElementById('set-old-pass').value.trim();
     var newP = document.getElementById('set-new-pass').value.trim();
