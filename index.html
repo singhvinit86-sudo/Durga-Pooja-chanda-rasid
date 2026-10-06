@@ -140,13 +140,30 @@
       </div>
 
       <div class="form-group">
-        <label>📞 मोबाइल नंबर</label>
-        <input type="tel" id="inp-mobile" class="form-input" placeholder="Admin" maxlength="10" />
+        <label id="lbl-login-field">🔑 एडमिन आईडी / मोबाइल नंबर</label>
+        <!-- autocomplete off और dynamic focus trick ब्राउज़र का ऑटो-फिल रोकता है -->
+        <input 
+          type="text" 
+          id="inp-mobile" 
+          class="form-input" 
+          placeholder="Admin" 
+          value="" 
+          autocomplete="off" 
+          readonly 
+          onfocus="this.removeAttribute('readonly');"
+        />
       </div>
 
       <div class="form-group">
         <label>🔒 पासवर्ड</label>
-        <input type="password" id="inp-pass" class="form-input" placeholder="Admin Password" />
+        <input 
+          type="password" 
+          id="inp-pass" 
+          class="form-input" 
+          placeholder="Admin Password" 
+          value="" 
+          autocomplete="new-password"
+        />
       </div>
 
       <button class="btn" style="margin-top: 10px;" onclick="doLogin()">लॉगिन करें</button>
@@ -163,7 +180,7 @@
     <div style="padding: 14px 16px 0 16px;">
       <div style="background: #fff3f3; padding: 12px; border-radius: 8px; border: 1px solid #ffd6d6; margin-bottom: 12px;">
         <div style="font-size: 13px; color: #666;">स्वागत है, एडमिन जी</div>
-        <div style="font-size: 16px; font-weight: bold; color: #111;">7905106011</div>
+        <div style="font-size: 16px; font-weight: bold; color: #111;">Admin Panel</div>
       </div>
       <button class="btn" onclick="openReceiptForm()">➕ रसीद बनाएं (Create Receipt)</button>
     </div>
@@ -211,7 +228,7 @@
       </button>
     </div>
 
-    <!-- कार्यकर्ता पासबुक (नकद + सामग्री विवरण दोनों एक साथ) -->
+    <!-- कार्यकर्ता पासबुक -->
     <div class="collector-passbook">
       <div style="font-weight: bold; font-size: 13px; color: #b71c1c; border-bottom: 1px dashed #ffe082; padding-bottom: 4px;">
         📋 मेरा चंदा हिसाब पासबुक
@@ -237,9 +254,7 @@
           <span>📦 प्राप्त सामग्री विवरण:</span>
           <span id="usr-stat-items-count">0 वस्तुएं</span>
         </div>
-        <div id="usr-passbook-items-list">
-          <!-- डायनामिक वस्तुएं लोड होंगी -->
-        </div>
+        <div id="usr-passbook-items-list"></div>
       </div>
     </div>
 
@@ -290,7 +305,6 @@
 
     <div style="padding: 20px; flex: 1;">
       
-      <!-- दान का प्रकार: रुपये या वस्तु -->
       <div class="form-group">
         <label>सहयोग का प्रकार (Donation Type) *</label>
         <div class="pill-wrap">
@@ -316,7 +330,6 @@
         <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
       </div>
 
-      <!-- रूपया सहयोग के लिए फ़ील्ड्स -->
       <div id="section-money-fields">
         <div class="form-group">
           <label>सहयोग राशि (रु.) *</label>
@@ -336,7 +349,6 @@
         </div>
       </div>
 
-      <!-- वस्तु/सामग्री सहयोग के लिए फ़ील्ड्स -->
       <div id="section-item-fields" style="display: none; background: #fff8e1; border: 1.5px dashed #ffa000; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
         <div class="form-group">
           <label>दान की गई सामग्री / वस्तु का नाम व मात्रा *</label>
@@ -427,7 +439,6 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
       <button class="btn" style="background: #b71c1c;" id="btn-dl-pdf" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
@@ -464,7 +475,7 @@
     <div id="receipts-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 7.1 PHYSICAL ITEMS LIST (एडमिन वस्तु रजिस्टर) -->
+  <!-- 7.1 PHYSICAL ITEMS LIST -->
   <div id="screen-items-list" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> वस्तु/सामग्री रजिस्टर</h2>
@@ -514,7 +525,7 @@
     </div>
   </div>
 
-  <!-- 9. USERS LIST & हिसाब (कैश + सामग्री का विवरण) -->
+  <!-- 9. USERS LIST & हिसाब -->
   <div id="screen-users-list" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅</button> Users & हिसाब</h2>
@@ -638,6 +649,10 @@
       target.classList.add('active');
       window.scrollTo(0, 0);
     }
+    // लॉगिन स्क्रीन पर आते ही फ़ील्ड्स को खाली करना
+    if (id === 'screen-login') {
+      clearLoginFields();
+    }
   }
 
   var currentRole = 'admin';
@@ -674,17 +689,36 @@
     return false;
   }
 
+  function clearLoginFields() {
+    var inpM = document.getElementById('inp-mobile');
+    var inpP = document.getElementById('inp-pass');
+    if (inpM) inpM.value = '';
+    if (inpP) inpP.value = '';
+  }
+
   function setRole(role) {
     currentRole = role;
     document.getElementById('tab-adm').classList.toggle('active', role === 'admin');
     document.getElementById('tab-usr').classList.toggle('active', role === 'user');
-    document.getElementById('inp-mobile').value = '';
-    document.getElementById('inp-pass').value = '';
+    
+    var inpM = document.getElementById('inp-mobile');
+    var lbl = document.getElementById('lbl-login-field');
+    
+    clearLoginFields();
+
     if (role === 'admin') {
-      document.getElementById('inp-mobile').placeholder = 'Admin';
+      if (lbl) lbl.innerText = "🔑 एडमिन आईडी / मोबाइल नंबर";
+      if (inpM) {
+        inpM.placeholder = 'Admin';
+        inpM.removeAttribute('maxlength');
+      }
       document.getElementById('inp-pass').placeholder = 'Admin Password';
     } else {
-      document.getElementById('inp-mobile').placeholder = 'User: 9876543210';
+      if (lbl) lbl.innerText = "📞 मोबाइल नंबर";
+      if (inpM) {
+        inpM.placeholder = 'User: 9876543210';
+        inpM.setAttribute('maxlength', '10');
+      }
       document.getElementById('inp-pass').placeholder = 'User Password';
     }
   }
@@ -694,16 +728,18 @@
     var p = document.getElementById('inp-pass').value.trim();
 
     if (!m || !p) {
-      alert("कृपया मोबाइल और पासवर्ड दर्ज करें!");
+      alert("कृपया आईडी/मोबाइल और पासवर्ड दर्ज करें!");
       return;
     }
 
     if (currentRole === 'admin') {
-      if (m === '7905106011' && (p === adminPass || p === '7905106011')) {
+      // एडमिन 'admin' या '7905106011' दोनों से लॉगिन कर सकता है
+      if ((m.toLowerCase() === 'admin' || m === '7905106011') && (p === adminPass || p === '7905106011')) {
         currentUser = null;
+        clearLoginFields();
         showScreen('screen-admin');
       } else {
-        alert("गलत Admin मोबाइल या पासवर्ड!");
+        alert("गलत Admin आईडी या पासवर्ड!");
       }
     } else {
       var found = null;
@@ -727,6 +763,7 @@
         document.getElementById('usr-code-show').innerText = found.code;
         document.getElementById('usr-code-avatar').innerText = found.code;
         updateUserPassbook();
+        clearLoginFields();
         showScreen('screen-user');
       } else {
         alert("गलत User पासवर्ड!");
@@ -736,6 +773,7 @@
 
   function doLogout() {
     currentUser = null;
+    clearLoginFields();
     showScreen('screen-login');
   }
 
@@ -1522,6 +1560,7 @@
       currentDurgaImg = DEFAULT_DURGA;
     }
     updateImages();
+    clearLoginFields();
     fetchFromFirebase();
 
     var urlParams = new URLSearchParams(window.location.search);
