@@ -84,51 +84,6 @@
     .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 12px; }
     .rec-table td { padding: 5px 4px; border-bottom: 1px dashed #ffe082; }
 
-    /* ======================================================== */
-    /* 100% फुल प्रूफ हिंदी गोल मुहर (CSS Based Circular Stamp) */
-    /* ======================================================== */
-    .hindi-round-seal {
-      width: 96px;
-      height: 96px;
-      border: 3px dashed #b71c1c;
-      border-radius: 50%;
-      margin: 6px 0 0 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      padding: 5px 4px;
-      background: rgba(255, 235, 238, 0.45);
-      color: #b71c1c;
-      transform: rotate(-7deg);
-      box-shadow: 0 0 0 2px #b71c1c inset;
-      user-select: none;
-    }
-    .seal-text-top {
-      font-size: 8.5px;
-      font-weight: 900;
-      text-align: center;
-      line-height: 1.1;
-      letter-spacing: 0.2px;
-    }
-    .seal-text-center {
-      border-top: 1px solid #b71c1c;
-      border-bottom: 1px solid #b71c1c;
-      width: 82%;
-      text-align: center;
-      font-size: 11px;
-      font-weight: 900;
-      padding: 2px 0;
-      letter-spacing: 1px;
-      color: #900c3f;
-    }
-    .seal-text-bottom {
-      font-size: 8px;
-      font-weight: 800;
-      text-align: center;
-      line-height: 1;
-    }
-
     .user-list-item { display: flex; flex-direction: column; padding: 12px 14px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
     .user-circle { width: 36px; height: 36px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
 
@@ -324,7 +279,7 @@
     </div>
 
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
-      <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏️️ नई रसीद बनाएं (रुपये / वस्तु)</button>
+      <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏️ नई रसीद बनाएं (रुपये / वस्तु)</button>
       <button class="btn" style="background: #1976d2;" onclick="openReceiptsList()">📋 मेरी काटी हुई सभी रसीदें</button>
     </div>
 
@@ -481,7 +436,6 @@
               <td style="font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-amt" style="font-weight: 900; font-size: 16px; color: #b71c1c;">-</td>
             </tr>
-            <!-- शुद्ध हिंदी में शब्दों में राशि -->
             <tr id="pv-row-words">
               <td style="font-weight: bold; color: #880e4f;">शब्दों में</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
@@ -506,18 +460,39 @@
             <div>
               दिनांक : <strong id="pv-date">-</strong><br>
               
-              <!-- हिंदी में गोल मुहर: चारों तरफ समिति का नाम, बीच में सत्यापित -->
-              <div class="hindi-round-seal">
-                <div class="seal-text-top">
-                  नवयुवा दुर्गा पूजा समिति<br>
-                  <span style="font-size: 7.5px; font-weight: bold; color: #555;">★ मारकुंडी ★</span>
-                </div>
-                <div class="seal-text-center">
-                  *सत्यापित*
-                </div>
-                <div class="seal-text-bottom">
-                  अधिकृत रसीद
-                </div>
+              <!-- गोल घेरे के अंदर परिधि पर घूमता नाम और मध्य में *सत्यापित* -->
+              <div style="width: 105px; height: 105px; margin-top: 4px; transform: rotate(-7deg); opacity: 0.95;">
+                <svg viewBox="0 0 120 120" width="100%" height="100%">
+                  <!-- बाहरी दोहरा बिंदीदार व ठोस घेरा -->
+                  <circle cx="60" cy="60" r="56" fill="none" stroke="#b71c1c" stroke-width="2.2" stroke-dasharray="3,2" />
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="#b71c1c" stroke-width="1.2" />
+                  <circle cx="60" cy="60" r="28" fill="none" stroke="#b71c1c" stroke-width="1" stroke-dasharray="2,2" />
+
+                  <defs>
+                    <!-- ऊपर की गोलाई का पाथ (नवयुवा दुर्गा पूजा समिति) -->
+                    <path id="sealTopCurve" d="M 18,60 A 42,42 0 1,1 102,60" fill="none" />
+                    <!-- नीचे की गोलाई का पाथ (मारकुंडी) -->
+                    <path id="sealBottomCurve" d="M 102,60 A 42,42 0 0,1 18,60" fill="none" />
+                  </defs>
+
+                  <!-- परिधि के अंदर गोल घूमता नाम -->
+                  <text font-size="8.8" font-weight="900" fill="#b71c1c" letter-spacing="0.3">
+                    <textPath href="#sealTopCurve" startOffset="50%" text-anchor="middle">
+                      नवयुवा दुर्गा पूजा समिति
+                    </textPath>
+                  </text>
+
+                  <text font-size="8.2" font-weight="800" fill="#b71c1c" letter-spacing="1">
+                    <textPath href="#sealBottomCurve" startOffset="50%" text-anchor="middle">
+                      ★ मारकुंडी ★
+                    </textPath>
+                  </text>
+
+                  <!-- मध्य में सत्यापित -->
+                  <text x="60" y="55" text-anchor="middle" font-size="6" font-weight="bold" fill="#b71c1c">◆ ◆ ◆</text>
+                  <text x="60" y="64" text-anchor="middle" font-size="11" font-weight="900" fill="#900c3f" letter-spacing="0.5">*सत्यापित*</text>
+                  <text x="60" y="72" text-anchor="middle" font-size="6" font-weight="bold" fill="#b71c1c">◆ ◆ ◆</text>
+                </svg>
               </div>
 
             </div>
@@ -778,9 +753,9 @@
   var samitiUpi = localStorage.getItem('durga_samiti_upi') || '7905106011@upi';
 
   // =========================================================================
-  // 1 से 100 शुद्ध मानक हिंदी शब्द (Direct Static Lookup Table)
+  // 1 से 100 शुद्ध मानक हिंदी शब्द प्रणाली (51 = इक्यावन, 21 = इक्कीस, आदि)
   // =========================================================================
-  var hindiNumbers1to99 = [
+  var hindiNumbers = [
     '', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस',
     'ग्यारह', 'बारह', 'तेरह', 'चौदह', 'पंद्रह', 'सोलह', 'सत्रह', 'अठारह', 'उन्नीस', 'बीस',
     'इक्कीस', 'बाईस', 'तेईस', 'चौबीस', 'पचीस', 'छब्बीस', 'सत्ताईस', 'अट्ठाईस', 'उनतीस', 'तीस',
@@ -797,38 +772,25 @@
     num = parseInt(num, 10);
     if (!num || isNaN(num) || num <= 0) return 'शून्य रुपये मात्र';
 
-    // सीधा चेक: 51 के लिए
-    if (num === 51) return 'इक्यावन रुपये मात्र';
+    var result = '';
 
-    var str = '';
-    
-    // लाख
     if (Math.floor(num / 100000) > 0) {
-      var l = Math.floor(num / 100000);
-      str += (hindiNumbers1to99[l] || l) + ' लाख ';
+      result += (hindiNumbers[Math.floor(num / 100000)] || Math.floor(num / 100000)) + ' लाख ';
       num %= 100000;
     }
-    
-    // हजार
     if (Math.floor(num / 1000) > 0) {
-      var th = Math.floor(num / 1000);
-      str += (hindiNumbers1to99[th] || th) + ' हजार ';
+      result += (hindiNumbers[Math.floor(num / 1000)] || Math.floor(num / 1000)) + ' हजार ';
       num %= 1000;
     }
-    
-    // सौ
     if (Math.floor(num / 100) > 0) {
-      var h = Math.floor(num / 100);
-      str += (hindiNumbers1to99[h] || h) + ' सौ ';
+      result += (hindiNumbers[Math.floor(num / 100)] || Math.floor(num / 100)) + ' सौ ';
       num %= 100;
     }
-    
-    // 1 से 99
     if (num > 0) {
-      str += (hindiNumbers1to99[num] || num) + ' ';
+      result += (hindiNumbers[num] || num) + ' ';
     }
-    
-    return str.trim() + ' रुपये मात्र';
+
+    return result.trim() + ' रुपये मात्र';
   }
 
   function generateReceiptToken(r) {
@@ -1313,11 +1275,10 @@
       mainLbl.innerText = "सहयोग राशि";
       mainVal.innerText = 'रु. ' + (r.amt || 0) + '/-';
       
-      // हमेशा वर्तमान फंक्शन से शुद्ध हिंदी में कैलकुलेट करके दिखाएं
-      var wordsText = numberToHindiWords(r.amt || 0);
-      document.getElementById('pv-words').innerText = wordsText;
+      // 51 को इक्यावन और अन्य सभी संख्याओं के लिए शब्दों में रूपांतरण
+      document.getElementById('pv-words').innerText = numberToHindiWords(r.amt || 0);
 
-      // लाइव UPI ID से QR कोड बनाना
+      // लाइव UPI QR कोड प्रदर्शन
       if (r.mode === 'Online') {
         qrWrap.style.display = 'block';
         var qrBox = document.getElementById('pv-qrcode-box');
@@ -1587,7 +1548,7 @@
 
       if (!currentUser) {
         var editBtn = document.createElement('button');
-        editBtn.innerText = '✏️️';
+        editBtn.innerText = '✏';
         editBtn.title = 'सुधारें';
         editBtn.style.cssText = 'border:none; background:#e3f2fd; color:#1976d2; font-size:11px; padding:4px 6px; border-radius:4px; cursor:pointer; margin-left:4px;';
         editBtn.onclick = (function(receiptData) {
