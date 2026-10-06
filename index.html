@@ -269,7 +269,7 @@
   <!-- 5. CREATE RECEIPT FORM -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> रसीद बनाएं</h2>
+      <h2><button class="icon-btn" onclick="backToHome()">⬅️️</button> रसीद बनाएं</h2>
     </div>
 
     <div style="padding: 20px; flex: 1;">
@@ -393,7 +393,7 @@
             <tr style="background: #ffe082;">
               <td id="pv-main-lbl" style="font-weight: bold; color: #b71c1c; font-size: 14px;">सहयोग राशि</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td id="pv-amt" style="font-weight: 900; font-size: 18px; color: #b71c1c;">-</td>
+              <td id="pv-amt" style="font-weight: 900; font-size: 17px; color: #b71c1c;">-</td>
             </tr>
           </table>
 
@@ -768,7 +768,6 @@
     showScreen('screen-user');
   }
 
-  // पासबुक में केवल कैश और ऑनलाइन रुपये वाले चंदे की गणना होती है (वस्तु का पैसा नहीं लिया जाता)
   function updateUserPassbook() {
     if (!currentUser) return;
     
@@ -776,8 +775,10 @@
     
     var tot = 0;
     for (var i = 0; i < receipts.length; i++) {
-      if (receipts[i].code === freshU.code && receipts[i].type !== 'item') {
-        tot += Number(receipts[i].amt || 0);
+      var r = receipts[i];
+      var isItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
+      if (r.code === freshU.code && !isItem) {
+        tot += Number(r.amt || 0);
       }
     }
     
@@ -789,7 +790,6 @@
     document.getElementById('usr-stat-pending').innerText = 'रु. ' + pend;
   }
 
-  // सहयोग प्रकार टॉगल (रुपये vs वस्तु)
   function selectDonationType(type) {
     donationType = type;
     document.getElementById('type-money').classList.toggle('active', type === 'money');
@@ -886,6 +886,7 @@
     showPreview(currentReceipt, false);
   }
 
+  // रसीद प्रिव्यू व लिंक से देखने का सटीक फ़ंक्शन
   function showPreview(r, isDonorView) {
     currentReceipt = r;
     document.getElementById('pv-no').innerText = r.no;
@@ -898,12 +899,15 @@
     var mainLbl = document.getElementById('pv-main-lbl');
     var mainVal = document.getElementById('pv-amt');
 
-    if (r.type === 'item') {
+    // जांचें कि क्या रसीद सामग्री/वस्तु की है
+    var isPhysicalItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
+
+    if (isPhysicalItem) {
       badgeTitle.innerText = "✨ वस्तु/सामग्री सहयोग रसीद ✨";
       modeRow.style.display = 'none';
       mainLbl.innerText = "सहयोग सामग्री";
-      var displayItem = r.itemName;
-      if (r.itemVal && r.itemVal > 0) {
+      var displayItem = r.itemName || "वस्तु दान";
+      if (r.itemVal && Number(r.itemVal) > 0) {
         displayItem += ' (अनुमानित मूल्य: रु. ' + r.itemVal + ')';
       }
       mainVal.innerHTML = '<span style="font-size:16px; color:#b71c1c;">📦 ' + displayItem + '</span>';
@@ -913,7 +917,7 @@
       var modeDisplay = (r.mode === 'Online') ? '📱 ऑनलाइन (UPI/Online)' : '💵 नकद (Cash)';
       document.getElementById('pv-paymode').innerText = modeDisplay;
       mainLbl.innerText = "सहयोग राशि";
-      mainVal.innerText = 'रु. ' + r.amt + '/-';
+      mainVal.innerText = 'रु. ' + (r.amt || 0) + '/-';
     }
 
     document.getElementById('pv-date').innerText = r.date;
@@ -988,16 +992,19 @@
     }
   }
 
+  // व्हाट्सएप मैसेज जनरेशन (भौतिक सामग्री के लिए शुद्ध टेक्स्ट)
   function shareWhatsApp() {
     if (!currentReceipt) return;
 
     var baseLink = window.location.href.split('?')[0];
     var link = baseLink + '?id=' + encodeURIComponent(currentReceipt.no);
 
+    var isPhysicalItem = (currentReceipt.type === 'item') || (currentReceipt.itemName && currentReceipt.itemName.trim() !== "");
+
     var detailStr = "";
-    if (currentReceipt.type === 'item') {
+    if (isPhysicalItem) {
       detailStr = "दान सामग्री: *" + currentReceipt.itemName + "*\n";
-      if (currentReceipt.itemVal) {
+      if (currentReceipt.itemVal && Number(currentReceipt.itemVal) > 0) {
         detailStr += "अनुमानित मूल्य: *रु. " + currentReceipt.itemVal + "/-*\n";
       }
     } else {
@@ -1071,8 +1078,10 @@
 
     var totA = 0;
     for (var j = 0; j < visibleReceipts.length; j++) {
-      if (visibleReceipts[j].data.type !== 'item') {
-        totA += Number(visibleReceipts[j].data.amt);
+      var recItem = visibleReceipts[j].data;
+      var isItem = (recItem.type === 'item') || (recItem.itemName && recItem.itemName.trim() !== "");
+      if (!isItem) {
+        totA += Number(recItem.amt || 0);
       }
     }
     document.getElementById('tot-rec-count').innerText = visibleReceipts.length;
@@ -1088,9 +1097,11 @@
       var rec = item.data;
       var idx = item.originalIndex;
 
+      var isItem = (rec.type === 'item') || (rec.itemName && rec.itemName.trim() !== "");
+
       var pBadge = "";
       var amtOrItem = "";
-      if (rec.type === 'item') {
+      if (isItem) {
         pBadge = '<span style="font-size:10px; padding:2px 6px; border-radius:4px; font-weight:bold; background:#fff3e0; color:#e65100;">📦 वस्तु दान</span>';
         amtOrItem = '<strong style="color:#e65100;">' + rec.itemName + '</strong>' + (rec.itemVal ? ' <small>(रु. ' + rec.itemVal + ')</small>' : '');
       } else {
@@ -1100,7 +1111,7 @@
       }
 
       var div = document.createElement('div');
-      div.style.cssText = 'background:#fff; padding:12px; border-radius:8px; margin-bottom:8px; border-left:4px solid ' + (rec.type === 'item' ? '#ff9800' : '#1976d2') + '; box-shadow:0 1px 3px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center;';
+      div.style.cssText = 'background:#fff; padding:12px; border-radius:8px; margin-bottom:8px; border-left:4px solid ' + (isItem ? '#ff9800' : '#1976d2') + '; box-shadow:0 1px 3px rgba(0,0,0,0.1); display:flex; justify-content:space-between; align-items:center;';
 
       var infoDiv = document.createElement('div');
       infoDiv.innerHTML = '<strong style="color:#b71c1c;">' + rec.no + ' - ' + rec.name + '</strong> ' + pBadge + '<br>' +
@@ -1135,7 +1146,6 @@
     }
   }
 
-  // वस्तु/सामग्री दान रजिस्टर (Admin View)
   function openPhysicalItemsList() {
     renderItemsList();
     showScreen('screen-items-list');
@@ -1150,7 +1160,8 @@
     var itemReceipts = [];
     for (var i = 0; i < receipts.length; i++) {
       var r = receipts[i];
-      if (r.type === 'item') {
+      var isItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
+      if (isItem) {
         var match = !searchText || 
           (r.itemName && r.itemName.toLowerCase().indexOf(searchText) !== -1) ||
           (r.name && r.name.toLowerCase().indexOf(searchText) !== -1) ||
@@ -1212,7 +1223,6 @@
     }
   }
 
-  // Users & हिसाब
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -1224,11 +1234,13 @@
       var tot = 0;
       var itemCount = 0;
       for (var j = 0; j < receipts.length; j++) {
-        if (receipts[j].code === u.code) {
-          if (receipts[j].type === 'item') {
+        var r = receipts[j];
+        if (r.code === u.code) {
+          var isItem = (r.type === 'item') || (r.itemName && r.itemName.trim() !== "");
+          if (isItem) {
             itemCount++;
           } else {
-            tot += Number(receipts[j].amt || 0);
+            tot += Number(r.amt || 0);
           }
         }
       }
@@ -1413,6 +1425,7 @@
     }
   }
 
+  // पेज लोड होने पर URL पैरामीटर (?id=...) की जांच
   window.addEventListener('load', function() {
     if (!currentDurgaImg) {
       currentDurgaImg = DEFAULT_DURGA;
