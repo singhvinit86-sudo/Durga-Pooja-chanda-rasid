@@ -186,12 +186,17 @@
       <button class="icon-btn" onclick="doLogout()">⏻</button>
     </div>
 
-    <div style="padding: 14px 16px; background: #e8f5e9; margin: 12px 16px; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
-      <div class="user-circle" id="usr-code-avatar">A</div>
-      <div>
-        <h3 id="usr-name-show" style="font-size: 17px;">कार्यकर्ता</h3>
-        <p style="font-size: 12px; color: #555;">रसीद कोड: <strong id="usr-code-show" style="color: #b71c1c;">A</strong></p>
+    <div style="padding: 14px 16px; background: #e8f5e9; margin: 12px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="user-circle" id="usr-code-avatar">A</div>
+        <div>
+          <h3 id="usr-name-show" style="font-size: 17px;">कार्यकर्ता</h3>
+          <p style="font-size: 12px; color: #555;">रसीद कोड: <strong id="usr-code-show" style="color: #b71c1c;">A</strong></p>
+        </div>
       </div>
+      <button onclick="openUserChangePass()" style="background: #fff; border: 1px solid #c8e6c9; border-radius: 6px; padding: 6px 10px; font-size: 12px; font-weight: bold; color: #2e7d32; cursor: pointer;">
+        🔑 पासवर्ड बदलें
+      </button>
     </div>
 
     <div class="collector-passbook">
@@ -221,6 +226,35 @@
 
     <div style="padding: 16px; margin-top: auto;">
       <button class="btn" onclick="doLogout()">लॉगआउट</button>
+    </div>
+  </div>
+
+  <!-- 4.1 USER CHANGE PASSWORD SCREEN -->
+  <div id="screen-user-change-pass" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="showScreen('screen-user')">⬅️</button> पासवर्ड बदलें</h2>
+    </div>
+    <div style="padding: 20px;">
+      <div style="background: #fff3e0; border-left: 4px solid #f57c00; padding: 10px 14px; border-radius: 4px; margin-bottom: 16px; font-size: 13px; color: #333;">
+        कृपया अपना वर्तमान (पुराना) पासवर्ड और नया पासवर्ड दर्ज करें।
+      </div>
+
+      <div class="form-group">
+        <label>पुराना पासवर्ड *</label>
+        <input type="password" id="u-old-pass" class="form-input" placeholder="वर्तमान पासवर्ड" />
+      </div>
+
+      <div class="form-group">
+        <label>नया पासवर्ड *</label>
+        <input type="password" id="u-new-pass" class="form-input" placeholder="नया पासवर्ड (उदा. 4 अंक)" />
+      </div>
+
+      <div class="form-group">
+        <label>नया पासवर्ड दोबारा दर्ज करें *</label>
+        <input type="password" id="u-confirm-pass" class="form-input" placeholder="पासवर्ड कन्फर्म करें" />
+      </div>
+
+      <button class="btn btn-green" onclick="changeOwnPassword()">💾 पासवर्ड अपडेट करें</button>
     </div>
   </div>
 
@@ -487,7 +521,7 @@
 
   setInterval(fetchFromFirebase, 5000);
 
-  // आपकी दी हुई दुर्गा जी की इमेज
+  // डिफ़ॉल्ट दुर्गा जी की इमेज
   var DEFAULT_DURGA = "durga.png";
   var currentDurgaImg = DEFAULT_DURGA;
 
@@ -525,7 +559,6 @@
     var storedU = localStorage.getItem('durga_users');
     if (storedU) {
       users = JSON.parse(storedU);
-      // सुनिश्चित करें कि paidAmt सभी यूज़र में मौजूद हो
       users.forEach(function(u) { if (typeof u.paidAmt === 'undefined') u.paidAmt = 0; });
     }
   } catch(e) {}
@@ -547,7 +580,7 @@
       document.getElementById('inp-pass').placeholder = 'Admin Password';
     } else {
       document.getElementById('inp-mobile').placeholder = 'User: 9876543210';
-      document.getElementById('inp-pass').placeholder = 'User Password (1234)';
+      document.getElementById('inp-pass').placeholder = 'User Password';
     }
   }
 
@@ -591,7 +624,7 @@
         updateUserPassbook();
         showScreen('screen-user');
       } else {
-        alert("गलत User पासवर्ड! (Default: 1234)");
+        alert("गलत User पासवर्ड!");
       }
     }
   }
@@ -610,11 +643,61 @@
     }
   }
 
+  // यूज़र द्वारा खुद पासवर्ड बदलने का फ़ंक्शन
+  function openUserChangePass() {
+    document.getElementById('u-old-pass').value = '';
+    document.getElementById('u-new-pass').value = '';
+    document.getElementById('u-confirm-pass').value = '';
+    showScreen('screen-user-change-pass');
+  }
+
+  function changeOwnPassword() {
+    if (!currentUser) return;
+
+    var oldP = document.getElementById('u-old-pass').value.trim();
+    var newP = document.getElementById('u-new-pass').value.trim();
+    var confP = document.getElementById('u-confirm-pass').value.trim();
+
+    if (!oldP || !newP || !confP) {
+      alert("कृपया सभी फ़ील्ड भरें!");
+      return;
+    }
+
+    if (oldP !== currentUser.pass && !(currentUser.pass === undefined && oldP === '1234')) {
+      alert("वर्तमान (पुराना) पासवर्ड गलत है!");
+      return;
+    }
+
+    if (newP.length < 4) {
+      alert("नया पासवर्ड कम से कम 4 अक्षरों का होना चाहिए!");
+      return;
+    }
+
+    if (newP !== confP) {
+      alert("नया पासवर्ड और कन्फर्म पासवर्ड मेल नहीं खा रहे हैं!");
+      return;
+    }
+
+    // यूज़र सूची और करंट यूज़र में पासवर्ड अपडेट करें
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].id === currentUser.id || users[i].code === currentUser.code) {
+        users[i].pass = newP;
+        currentUser.pass = newP;
+        break;
+      }
+    }
+
+    localStorage.setItem('durga_users', JSON.stringify(users));
+    syncToFirebase("users", users);
+
+    alert("आपका पासवर्ड सफलतापूर्वक बदल दिया गया है!");
+    showScreen('screen-user');
+  }
+
   // कार्यकर्ता का सटीक पासबुक हिसाब
   function updateUserPassbook() {
     if (!currentUser) return;
     
-    // वर्तमान कार्यकर्ता का ताजा डेटा प्राप्त करें
     var freshU = users.find(function(x) { return x.code === currentUser.code; }) || currentUser;
     
     var tot = 0;
@@ -894,7 +977,7 @@
     }
   }
 
-  // Users & हिसाब: वॉलेट मॉडल जिसमें आंशिक (Partial) जमा सही काम करता है
+  // Users & हिसाब
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -986,7 +1069,6 @@
     }
   }
 
-  // पैसा जमा लेने का सुधरा हुआ सटीक फ़ंक्शन:
   function adminSettleCash(code, name, pending) {
     var val = prompt("'" + name + "' से प्राप्त हुई राशि (रु.) दर्ज करें:\n(कुल बकाया: रु. " + pending + ")", pending);
     if (!val) return;
@@ -1133,3 +1215,4 @@
 
 </body>
 </html>
+
