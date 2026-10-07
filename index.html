@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>नवयुवा दुर्गा पूजा समिति - चंदा व आय-व्यय ऐप</title>
+  <title>नवयुवा दुर्गा पूजा समिति - चंदा व दान ऐप</title>
   <meta name="theme-color" content="#b71c1c" />
 
-  <!-- PDF Generation Libraries -->
+  <!-- PDF Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
@@ -34,9 +34,9 @@
     .form-input { width: 100%; padding: 10px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 14px; outline: none; }
     .form-input:focus { border-color: #d32f2f; }
 
-    /* Type selector radio tabs */
-    .type-pill-wrap { display: flex; gap: 6px; margin-bottom: 12px; }
-    .type-pill { flex: 1; text-align: center; padding: 8px 4px; border: 1.5px solid #dcdde1; border-radius: 6px; font-size: 12.5px; font-weight: bold; cursor: pointer; background: #fff; color: #555; }
+    /* Type selector tabs (नकद / ऑनलाइन / वस्तु दान) */
+    .type-pill-wrap { display: flex; gap: 6px; margin-bottom: 14px; }
+    .type-pill { flex: 1; text-align: center; padding: 9px 4px; border: 1.5px solid #dcdde1; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; background: #fff; color: #555; }
     .type-pill.active { border-color: #b71c1c; background: #ffebee; color: #b71c1c; }
 
     /* Splash Screen */
@@ -66,7 +66,7 @@
     .collector-passbook { background: #fffdf5; border: 1.5px solid #ffe082; border-radius: 10px; padding: 12px 14px; margin: 12px 16px; }
     .passbook-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; gap: 6px; margin-top: 8px; }
     .passbook-item { padding: 6px 4px; border-radius: 6px; background: #ffffff; border: 1px solid #f1f2f6; }
-    .passbook-item .val { font-size: 15px; font-weight: 800; }
+    .passbook-item .val { font-size: 14px; font-weight: 800; }
     .passbook-item .lbl { font-size: 10px; color: #666; font-weight: 700; margin-top: 2px; }
 
     /* Receipt Card */
@@ -90,9 +90,9 @@
     .cancelled-tag { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; }
     .mode-tag { background: #e0f2fe; color: #0284c7; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 800; border: 1px solid #bae6fd; }
 
-    /* Receipt Online QR display */
+    /* Receipt QR Wrap */
     .receipt-qr-wrap { text-align: center; margin: 10px auto 4px auto; padding: 8px; background: #fffdf5; border: 1.5px dashed #b71c1c; border-radius: 8px; max-width: 220px; }
-    .receipt-qr-wrap img { width: 110px; height: 110px; object-fit: contain; display: block; margin: 0 auto 4px auto; }
+    .receipt-qr-wrap img { width: 115px; height: 115px; object-fit: contain; display: block; margin: 0 auto 4px auto; }
     .receipt-qr-wrap span { font-size: 10px; font-weight: bold; color: #b71c1c; display: block; }
 
     @media print {
@@ -178,7 +178,7 @@
         <div class="summary-grid">
           <div class="sum-box">
             <div class="sum-val" style="color: #2e7d32;" id="adm-sum-income">₹0</div>
-            <div class="sum-lbl">कुल वैध चंदा</div>
+            <div class="sum-lbl">कुल वैध नकद/UPI</div>
           </div>
           <div class="sum-box">
             <div class="sum-val" style="color: #c62828;" id="adm-sum-expense">₹0</div>
@@ -265,7 +265,7 @@
     </div>
   </div>
 
-  <!-- 5. CREATE RECEIPT FORM -->
+  <!-- 5. CREATE RECEIPT FORM (Admin & User Both) -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> रसीद बनाएं</h2>
@@ -295,17 +295,17 @@
         <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
       </div>
 
-      <!-- नकद / ऑनलाइन के लिए राशि इनपुट -->
+      <!-- नकद व ऑनलाइन के लिए राशि -->
       <div class="form-group" id="grp-money">
         <label>सहयोग राशि (रु.) *</label>
         <input type="number" id="r-amt" class="form-input" placeholder="501, 1100, 2100..." />
       </div>
 
-      <!-- वस्तु दान के लिए समर्पित वस्तु का विवरण -->
+      <!-- वस्तु दान के लिए फील्ड्स -->
       <div id="grp-item-fields" style="display: none;">
         <div class="form-group">
           <label>समर्पित वस्तु / सेवा का नाम व विवरण *</label>
-          <input type="text" id="r-item-name" class="form-input" placeholder="उदा. चुनरी, मूर्ति श्रृंगार, 5 लीटर घी, टेंट सेवा" />
+          <input type="text" id="r-item-name" class="form-input" placeholder="उदा. चुनरी, 5L तेल/घी, मूर्ति श्रृंगार, टेंट सेवा" />
         </div>
         <div class="form-group">
           <label>अनुमानित मूल्य ₹ (वैकल्पिक)</label>
@@ -370,12 +370,13 @@
               <td style="font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-type-label" style="font-weight: bold; color: #0284c7;">नकद (Cash)</td>
             </tr>
-            <!-- Dynamically switched between Amount vs Item description -->
+            <!-- Row for Cash/Online Amount -->
             <tr id="pv-row-amount" style="background: #ffe082;">
               <td style="font-weight: bold; color: #b71c1c; font-size: 14px;">सहयोग राशि</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-amt" style="font-weight: 900; font-size: 19px; color: #b71c1c;">-</td>
             </tr>
+            <!-- Row for Goods/Item Donation -->
             <tr id="pv-row-item" style="display: none; background: #fff3e0;">
               <td style="font-weight: bold; color: #b71c1c; font-size: 13px;">समर्पित वस्तु</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
@@ -511,7 +512,7 @@
     <div id="users-list-box" style="padding: 14px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 11. SETTINGS -->
+  <!-- 11. SETTINGS & QR MANAGEMENT -->
   <div id="screen-settings" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Settings</h2>
@@ -573,7 +574,7 @@
 
 <script>
   // =========================================================================
-  // FIREBASE CONFIGURATION
+  // FIREBASE CONFIGURATION & REAL-TIME SYNC
   // =========================================================================
   var FIREBASE_DB_URL = "https://navyuva-durga-pooja-samiti-default-rtdb.firebaseio.com/";
 
@@ -635,10 +636,10 @@
   setInterval(fetchFromFirebase, 5000);
 
   // डिफ़ॉल्ट Base64 SVG इमेज (माँ दुर्गा)
-  var DEFAULT_DURGA = "durga.png";
+  var DEFAULT_DURGA = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MDAgNTAwIj48ZGVmcz48cmFkaWFsR3JhZGllbnQgaWQ9ImciIGN4PSI1MCUiIGN5PSI1MCUiIHI9IjUwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZjNiMCIvPjxzdG9wIG9mZnNldD0iNjAlIiBzdG9wLWNvbG9yPSIjZmY5ODAwIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjYjcxYzFjIi8+PC9yYWRpYWxHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjUwMCIgaGVpZ2h0PSI1MDAiIGZpbGw9InVybCgjZykiLz48Y2lyY2xlIGN4PSIyNTAiIGN5PSIyNTAiIHI9IjIzMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZlYTAwIiBzdHJva2Utd2lkdGg9IjgiLz48ZyBmaWxsPSIjZmZkNzAwIj48cG9seWdvbiBwb2ludHM9IjI1MCw1MCAzMTAsMTcwIDI1MCwxNTAgMTkwLDE3MCIvPjxjaXJjbGUgY3g9IjI1MCIgY3k9IjEyMCIgcj0iMTQiIGZpbGw9IiNkMzJmMmYiLz48L2c+PHBhdGggZD0iTTE3MCAxOTAgUTI1MCAzNDAgMzMwIDE5MCBaIiBmaWxsPSIjZmZlMGIyIi8+PGVsbGlwc2UgY3g9IjI1MCIgY3k9IjE5MCIgcng9IjkiIHJ5PSIxOCIgZmlsbD0iI2I3MWMxYyIvPjxjaXJjbGUgY3g9IjI1MCIgY3k9IjE5MCIgcj0iNCIgZmlsbD0iI2ZmZDcwMCIvPjxlbGxpcHNlIGN4PSIyMTAiIGN5PSIyMjUiIHJ4PSIyMiIgcnk9IjExIiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiMxMTEiIHN0cm9rZS13aWR0aD0iMyIvPjxjaXJjbGUgY3g9IjIxMCIgY3k9IjIyNSIgcj0iOCIgZmlsbD0iIzExMSIvPjxlbGxpcHNlIGN4PSIyOTAiIGN5PSIyMjUiIHJ4PSIyMiIgcnk9IjExIiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiMxMTEiIHN0cm9rZS13aWR0aD0iMyIvPjxjaXJjbGUgY3g9IjI5MCIgY3k9IjIyNSIgcj0iOCIgZmlsbD0iIzExMSIvPjxwYXRoIGQ9Ik0xOTAgMjEwIFEyMTAgMTk1IDIzMCAyMTUiIHN0cm9rZT0iIzExMSIgc3Ryb2tlLXdpZHRoPSI0IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTI3MCAyMTUgUTI5MCAxOTUgMzEwIDIxMCIgc3Ryb2tlPSIjMTExIiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSIyNzAiIGN5PSIyNTUiIHI9IjE0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmQ3MDAiIHN0cm9rZS13aWR0aD0iNCIvPjxwYXRoIGQ9Ik0yMjUgMjg1IFEyNTAgMzA1IDI3NSAyODUgUTI1MCAyOTUgMjI1IDI4NSBaIiBmaWxsPSIjYjcxYzFjIi8+PHBhdGggZD0iTTI1MCAyNTAgTDI1MCA0MzAgTTIyMCAyODAgTDI4MCAyODAgTTIyNSA0MTAgTDI1MCA0MzAgTDI3NSA0MTAiIHN0cm9rZT0iI2ZmZDcwMCIgc3Ryb2tlLXdpZHRoPSIxMCIgZmlsbD0ibm9uZSIvPjx0ZXh0IHg9IjI1MCIgeT0iNDc1IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgZm9udC1zaXplPSIyOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmVhMDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPnx8IOCnleCliyDgpK7gpL7gpIEg4KSm4KWB4KSw4KWN4KSX4KWHIHx8PC90ZXh0Pjwvc3ZnPg==";
   var currentDurgaImg = localStorage.getItem('durga_app_img') || DEFAULT_DURGA;
 
-  // डिफ़ॉल्ट समिति UPI QR कोड (QRServer API Generated)
+  // डिफ़ॉल्ट समिति UPI QR कोड
   var DEFAULT_QR = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=7905106011@okbizaxis%26pn=NavYuva%20Durga%20Puja%20Samiti";
   var currentQRImg = localStorage.getItem('durga_samiti_qr') || DEFAULT_QR;
 
@@ -819,7 +820,7 @@
     document.getElementById('adm-sum-balance').innerText = '₹' + balance;
   }
 
-  // कार्यकर्ता पासबुक (केवल नकद पर आधारित)
+  // कार्यकर्ता पासबुक (केवल नकद कलेक्शन का हिसाब)
   function updateUserPassbook() {
     if (!currentUser) return;
     var tot = 0, paid = 0, pend = 0;
@@ -882,7 +883,6 @@
     var dateStr = String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
     
     var collectorName = currentUser ? currentUser.name : 'समिति अध्यक्ष / एडमिन';
-    // ऑनलाइन और वस्तु दान स्वतः 'जमा' (Received) माने जाते हैं
     var isRec = (selectedType === 'ONLINE' || selectedType === 'ITEM') ? true : (!currentUser);
 
     currentReceipt = {
@@ -921,7 +921,6 @@
     var previewImg = document.getElementById('receipt-preview-img');
     if (previewImg) previewImg.src = currentDurgaImg || DEFAULT_DURGA;
 
-    // Type label and row switching
     var typeLbl = document.getElementById('pv-type-label');
     var rowAmt = document.getElementById('pv-row-amount');
     var rowItem = document.getElementById('pv-row-item');
@@ -932,7 +931,11 @@
       rowAmt.style.display = 'table-row';
       rowItem.style.display = 'none';
       document.getElementById('pv-amt').innerText = 'रु. ' + r.amt + '/- (ऑनलाइन प्राप्त)';
-      qrSec.style.display = 'block'; // QR code show on online receipt
+      
+      // Online receipt me samiti ka QR code show karein
+      var pvQrImg = document.getElementById('pv-qr-img');
+      if (pvQrImg) pvQrImg.src = currentQRImg || DEFAULT_QR;
+      qrSec.style.display = 'block';
     } else if (r.type === 'ITEM') {
       typeLbl.innerText = '🎁 वस्तु दान (Goods Donation)';
       rowAmt.style.display = 'none';
@@ -1704,7 +1707,7 @@
               if (match) {
                 showPreview(match, true);
               } else {
-                alert("रसीद संख्या [" + recId + "] सर्ver पर नहीं मिली!");
+                alert("रसीद संख्या [" + recId + "] सर्वर पर नहीं मिली!");
               }
             }
           })
