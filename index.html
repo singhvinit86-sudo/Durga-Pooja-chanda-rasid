@@ -49,6 +49,11 @@
     .form-input { width: 100%; padding: 10px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 14px; outline: none; }
     .form-input:focus { border-color: #d32f2f; }
 
+    /* Quick Amount Badges */
+    .quick-amt-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .quick-amt-chip { background: #fff3e0; border: 1px solid #ffb74d; color: #b71c1c; padding: 5px 10px; border-radius: 16px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .quick-amt-chip:active { background: #b71c1c; color: white; }
+
     /* Type selector tabs */
     .type-pill-wrap { display: flex; gap: 6px; margin-bottom: 14px; }
     .type-pill { flex: 1; text-align: center; padding: 9px 4px; border: 1.5px solid #dcdde1; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; background: #fff; color: #555; }
@@ -100,11 +105,9 @@
     .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 13px; }
     .rec-table td { padding: 6px 4px; border-bottom: 1px dashed #ffe082; }
 
-    /* Circular Committee Stamp Seal */
-    .seal-wrap { width: 78px; height: 78px; border: 2.5px solid #b71c1c; border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: #b71c1c; background: #fffcf8; outline: 1.5px dashed #b71c1c; outline-offset: -4px; transform: rotate(-5deg); box-shadow: 0 0 4px rgba(183,28,28,0.15); flex-shrink: 0; }
-    .seal-top { font-size: 7px; font-weight: 900; line-height: 1.1; letter-spacing: -0.2px; text-transform: uppercase; }
-    .seal-mid { font-size: 11px; font-weight: 900; color: #b71c1c; border-top: 1px solid #b71c1c; border-bottom: 1px solid #b71c1c; padding: 1px 4px; margin: 2px 0; letter-spacing: 0.5px; }
-    .seal-bot { font-size: 7.5px; font-weight: 800; line-height: 1.1; }
+    /* Circular Committee Stamp Seal with Curved SVG Text */
+    .seal-wrap { width: 88px; height: 88px; flex-shrink: 0; transform: rotate(-6deg); }
+    .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.2)); }
 
     /* Certificate Card Styling */
     .cert-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
@@ -125,7 +128,6 @@
     .receipt-qr-wrap img { width: 115px; height: 115px; object-fit: contain; display: block; margin: 0 auto 4px auto; }
     .receipt-qr-wrap span { font-size: 10px; font-weight: bold; color: #b71c1c; display: block; }
 
-    /* Tamper error message box */
     #tamper-error-box { display: none; padding: 30px 20px; text-align: center; }
 
     @media print {
@@ -202,7 +204,6 @@
     </div>
 
     <div style="padding: 14px 16px 0 16px;">
-      <!-- दैनिक आय-व्यय सारांश -->
       <div class="summary-card">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ffb74d; padding-bottom: 4px;">
           <span style="font-weight: bold; font-size: 13px; color: #b71c1c;">📊 दैनिक आय-व्यय सारांश</span>
@@ -310,7 +311,7 @@
     </div>
   </div>
 
-  <!-- 5. CREATE RECEIPT FORM -->
+  <!-- 5. CREATE RECEIPT FORM WITH QUICK SHORTCUT AMOUNTS (51, 101, 201, 501, 1101) -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> रसीद बनाएं</h2>
@@ -339,9 +340,17 @@
         <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
       </div>
 
+      <!-- सहयोग राशि व 51, 101, 201, 501, 1101 शॉर्टकट्स -->
       <div class="form-group" id="grp-money">
         <label>सहयोग राशि (रु.) *</label>
-        <input type="number" id="r-amt" class="form-input" placeholder="501, 1100, 2100..." />
+        <input type="number" id="r-amt" class="form-input" placeholder="राशि दर्ज करें या नीचे से चुनें" />
+        <div class="quick-amt-group">
+          <span class="quick-amt-chip" onclick="setQuickAmount(51)">₹51</span>
+          <span class="quick-amt-chip" onclick="setQuickAmount(101)">₹101</span>
+          <span class="quick-amt-chip" onclick="setQuickAmount(201)">₹201</span>
+          <span class="quick-amt-chip" onclick="setQuickAmount(501)">₹501</span>
+          <span class="quick-amt-chip" onclick="setQuickAmount(1101)">₹1101</span>
+        </div>
       </div>
 
       <div id="grp-item-fields" style="display: none;">
@@ -359,7 +368,7 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW (DIRECT DONOR VIEW: ONLY SAVE/DOWNLOAD AVAILABLE) -->
+  <!-- 6. RECEIPT PREVIEW (WORDS CONVERSION & CURVED STAMP MOHAR) -->
   <div id="screen-preview" class="screen">
     <div class="top-bar" id="preview-top-bar">
       <h2><button class="icon-btn" id="preview-back-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
@@ -410,23 +419,29 @@
             </tr>
             <tr>
               <td style="font-weight: bold; color: #880e4f;">मोबाइल नंबर</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td style="width: 8px; font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-phone">-</td>
             </tr>
             <tr>
               <td style="font-weight: bold; color: #880e4f;">पता / ग्राम</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td style="width: 8px; font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-addr">-</td>
             </tr>
             <tr>
               <td style="font-weight: bold; color: #880e4f;">दान माध्यम</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td style="width: 8px; font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-type-label" style="font-weight: bold; color: #0284c7;">नकद (Cash)</td>
             </tr>
             <tr id="pv-row-amount" style="background: #ffe082;">
               <td style="font-weight: bold; color: #b71c1c; font-size: 14px;">सहयोग राशि</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-amt" style="font-weight: 900; font-size: 19px; color: #b71c1c;">-</td>
+            </tr>
+            <!-- Row for Words Conversion (रुपये शब्दों में) -->
+            <tr id="pv-row-words" style="background: #fff8e1;">
+              <td style="font-weight: bold; color: #880e4f; font-size: 12px;">रुपये शब्दों में</td>
+              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td id="pv-words" style="font-weight: bold; color: #b71c1c; font-size: 13px;">-</td>
             </tr>
             <tr id="pv-row-item" style="display: none; background: #fff3e0;">
               <td style="font-weight: bold; color: #b71c1c; font-size: 13px;">समर्पित वस्तु</td>
@@ -444,14 +459,47 @@
             🌺 माँ भगवती दुर्गा की कृपा आप एवं आपके परिवार पर सदैव बनी रहे। 🌺
           </div>
 
-          <!-- Bottom Footer Area with Circular Stamp & Signature -->
+          <!-- Bottom Footer Area with Curved SVG Stamp & Signature -->
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; padding: 0 4px 6px 4px; font-size: 12px; font-weight: bold;">
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+              
+              <!-- Curved SVG Mohar (नवयुवा दुर्गा पूजा समिति & मारकुंडी सोनभद्र circular) -->
               <div class="seal-wrap">
-                <span class="seal-top">नवयुवा दुर्गा पूजा समिति</span>
-                <span class="seal-mid">★ प्रमाणित ★</span>
-                <span class="seal-bot">मारकुंडी (सोनभद्र)</span>
+                <svg viewBox="0 0 160 160">
+                  <defs>
+                    <!-- Upper Arc Path (Clockwise) -->
+                    <path id="upper-arc" d="M 22,80 A 58,58 0 1,1 138,80" fill="none" />
+                    <!-- Lower Arc Path (Clockwise) -->
+                    <path id="lower-arc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
+                  </defs>
+                  
+                  <!-- Outer Double Rings -->
+                  <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
+                  <circle cx="80" cy="80" r="70" fill="none" stroke="#b71c1c" stroke-width="1.5" stroke-dasharray="3,2" />
+                  <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
+
+                  <!-- Top Curved Text: नवयुवा दुर्गा पूजा समिति -->
+                  <text font-size="11" font-weight="900" fill="#b71c1c">
+                    <textPath href="#upper-arc" startOffset="50%" text-anchor="middle">
+                      नवयुवा दुर्गा पूजा समिति
+                    </textPath>
+                  </text>
+
+                  <!-- Bottom Curved Text: मारकुंडी सोनभद्र -->
+                  <text font-size="10.5" font-weight="900" fill="#b71c1c">
+                    <textPath href="#lower-arc" startOffset="50%" text-anchor="middle">
+                      ★ मारकुंडी सोनभद्र ★
+                    </textPath>
+                  </text>
+
+                  <!-- Center Badge: प्रमाणित -->
+                  <rect x="42" y="70" width="76" height="20" rx="3" fill="#fff3f3" stroke="#b71c1c" stroke-width="1" />
+                  <text x="80" y="84" font-size="12" font-weight="900" fill="#b71c1c" text-anchor="middle">
+                    ★ प्रमाणित ★
+                  </text>
+                </svg>
               </div>
+
               <div style="font-size: 11px; color: #444; margin-top: 2px;">दिनांक : <strong id="pv-date">-</strong></div>
             </div>
 
@@ -464,7 +512,7 @@
       </div>
     </div>
 
-    <!-- BUTTONS SECTION: In donor mode, ONLY Download/Save PDF will show -->
+    <!-- BUTTONS SECTION -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;" id="preview-action-buttons">
       <button class="btn" style="background: #b71c1c;" id="btn-dl-pdf" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
@@ -518,10 +566,31 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 18px; padding: 0 8px;">
             <div style="text-align: left;">
-              <div class="seal-wrap">
-                <span class="seal-top">नवयुवा दुर्गा पूजा समिति</span>
-                <span class="seal-mid">★ प्रमाणित ★</span>
-                <span class="seal-bot">मारकुंडी (सोनभद्र)</span>
+              <!-- Mini Curved Stamp for Certificate -->
+              <div class="seal-wrap" style="width: 74px; height: 74px;">
+                <svg viewBox="0 0 160 160">
+                  <defs>
+                    <path id="cert-upper-arc" d="M 22,80 A 58,58 0 1,1 138,80" fill="none" />
+                    <path id="cert-lower-arc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
+                  </defs>
+                  <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
+                  <circle cx="80" cy="80" r="70" fill="none" stroke="#b71c1c" stroke-width="1.5" stroke-dasharray="3,2" />
+                  <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
+                  <text font-size="11" font-weight="900" fill="#b71c1c">
+                    <textPath href="#cert-upper-arc" startOffset="50%" text-anchor="middle">
+                      नवयुवा दुर्गा पूजा समिति
+                    </textPath>
+                  </text>
+                  <text font-size="10.5" font-weight="900" fill="#b71c1c">
+                    <textPath href="#cert-lower-arc" startOffset="50%" text-anchor="middle">
+                      ★ मारकुंडी सोनभद्र ★
+                    </textPath>
+                  </text>
+                  <rect x="42" y="70" width="76" height="20" rx="3" fill="#fff3f3" stroke="#b71c1c" stroke-width="1" />
+                  <text x="80" y="84" font-size="12" font-weight="900" fill="#b71c1c" text-anchor="middle">
+                    ★ प्रमाणित ★
+                  </text>
+                </svg>
               </div>
               <div style="font-size: 10px; color: #555; margin-top: 4px;">दिनांक: <strong id="cert-date">-</strong></div>
             </div>
@@ -730,6 +799,62 @@
   // FIREBASE CONFIGURATION & REAL-TIME SYNC
   // =========================================================================
   var FIREBASE_DB_URL = "https://navyuva-durga-pooja-samiti-default-rtdb.firebaseio.com/";
+
+  // Number to Hindi Words Function (संख्या से हिंदी शब्द)
+  function numberToHindiWords(num) {
+    var n = parseInt(num, 10);
+    if (isNaN(n) || n === 0) return 'शून्य रुपये';
+
+    var units = [
+      '', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस',
+      'ग्यारह', 'बारह', 'तेरह', 'चौदह', 'पंद्रह', 'सोलह', 'सत्रह', 'अठारह', 'उन्नीस', 'बीस',
+      'इक्कीस', 'बाईस', 'तेईस', 'चौबीस', 'पच्चीस', 'छब्बीस', 'सत्ताईस', 'अट्ठाईस', 'उनतीस', 'तीस',
+      'इकतीस', 'बत्तीस', 'तैंतीस', 'चौंतीस', 'पैंतीस', 'छत्तीस', 'सैंतीस', 'अड़तीस', 'उनतालीस', 'चालीस',
+      'इकतालीस', 'बयालीस', 'तैंतालीस', 'चवालीस', 'पैंतालीस', 'छियालीस', 'सैंतालीस', 'अड़तालीस', 'उनचास', 'पचास',
+      'इक्यावन', 'बावन', 'तिरेपन', 'चौवन', 'पचपन', 'छप्पन', 'सत्तावन', 'अट्ठावन', 'उनसठ', 'साठ',
+      'इकसठ', 'बासठ', 'तिरेसठ', 'चौंसठ', 'पैंसठ', 'छियासठ', 'सरसठ', 'अड़सठ', 'उनहत्तर', 'सत्तर',
+      'इकहत्तर', 'बहत्तर', 'तिहत्तर', 'चौहत्तर', 'पचहत्तर', 'छिहत्तर', 'सतहत्तर', 'अठहत्तर', 'उनासी', 'अस्सी',
+      'इक्यासी', 'बयासी', 'तिरासी', 'चौरासी', 'पचासी', 'छियासी', 'सत्तासी', 'अट्ठासी', 'नवासी', 'नब्बे',
+      'इक्यानवे', 'बानवे', 'तिरानवे', 'चौरानवे', 'पंचानवे', 'छियानवे', 'सत्तानवे', 'अट्ठानवे', 'निन्यानवे'
+    ];
+
+    function convertBelowHundred(val) {
+      return units[val] || '';
+    }
+
+    var str = '';
+
+    if (n >= 10000000) {
+      var cr = Math.floor(n / 10000000);
+      str += convertBelowHundred(cr) + ' करोड़ ';
+      n %= 10000000;
+    }
+    if (n >= 100000) {
+      var lk = Math.floor(n / 100000);
+      str += convertBelowHundred(lk) + ' लाख ';
+      n %= 100000;
+    }
+    if (n >= 1000) {
+      var th = Math.floor(n / 1000);
+      str += convertBelowHundred(th) + ' हजार ';
+      n %= 1000;
+    }
+    if (n >= 100) {
+      var hu = Math.floor(n / 100);
+      str += convertBelowHundred(hu) + ' सौ ';
+      n %= 100;
+    }
+    if (n > 0) {
+      str += convertBelowHundred(n) + ' ';
+    }
+
+    return str.trim() + ' रुपये मात्र';
+  }
+
+  function setQuickAmount(amt) {
+    var el = document.getElementById('r-amt');
+    if (el) el.value = amt;
+  }
 
   // TAMPER-PROOF SECURITY SIGNATURE GENERATOR
   function generateReceiptSig(r) {
@@ -1083,7 +1208,7 @@
     if (currentReceipt.type === 'ITEM') {
       desc = "समर्पित वस्तु: " + currentReceipt.itemDesc + (currentReceipt.itemVal ? " (अनुमानित मूल्य: ₹" + currentReceipt.itemVal + "/-)" : "");
     } else {
-      desc = "सहयोग राशि: ₹" + currentReceipt.amt + "/- (" + (currentReceipt.type === 'ONLINE' ? 'ऑनलाइन/UPI' : 'नकद') + ")";
+      desc = "सहयोग राशि: ₹" + currentReceipt.amt + "/- (" + (currentReceipt.type === 'ONLINE' ? 'ऑनलाइन/UPI' : 'नकद') + ") [" + numberToHindiWords(currentReceipt.amt) + "]";
     }
     document.getElementById('cert-donor-desc').innerText = desc;
     document.getElementById('cert-date').innerText = currentReceipt.date;
@@ -1402,7 +1527,6 @@
     showPreview(currentReceipt, false);
   }
 
-  // UPDATED showPreview: STOPS FLASH & ONLY SHOWS DOWNLOAD IN DONOR VIEW
   function showPreview(r, isDonorView) {
     currentReceipt = r;
     document.getElementById('tamper-error-box').style.display = 'none';
@@ -1420,14 +1544,17 @@
 
     var typeLbl = document.getElementById('pv-type-label');
     var rowAmt = document.getElementById('pv-row-amount');
+    var rowWords = document.getElementById('pv-row-words');
     var rowItem = document.getElementById('pv-row-item');
     var qrSec = document.getElementById('pv-qr-section');
 
     if (r.type === 'ONLINE') {
       typeLbl.innerText = '📲 ऑनलाइन / UPI';
       rowAmt.style.display = 'table-row';
+      rowWords.style.display = 'table-row';
       rowItem.style.display = 'none';
       document.getElementById('pv-amt').innerText = 'रु. ' + r.amt + '/- (ऑनलाइन प्राप्त)';
+      document.getElementById('pv-words').innerText = numberToHindiWords(r.amt);
       
       var pvQrImg = document.getElementById('pv-qr-img');
       if (pvQrImg) pvQrImg.src = currentQRImg || DEFAULT_QR;
@@ -1435,15 +1562,18 @@
     } else if (r.type === 'ITEM') {
       typeLbl.innerText = '🎁 वस्तु दान (Goods Donation)';
       rowAmt.style.display = 'none';
+      rowWords.style.display = 'none';
       rowItem.style.display = 'table-row';
-      var valNote = r.itemVal ? ' (अनुमानित मूल्य: रु. ' + r.itemVal + '/-)' : '';
+      var valNote = r.itemVal ? ' (अनुमानित मूल्य: रु. ' + r.itemVal + '/- - ' + numberToHindiWords(r.itemVal) + ')' : '';
       document.getElementById('pv-item-desc').innerText = r.itemDesc + valNote;
       qrSec.style.display = 'none';
     } else {
       typeLbl.innerText = '💵 नकद (Cash)';
       rowAmt.style.display = 'table-row';
+      rowWords.style.display = 'table-row';
       rowItem.style.display = 'none';
       document.getElementById('pv-amt').innerText = 'रु. ' + r.amt + '/-';
+      document.getElementById('pv-words').innerText = numberToHindiWords(r.amt);
       qrSec.style.display = 'none';
     }
 
@@ -1454,7 +1584,6 @@
       badgeBox.innerHTML = '<span style="background: linear-gradient(135deg, #b71c1c, #d32f2f); color: #ffea00; font-size: 13px; font-weight: bold; padding: 4px 18px; border-radius: 20px; display: inline-block; margin-bottom: 6px;">✨ ' + (r.type === 'ITEM' ? 'वस्तु दान समर्पित रसीद' : 'चंदा सहयोग रसीद') + ' ✨</span>';
     }
 
-    // DONOR VIEW RESTRICTIONS: ONLY DOWNLOAD/SAVE BUTTON VISIBLE
     var certBtn = document.getElementById('btn-view-cert');
     var shareBtn = document.getElementById('btn-share-wa');
     var printBtn = document.getElementById('btn-print');
@@ -1527,7 +1656,6 @@
     }
   }
 
-  // WHATSAPP SHARE GENERATES SECURE TAMPER-PROOF SIGNATURE IN LINK
   function shareWhatsApp() {
     if (!currentReceipt) return;
     if (currentReceipt.isCancelled) {
@@ -1541,7 +1669,7 @@
 
     var donationLine = (currentReceipt.type === 'ITEM') 
       ? ("समर्पित वस्तु: *" + currentReceipt.itemDesc + "* " + (currentReceipt.itemVal ? "(मूल्य: ₹" + currentReceipt.itemVal + "/-)" : ""))
-      : ("सहयोग राशि: *रु. " + currentReceipt.amt + "/-* (" + (currentReceipt.type === 'ONLINE' ? 'ऑनलाइन/UPI' : 'नकद') + ")");
+      : ("सहयोग राशि: *रु. " + currentReceipt.amt + "/-* (" + numberToHindiWords(currentReceipt.amt) + ")");
 
     var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n\n" +
       "प्रिय *" + currentReceipt.name + "* जी,\n" +
@@ -1647,7 +1775,7 @@
       
       var amtOrItemDisplay = (rec.type === 'ITEM')
         ? '<strong style="color:#d84315;">🎁 ' + rec.itemDesc + (rec.itemVal ? ' (₹' + rec.itemVal + ')' : '') + '</strong>'
-        : '<strong style="' + (rec.isCancelled ? 'color:#888; text-decoration:line-through;' : 'color:#2e7d32;') + '">रु. ' + rec.amt + '</strong>';
+        : '<strong style="' + (rec.isCancelled ? 'color:#888; text-decoration:line-through;' : 'color:#2e7d32;') + '">रु. ' + rec.amt + '</strong> <small style="color:#666;">(' + numberToHindiWords(rec.amt) + ')</small>';
 
       infoDiv.innerHTML = '<strong style="color:#b71c1c;">' + rec.no + ' - ' + rec.name + ' <span style="font-size:11px; color:#b71c1c;">[' + rec.code + ']</span></strong> ' + modeBadge + cancelledText + '<br>' +
         '<small style="color:#555;">' + rec.phone + ' • ' + rec.date + '<br>रसीद कर्ता: ' + (rec.by || 'समिति') + ' (' + rec.code + ')</small><br>' +
@@ -1811,10 +1939,11 @@
     }
 
     var csvContent = "\uFEFF";
-    csvContent += "रसीद संख्या,दानदाता का नाम,मोबाइल नंबर,पता,माध्यम,सहयोग राशि (रु.),समर्पित वस्तु,अनुमानित मूल्य,दिनांक,रसीद कर्ता,कोड,जमा स्थिति,रद्द स्थिति\n";
+    csvContent += "रसीद संख्या,दानदाता का नाम,मोबाइल नंबर,पता,माध्यम,सहयोग राशि (रु.),राशि शब्दों में,समर्पित वस्तु,अनुमानित मूल्य,दिनांक,रसीद कर्ता,कोड,जमा स्थिति,रद्द स्थिति\n";
 
     receipts.forEach(function(r) {
       var modeName = (r.type === 'ONLINE') ? 'ऑनलाइन/UPI' : ((r.type === 'ITEM') ? 'वस्तु दान' : 'नकद');
+      var wordsStr = (r.type !== 'ITEM') ? numberToHindiWords(r.amt) : '';
       var row = [
         '"' + (r.no || '') + '"',
         '"' + (r.name || '').replace(/"/g, '""') + '"',
@@ -1822,6 +1951,7 @@
         '"' + (r.addr || '').replace(/"/g, '""') + '"',
         '"' + modeName + '"',
         r.amt || 0,
+        '"' + wordsStr + '"',
         '"' + (r.itemDesc || '').replace(/"/g, '""') + '"',
         r.itemVal || 0,
         '"' + (r.date || '') + '"',
@@ -2167,7 +2297,6 @@
     var recSig = urlParams.get('sig');
 
     if (recId) {
-      // Hide top sync bar on donor view
       var syncBar = document.getElementById('sync-bar');
       if (syncBar) syncBar.style.display = 'none';
 
@@ -2177,14 +2306,13 @@
           return;
         }
 
-        // Strict Hash / Signature Check: If changed by 1 character, reject!
         var expectedSig = generateReceiptSig(foundRec);
         if (!recSig || recSig !== expectedSig) {
           showTamperError();
           return;
         }
 
-        showPreview(foundRec, true); // true = Direct Donor view (Only Save/Download PDF)
+        showPreview(foundRec, true);
       }
 
       function showTamperError() {
