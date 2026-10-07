@@ -317,7 +317,7 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन (दानदाता के लिए केवल Download और Print दिखेगा) -->
+    <!-- बटन सेक्शन (केवल Download, WhatsApp, Print और Home) -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
       <button class="btn" style="background: #b71c1c;" id="btn-dl-pdf" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
@@ -678,7 +678,7 @@
     showPreview(currentReceipt, false);
   }
 
-  // showPreview: isDonorView = true होने पर सिर्फ PDF और Print बटन दिखेंगे
+  // showPreview: isDonorView = true होने पर केवल PDF और Print दिखेगा
   function showPreview(r, isDonorView) {
     currentReceipt = r;
     document.getElementById('pv-no').innerText = r.no;
@@ -1126,13 +1126,12 @@
     var recId = urlParams.get('id');
 
     if (recId) {
-      // दानदाता का सीधा लिंक: ऊपरी सिंक बार छिपाएं
       var syncBar = document.getElementById('sync-bar');
       if (syncBar) syncBar.style.display = 'none';
 
       var found = receipts.find(function(r) { return r.no === recId; });
       if (found) {
-        showPreview(found, true); // true = केवल दानदाता व्यू
+        showPreview(found, true);
       } else if (FIREBASE_DB_URL) {
         var url = FIREBASE_DB_URL.replace(/\/$/, "") + "/receipts.json";
         fetch(url)
@@ -1142,7 +1141,7 @@
               var allRecs = Array.isArray(data) ? data : Object.values(data);
               var match = allRecs.find(function(x) { return x.no === recId; });
               if (match) {
-                showPreview(match, true); // true = केवल दानदाता व्यू
+                showPreview(match, true);
               } else {
                 alert("रसीद संख्या [" + recId + "] सर्वर पर नहीं मिली!");
               }
