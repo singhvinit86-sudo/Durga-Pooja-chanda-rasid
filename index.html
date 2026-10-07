@@ -311,7 +311,7 @@
     </div>
   </div>
 
-  <!-- 5. CREATE RECEIPT FORM WITH QUICK SHORTCUT AMOUNTS (51, 101, 201, 501, 1101) -->
+  <!-- 5. CREATE RECEIPT FORM -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> रसीद बनाएं</h2>
@@ -340,7 +340,6 @@
         <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
       </div>
 
-      <!-- सहयोग राशि व 51, 101, 201, 501, 1101 शॉर्टकट्स -->
       <div class="form-group" id="grp-money">
         <label>सहयोग राशि (रु.) *</label>
         <input type="number" id="r-amt" class="form-input" placeholder="राशि दर्ज करें या नीचे से चुनें" />
@@ -368,7 +367,7 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW (WORDS CONVERSION & CURVED STAMP MOHAR) -->
+  <!-- 6. RECEIPT PREVIEW -->
   <div id="screen-preview" class="screen">
     <div class="top-bar" id="preview-top-bar">
       <h2><button class="icon-btn" id="preview-back-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
@@ -437,7 +436,6 @@
               <td style="font-weight: bold; color: #b71c1c;">:</td>
               <td id="pv-amt" style="font-weight: 900; font-size: 19px; color: #b71c1c;">-</td>
             </tr>
-            <!-- Row for Words Conversion (रुपये शब्दों में) -->
             <tr id="pv-row-words" style="background: #fff8e1;">
               <td style="font-weight: bold; color: #880e4f; font-size: 12px;">रुपये शब्दों में</td>
               <td style="font-weight: bold; color: #b71c1c;">:</td>
@@ -463,36 +461,30 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; padding: 0 4px 6px 4px; font-size: 12px; font-weight: bold;">
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
               
-              <!-- Curved SVG Mohar (नवयुवा दुर्गा पूजा समिति & मारकुंडी सोनभद्र circular) -->
+              <!-- Curved SVG Mohar -->
               <div class="seal-wrap">
                 <svg viewBox="0 0 160 160">
                   <defs>
-                    <!-- Upper Arc Path (Clockwise) -->
                     <path id="upper-arc" d="M 22,80 A 58,58 0 1,1 138,80" fill="none" />
-                    <!-- Lower Arc Path (Clockwise) -->
                     <path id="lower-arc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
                   </defs>
                   
-                  <!-- Outer Double Rings -->
                   <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
                   <circle cx="80" cy="80" r="70" fill="none" stroke="#b71c1c" stroke-width="1.5" stroke-dasharray="3,2" />
                   <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
 
-                  <!-- Top Curved Text: नवयुवा दुर्गा पूजा समिति -->
                   <text font-size="11" font-weight="900" fill="#b71c1c">
                     <textPath href="#upper-arc" startOffset="50%" text-anchor="middle">
                       नवयुवा दुर्गा पूजा समिति
                     </textPath>
                   </text>
 
-                  <!-- Bottom Curved Text: मारकुंडी सोनभद्र -->
                   <text font-size="10.5" font-weight="900" fill="#b71c1c">
                     <textPath href="#lower-arc" startOffset="50%" text-anchor="middle">
                       ★ मारकुंडी सोनभद्र ★
                     </textPath>
                   </text>
 
-                  <!-- Center Badge: प्रमाणित -->
                   <rect x="42" y="70" width="76" height="20" rx="3" fill="#fff3f3" stroke="#b71c1c" stroke-width="1" />
                   <text x="80" y="84" font-size="12" font-weight="900" fill="#b71c1c" text-anchor="middle">
                     ★ प्रमाणित ★
@@ -566,7 +558,6 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 18px; padding: 0 8px;">
             <div style="text-align: left;">
-              <!-- Mini Curved Stamp for Certificate -->
               <div class="seal-wrap" style="width: 74px; height: 74px;">
                 <svg viewBox="0 0 160 160">
                   <defs>
@@ -704,7 +695,7 @@
     </div>
   </div>
 
-  <!-- 10. USERS LIST & हिसाब -->
+  <!-- 10. USERS LIST & हिसाब (FIXED PARTIAL COLLECTION / LEDGER) -->
   <div id="screen-users-list" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Users & हिसाब</h2>
@@ -800,10 +791,10 @@
   // =========================================================================
   var FIREBASE_DB_URL = "https://navyuva-durga-pooja-samiti-default-rtdb.firebaseio.com/";
 
-  // Number to Hindi Words Function (संख्या से हिंदी शब्द)
+  // Number to Hindi Words Function (21 = इक्कीस, 51 = इक्यावन, 101 = एक सौ एक...)
   function numberToHindiWords(num) {
     var n = parseInt(num, 10);
-    if (isNaN(n) || n === 0) return 'शून्य रुपये';
+    if (isNaN(n) || n === 0) return 'शून्य रुपये मात्र';
 
     var units = [
       '', 'एक', 'दो', 'तीन', 'चार', 'पाँच', 'छह', 'सात', 'आठ', 'नौ', 'दस',
@@ -969,9 +960,9 @@
   var adminPass = localStorage.getItem('durga_admin_pass') || '7905106011';
 
   var users = [
-    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', isActive: true },
-    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', isActive: true },
-    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', isActive: true }
+    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', deposited: 0, isActive: true },
+    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', deposited: 0, isActive: true },
+    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', deposited: 0, isActive: true }
   ];
   try {
     var storedU = localStorage.getItem('durga_users');
@@ -1439,17 +1430,23 @@
     document.getElementById('adm-sum-balance').innerText = '₹' + balance;
   }
 
+  // UPDATED: REAL-TIME LEDGER PASSBOOK (ACCURATE PARTIAL / FULL AMOUNT TRACKING)
   function updateUserPassbook() {
     if (!currentUser) return;
-    var tot = 0, paid = 0, pend = 0;
+    
+    // Find current user's up-to-date record
+    var uRecord = users.find(function(x) { return x.id === currentUser.id; }) || currentUser;
+    var tot = 0;
+
     for (var i = 0; i < receipts.length; i++) {
-      if (receipts[i].code === currentUser.code && !receipts[i].isCancelled && (receipts[i].type === 'CASH' || !receipts[i].type)) {
-        var a = Number(receipts[i].amt);
-        tot += a;
-        if (receipts[i].isReceived) paid += a;
-        else pend += a;
+      if (receipts[i].code === uRecord.code && !receipts[i].isCancelled && (receipts[i].type === 'CASH' || !receipts[i].type)) {
+        tot += Number(receipts[i].amt) || 0;
       }
     }
+
+    var paid = Number(uRecord.deposited) || 0;
+    var pend = Math.max(0, tot - paid);
+
     document.getElementById('usr-stat-total').innerText = 'रु. ' + tot;
     document.getElementById('usr-stat-paid').innerText = 'रु. ' + paid;
     document.getElementById('usr-stat-pending').innerText = 'रु. ' + pend;
@@ -2068,6 +2065,9 @@
     }
   }
 
+  // =========================================================================
+  // USER LIST WITH ACCURATE PARTIAL CASH DEPOSIT / SETTLEMENT
+  // =========================================================================
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -2076,15 +2076,15 @@
       var u = users[i];
       var isAct = (u.isActive !== false);
 
-      var tot = 0, paid = 0, pend = 0;
+      var tot = 0;
       for (var j = 0; j < receipts.length; j++) {
         if (receipts[j].code === u.code && !receipts[j].isCancelled && (receipts[j].type === 'CASH' || !receipts[j].type)) {
-          var a = Number(receipts[j].amt);
-          tot += a;
-          if (receipts[j].isReceived) paid += a;
-          else pend += a;
+          tot += Number(receipts[j].amt) || 0;
         }
       }
+
+      var paid = Number(u.deposited) || 0;
+      var pend = Math.max(0, tot - paid);
 
       var div = document.createElement('div');
       div.className = 'user-list-item';
@@ -2119,6 +2119,33 @@
       box.appendChild(div);
     }
     showScreen('screen-users-list');
+  }
+
+  // UPDATED: ACCURATE PARTIAL / FULL AMOUNT DEPOSIT FUNCTION
+  function adminSettleCash(code, name, pending) {
+    var val = prompt("'" + name + "' से कितने रुपये नकद प्राप्त हुए दर्ज करें:\n(वर्तमान कुल बकाया: रु. " + pending + ")", pending);
+    if (!val) return;
+    var amt = parseInt(val.trim(), 10);
+    if (isNaN(amt) || amt <= 0) {
+      alert("अमान्य राशि!");
+      return;
+    }
+    if (amt > pending) {
+      alert("दर्ज की गई राशि कुल बकाया (रु. " + pending + ") से अधिक नहीं हो सकती!");
+      return;
+    }
+
+    for (var i = 0; i < users.length; i++) {
+      if (users[i].code === code) {
+        users[i].deposited = (Number(users[i].deposited) || 0) + amt;
+        break;
+      }
+    }
+
+    localStorage.setItem('durga_users', JSON.stringify(users));
+    syncToFirebase("users", users);
+    openUsersList();
+    alert("रु. " + amt + " सफलतापूर्वक जमा कर लिए गए!\nअब बकाया: रु. " + (pending - amt));
   }
 
   function adminResetUserPass(id) {
@@ -2161,27 +2188,6 @@
     }
   }
 
-  function adminSettleCash(code, name, pending) {
-    var val = prompt("'" + name + "' से कितने रुपये नकद प्राप्त हुए दर्ज करें:\n(वर्तमान बकाया: रु. " + pending + ")", pending);
-    if (!val) return;
-    var amt = parseInt(val.trim(), 10);
-    if (isNaN(amt) || amt <= 0) return;
-
-    var rem = amt;
-    for (var i = receipts.length - 1; i >= 0; i--) {
-      if (receipts[i].code === code && !receipts[i].isReceived && !receipts[i].isCancelled && (receipts[i].type === 'CASH' || !receipts[i].type)) {
-        receipts[i].isReceived = true;
-        rem -= receipts[i].amt;
-        if (rem <= 0) break;
-      }
-    }
-    localStorage.setItem('durga_receipts', JSON.stringify(receipts));
-    syncToFirebase("receipts", receipts);
-    openUsersList();
-    updateAdminSummary();
-    alert("रु. " + amt + " सफलतापूर्वक जमा कर लिए गए!");
-  }
-
   function saveNewUser() {
     var n = document.getElementById('nu-name').value.trim();
     var p = document.getElementById('nu-phone').value.trim();
@@ -2194,7 +2200,7 @@
     }
 
     var code = String.fromCharCode(65 + (users.length % 26));
-    users.push({ id: Date.now(), name: n, mobile: p, pass: pass, code: code, addr: addr, isActive: true });
+    users.push({ id: Date.now(), name: n, mobile: p, pass: pass, code: code, addr: addr, deposited: 0, isActive: true });
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
     alert("यूज़र बन गया! रसीद कोड: " + code);
