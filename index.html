@@ -104,6 +104,18 @@
     .standee-header { border-bottom: 2px dashed #b71c1c; padding-bottom: 8px; margin-bottom: 12px; }
     .standee-qr-frame { background: white; border: 2px solid #ff9800; border-radius: 10px; padding: 12px; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin: 10px 0; }
 
+    /* Worker ID Card Styles */
+    .id-card-frame { width: 100%; max-width: 340px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 2.5px solid #b71c1c; box-shadow: 0 4px 14px rgba(0,0,0,0.15); overflow: hidden; position: relative; }
+    .id-card-header { background: linear-gradient(135deg, #b71c1c, #d32f2f); color: white; text-align: center; padding: 10px 8px; }
+    .id-card-header h3 { font-size: 15px; font-weight: 900; letter-spacing: 0.3px; }
+    .id-card-header p { font-size: 10px; color: #ffea00; font-weight: bold; margin-top: 1px; }
+    .id-card-body { padding: 12px; display: flex; gap: 12px; align-items: center; background: #fffdf7; }
+    .id-photo-box { width: 85px; height: 105px; border-radius: 6px; border: 2px solid #d32f2f; overflow: hidden; background: #eee; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .id-photo-box img { width: 100%; height: 100%; object-fit: cover; }
+    .id-info-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+    .id-info-table td { padding: 3px 2px; vertical-align: top; }
+    .id-card-footer { background: #fdf2e9; border-top: 1px dashed #e65100; padding: 6px 12px; display: flex; justify-content: space-between; align-items: center; }
+
     /* Audit & Report Sheet Styles */
     .audit-sheet { background: #ffffff; border: 2px solid #8e0000; border-radius: 8px; padding: 16px; font-size: 12px; color: #222; }
     .audit-table { width: 100%; border-collapse: collapse; margin-top: 8px; margin-bottom: 14px; }
@@ -113,8 +125,8 @@
 
     @media print {
       body * { visibility: hidden; }
-      #print-area, #print-area *, #audit-capture-target, #audit-capture-target *, #day-report-capture, #day-report-capture *, #danpeti-standee-target, #danpeti-standee-target * { visibility: visible; }
-      #print-area, #audit-capture-target, #day-report-capture, #danpeti-standee-target { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-area, #print-area *, #audit-capture-target, #audit-capture-target *, #day-report-capture, #day-report-capture *, #danpeti-standee-target, #danpeti-standee-target *, #id-card-capture-target, #id-card-capture-target * { visibility: visible; }
+      #print-area, #audit-capture-target, #day-report-capture, #danpeti-standee-target, #id-card-capture-target { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
@@ -336,7 +348,11 @@
       </div>
     </div>
 
+    <!-- बटन सेक्शन (नया: कार्यकर्ता आईडी कार्ड जनरेटर) -->
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
+      <button class="btn" style="background: #283593; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="openWorkerIdCardScreen()">
+        🪪 मेरा कार्यकर्ता पहचान पत्र (ID Card बनाएं)
+      </button>
       <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏ नई रसीद बनाएं (रुपये / वस्तु)</button>
       <button class="btn" style="background: #1976d2;" onclick="openReceiptsList()">📋 मेरी काटी हुई सभी रसीदें</button>
       <button class="btn" style="background: #e91e63;" onclick="openDanpetiScreen()">🪔 पंडाल डिजिटल दानपेटी QR</button>
@@ -369,7 +385,102 @@
     </div>
   </div>
 
-  <!-- 5. CREATE / EDIT RECEIPT FORM (With Voice Typing Feature) -->
+  <!-- 4.2 WORKER DIGITAL ID CARD SCREEN (नया फ़ीचर) -->
+  <div id="screen-worker-idcard" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="showScreen('screen-user')">⬅</button> कार्यकर्ता पहचान पत्र</h2>
+    </div>
+
+    <div style="padding: 14px; flex: 1; overflow-y: auto;">
+      <!-- ID Card Details Input Form -->
+      <div style="background: #e8eaf6; border: 1.5px solid #c5cae9; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+        <h4 style="font-size: 13px; color: #1a237e; margin-bottom: 8px;">✏️ पहचान पत्र विवरण दर्ज करें</h4>
+        
+        <div class="form-group">
+          <label>कार्यकर्ता आधार संख्या (Aadhaar Number) *</label>
+          <input type="text" id="id-inp-aadhar" class="form-input" placeholder="12 अंकों का आधार नंबर दर्ज करें" maxlength="14" oninput="formatAadhaarInput(this); updateIdCardPreview();" />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>कार्यकर्ता पासपोर्ट फोटो *</label>
+          <input type="file" id="id-photo-input" accept="image/*" style="display: none;" onchange="handleWorkerPhotoUpload(event)" />
+          <button type="button" class="btn" style="background: #3949ab; padding: 8px; font-size: 13px;" onclick="document.getElementById('id-photo-input').click()">
+            📸 कैमरे या गैलरी से फोटो अपलोड करें
+          </button>
+        </div>
+      </div>
+
+      <!-- ID Card Preview Capture Target -->
+      <div style="padding: 6px 0; display: flex; justify-content: center;">
+        <div class="id-card-frame" id="id-card-capture-target">
+          <div class="id-card-header">
+            <div style="font-size: 10px; color: #ffea00; font-weight: bold;">🚩 || ॐ नमः चण्डिकायै || 🚩</div>
+            <h3>नवयुवा दुर्गा पूजा समिति</h3>
+            <p>रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.)</p>
+            <div style="background: #ffffff; color: #b71c1c; font-size: 9px; font-weight: 900; display: inline-block; padding: 2px 8px; border-radius: 10px; margin-top: 3px; text-transform: uppercase;">
+              अधिकृत कार्यकर्ता पहचान पत्र
+            </div>
+          </div>
+
+          <div class="id-card-body">
+            <div class="id-photo-box">
+              <img id="id-card-img-preview" src="durga.png" alt="Worker Photo" crossorigin="anonymous" />
+            </div>
+            <div style="flex: 1;">
+              <table class="id-info-table">
+                <tr>
+                  <td style="font-weight: bold; width: 62px; color: #666;">नाम</td>
+                  <td style="font-weight: bold;">:</td>
+                  <td style="font-weight: 900; color: #b71c1c; font-size: 13px;" id="id-show-name">-</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold; color: #666;">पद</td>
+                  <td style="font-weight: bold;">:</td>
+                  <td style="font-weight: bold; color: #1b5e20;">संग्रहकर्ता (Collector)</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold; color: #666;">रसीद कोड</td>
+                  <td style="font-weight: bold;">:</td>
+                  <td style="font-weight: 900; color: #d32f2f;" id="id-show-code">-</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold; color: #666;">मोबाइल</td>
+                  <td style="font-weight: bold;">:</td>
+                  <td style="font-weight: bold;" id="id-show-phone">-</td>
+                </tr>
+                <tr>
+                  <td style="font-weight: bold; color: #666;">आधार सं.</td>
+                  <td style="font-weight: bold;">:</td>
+                  <td style="font-weight: bold; color: #333;" id="id-show-aadhar">XXXX-XXXX-XXXX</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <div class="id-card-footer">
+            <div style="font-size: 8.5px; color: #555; line-height: 1.2;">
+              सत्र: <strong>2026-2027</strong><br>
+              वैधता: <strong>दुर्गा पूजा महोत्सव</strong>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 8px; color: #b71c1c; font-weight: bold;">समिति अध्यक्ष / सचिव</div>
+              <div style="font-size: 9px; color: #b71c1c; font-weight: 900;">[ सत्यापित मुहर ]</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+        <button class="btn" style="background: #2e7d32;" onclick="downloadWorkerIdCardPDF()">
+          📥 पहचान पत्र PDF डाउनलोड करें (Print Ready)
+        </button>
+        <button class="btn" style="background: #546e7a;" onclick="window.print()">🖨️ कार्ड सीधे प्रिंट करें</button>
+        <button class="btn" style="background: #424242;" onclick="showScreen('screen-user')">⬅ कार्यकर्ता पैनल पर लौटें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. CREATE / EDIT RECEIPT FORM -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> <span id="form-receipt-title">रसीद बनाएं</span></h2>
@@ -390,7 +501,6 @@
         </div>
       </div>
 
-      <!-- दानदाता नाम + वॉयस टाइपिंग -->
       <div class="form-group">
         <label>दानदाता का नाम * <small style="color:#b71c1c;">(बोलकर लिखने हेतु 🎙️ दबाएं)</small></label>
         <div class="input-mic-wrap">
@@ -404,7 +514,6 @@
         <input type="tel" id="r-phone" class="form-input" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" />
       </div>
 
-      <!-- पता + वॉयस टाइपिंग -->
       <div class="form-group">
         <label>पता / ग्राम <small style="color:#b71c1c;">(वॉयस टाइपिंग 🎙️)</small></label>
         <div class="input-mic-wrap">
@@ -459,7 +568,7 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW (With Call, SMS & WhatsApp Options) -->
+  <!-- 6. RECEIPT PREVIEW -->
   <div id="screen-preview" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" id="preview-back-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
@@ -569,14 +678,13 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन (WhatsApp, Call, SMS & PDF) -->
+    <!-- बटन सेक्शन -->
     <div style="padding: 14px; display: flex; flex-direction: column; gap: 8px;">
       <button class="btn" style="background: #b71c1c;" id="btn-dl-pdf" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
       </button>
       <button class="btn btn-green" id="btn-share-wa" onclick="shareWhatsApp()">💬 WhatsApp पर भेजें</button>
 
-      <!-- ऑटो-कॉलिंग व SMS फॉलबैक बटन -->
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" id="comm-action-row">
         <button class="btn" style="background: #0288d1; padding: 10px; font-size: 13px;" onclick="callDonor()">
           📞 दानदाता को कॉल करें
@@ -1141,9 +1249,9 @@
   var adminPass = localStorage.getItem('durga_admin_pass') || '7905106011';
 
   var users = [
-    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', isActive: true, paidAmt: 0, isPrivatePass: false },
-    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', isActive: true, paidAmt: 0, isPrivatePass: false },
-    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', isActive: true, paidAmt: 0, isPrivatePass: false }
+    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', isActive: true, paidAmt: 0, isPrivatePass: false, aadhar: '', photo: '' },
+    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', isActive: true, paidAmt: 0, isPrivatePass: false, aadhar: '', photo: '' },
+    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', isActive: true, paidAmt: 0, isPrivatePass: false, aadhar: '', photo: '' }
   ];
   try {
     var storedU = localStorage.getItem('durga_users');
@@ -1152,6 +1260,8 @@
       users.forEach(function(u) { 
         if (typeof u.paidAmt === 'undefined') u.paidAmt = 0; 
         if (typeof u.isPrivatePass === 'undefined') u.isPrivatePass = false;
+        if (typeof u.aadhar === 'undefined') u.aadhar = '';
+        if (typeof u.photo === 'undefined') u.photo = '';
       });
     }
   } catch(e) {}
@@ -1366,6 +1476,128 @@
   }
 
   // =========================================================================
+  // कार्यकर्ता पहचान पत्र (WORKER ID CARD) लॉजिक
+  // =========================================================================
+  function openWorkerIdCardScreen() {
+    if (!currentUser) return;
+    var freshU = users.find(function(x) { 
+      return String(x.code).toUpperCase() === String(currentUser.code).toUpperCase(); 
+    }) || currentUser;
+
+    document.getElementById('id-show-name').innerText = freshU.name || 'कार्यकर्ता';
+    document.getElementById('id-show-code').innerText = freshU.code || 'A';
+    document.getElementById('id-show-phone').innerText = freshU.mobile || '-';
+    
+    var aadharInp = document.getElementById('id-inp-aadhar');
+    if (freshU.aadhar) {
+      aadharInp.value = freshU.aadhar;
+      document.getElementById('id-show-aadhar').innerText = freshU.aadhar;
+    } else {
+      aadharInp.value = '';
+      document.getElementById('id-show-aadhar').innerText = 'XXXX-XXXX-XXXX';
+    }
+
+    var imgPrev = document.getElementById('id-card-img-preview');
+    if (freshU.photo) {
+      imgPrev.src = freshU.photo;
+    } else {
+      imgPrev.src = currentDurgaImg || DEFAULT_DURGA;
+    }
+
+    showScreen('screen-worker-idcard');
+  }
+
+  function formatAadhaarInput(el) {
+    var raw = el.value.replace(/\D/g, '');
+    if (raw.length > 12) raw = raw.substring(0, 12);
+    var formatted = '';
+    for (var i = 0; i < raw.length; i++) {
+      if (i > 0 && i % 4 === 0) formatted += '-';
+      formatted += raw[i];
+    }
+    el.value = formatted;
+  }
+
+  function updateIdCardPreview() {
+    var val = document.getElementById('id-inp-aadhar').value.trim();
+    document.getElementById('id-show-aadhar').innerText = val || 'XXXX-XXXX-XXXX';
+    if (currentUser) {
+      currentUser.aadhar = val;
+      var u = users.find(function(x) { return x.id === currentUser.id; });
+      if (u) u.aadhar = val;
+      localStorage.setItem('durga_users', JSON.stringify(users));
+      syncToFirebase("users", users);
+    }
+  }
+
+  function handleWorkerPhotoUpload(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var maxDim = 250;
+        var scale = Math.min(maxDim / img.width, maxDim / img.height, 1);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        var photoDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        document.getElementById('id-card-img-preview').src = photoDataUrl;
+        
+        if (currentUser) {
+          currentUser.photo = photoDataUrl;
+          var u = users.find(function(x) { return x.id === currentUser.id; });
+          if (u) u.photo = photoDataUrl;
+          try {
+            localStorage.setItem('durga_users', JSON.stringify(users));
+            syncToFirebase("users", users);
+            alert("कार्यकर्ता फोटो सफलतापूर्वक अपडेट हो गई!");
+          } catch(err) {
+            alert("फोटो का आकार बड़ा है, कृपया छोटी फोटो चुनें।");
+          }
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function downloadWorkerIdCardPDF() {
+    var target = document.getElementById('id-card-capture-target');
+    try {
+      var canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a6' });
+
+      var pW = 105, pH = 148, margin = 8;
+      var maxW = pW - (margin * 2);
+      var imgW = maxW;
+      var imgH = (canvas.height * imgW) / canvas.width;
+      var x = margin;
+      var y = margin + 5;
+
+      pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+      pdf.save('पहचान_पत्र_' + (currentUser ? currentUser.name : 'कार्यकर्ता') + '.pdf');
+    } catch(err) {
+      alert("सीधे PDF डाउनलोड नहीं हो सकी। प्रिंट स्क्रीन से 'Save as PDF' करें।");
+      window.print();
+    }
+  }
+
+  // =========================================================================
   // वॉयस टाइपिंग (Web Speech Recognition API)
   // =========================================================================
   var activeRecognition = null;
@@ -1387,7 +1619,7 @@
     }
 
     var recognition = new SpeechRecognition();
-    recognition.lang = 'hi-IN'; // शुद्ध हिंदी वॉयस पहचान
+    recognition.lang = 'hi-IN';
     recognition.continuous = false;
     recognition.interimResults = false;
 
@@ -1780,9 +2012,6 @@
     showScreen('screen-preview');
   }
 
-  // =========================================================================
-  // ऑटो-कॉलिंग व SMS फॉलबैक फंक्शंस
-  // =========================================================================
   function callDonor() {
     if (!currentReceipt || !currentReceipt.phone) {
       alert("दानदाता का मोबाइल नंबर उपलब्ध नहीं है!");
@@ -1809,9 +2038,6 @@
     window.location.href = smsUrl;
   }
 
-  // =========================================================================
-  // डिजिटल दानपेटी QR पोस्टर
-  // =========================================================================
   function openDanpetiScreen() {
     var upiId = samitiUpi || '7905106011@upi';
     document.getElementById('danpeti-upi-display').innerText = upiId;
@@ -1819,7 +2045,6 @@
     var qrBox = document.getElementById('danpeti-qrcode-box');
     qrBox.innerHTML = '';
 
-    // दानपेटी जेनरिक UPI URL (दानदाता अपनी मर्ज़ी से राशि डालेगा)
     var danpetiUrl = "upi://pay?pa=" + encodeURIComponent(upiId) + "&pn=" + encodeURIComponent("Navyuva Durga Samiti Danpeti") + "&cu=INR&tn=" + encodeURIComponent("Pandal Daanpeti Sahayog");
 
     try {
@@ -2780,7 +3005,9 @@
       addr: addr, 
       isActive: true, 
       paidAmt: 0, 
-      isPrivatePass: false 
+      isPrivatePass: false,
+      aadhar: '',
+      photo: ''
     });
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
