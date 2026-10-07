@@ -142,7 +142,7 @@
     </div>
   </div>
 
-  <!-- 2. LOGIN SCREEN -->
+  <!-- 2. LOGIN SCREEN (PLACEHOLDER UPDATED TO '10 अंकों का मोबाइल नंबर दर्ज करें') -->
   <div id="screen-login" class="screen">
     <div class="top-bar">
       <h2>ॐ दुर्गा पूजा समिति</h2>
@@ -165,7 +165,7 @@
 
       <div class="form-group">
         <label>📞 मोबाइल नंबर</label>
-        <input type="tel" id="inp-mobile" class="form-input" placeholder="Admin: 7905106011" maxlength="10" />
+        <input type="tel" id="inp-mobile" class="form-input" placeholder="10 अंकों का मोबाइल नंबर दर्ज करें" maxlength="10" />
       </div>
 
       <div class="form-group">
@@ -281,7 +281,7 @@
       </div>
     </div>
 
-    <!-- कार्यकर्ता दैनिक शाम की समरी (User Daily Evening Dispatch) -->
+    <!-- कार्यकर्ता दैनिक शाम की समरी -->
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
       <button class="btn btn-green" onclick="sendUserDailyEveningSummary()">
         📤 आज का मेरा हिसाब WhatsApp पर भेजें
@@ -440,7 +440,7 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन (Added Certificate Generator Button) -->
+    <!-- बटन सेक्शन -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
       <button class="btn btn-purple" onclick="openCertificateScreen()">
         📜 सम्मान पत्र / आभार पत्र देखें (Certificate)
@@ -454,7 +454,7 @@
     </div>
   </div>
 
-  <!-- 6.1 DONOR CERTIFICATE SCREEN (सम्मान पत्र / आभार पत्र जनरेटर) -->
+  <!-- 6.1 DONOR CERTIFICATE SCREEN -->
   <div id="screen-certificate" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-preview')">⬅</button> सम्मान पत्र / आभार पत्र</h2>
@@ -626,7 +626,7 @@
     </div>
     <div style="padding: 20px; overflow-y: auto;">
       
-      <!-- संपूर्ण डेटा बैकअप और रिस्टोर (Full Data Backup & Restore) -->
+      <!-- संपूर्ण डेटा बैकअप और रिस्टोर -->
       <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">💾 संपूर्ण डेटा बैकअप व रिस्टोर</h3>
       <div style="border: 1.5px solid #81c784; background: #f1f8e9; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
         <p style="font-size: 12px; color: #555; margin-bottom: 10px;">
@@ -851,19 +851,15 @@
     }
   }
 
+  // UPDATED setRole: Always sets clean placeholder "10 अंकों का मोबाइल नंबर दर्ज करें"
   function setRole(role) {
     currentRole = role;
     document.getElementById('tab-adm').classList.toggle('active', role === 'admin');
     document.getElementById('tab-usr').classList.toggle('active', role === 'user');
     document.getElementById('inp-mobile').value = '';
     document.getElementById('inp-pass').value = '';
-    if (role === 'admin') {
-      document.getElementById('inp-mobile').placeholder = 'Admin: 7905106011';
-      document.getElementById('inp-pass').placeholder = 'Admin Password';
-    } else {
-      document.getElementById('inp-mobile').placeholder = 'User: 9876543210';
-      document.getElementById('inp-pass').placeholder = 'User Password';
-    }
+    document.getElementById('inp-mobile').placeholder = '10 अंकों का मोबाइल नंबर दर्ज करें';
+    document.getElementById('inp-pass').placeholder = 'पासवर्ड दर्ज करें';
   }
 
   function doLogin() {
@@ -928,7 +924,7 @@
   }
 
   // =========================================================================
-  // 1. कार्यकता (USER) दैनिक शाम की समरी
+  // USER DAILY EVENING DISPATCH
   // =========================================================================
   function sendUserDailyEveningSummary() {
     if (!currentUser) return;
@@ -971,7 +967,7 @@
   }
 
   // =========================================================================
-  // 2. एडमिन (ADMIN) शाम की पूरी समिति रिपोर्ट
+  // ADMIN DAILY EVENING CONSOLIDATED REPORT
   // =========================================================================
   function sendAdminEveningReport() {
     var today = new Date();
@@ -982,7 +978,6 @@
     var todayOnline = 0;
     var todayItems = 0;
 
-    // Karyakarta wise count
     var userMap = {};
     for (var u = 0; u < users.length; u++) {
       userMap[users[u].code] = { name: users[u].name, total: 0, count: 0 };
@@ -1048,7 +1043,7 @@
   }
 
   // =========================================================================
-  // 3. सम्मान पत्र / आभार पत्र जनरेटर (CERTIFICATE OF HONOR)
+  // CERTIFICATE OF HONOR
   // =========================================================================
   function openCertificateScreen() {
     if (!currentReceipt) {
@@ -1136,7 +1131,7 @@
   }
 
   // =========================================================================
-  // 4. संपूर्ण डेटा बैकअप और रिस्टोर (FULL BACKUP & RESTORE)
+  // FULL BACKUP & RESTORE
   // =========================================================================
   function downloadFullBackupJSON() {
     var backupData = {
@@ -1185,7 +1180,6 @@
             localStorage.setItem('durga_samiti_qr', currentQRImg);
             localStorage.setItem('durga_app_img', currentDurgaImg);
 
-            // Firebase sync
             syncToFirebase("receipts", receipts);
             syncToFirebase("expenses", expenses);
             syncToFirebase("users", users);
@@ -1209,7 +1203,7 @@
   }
 
   // =========================================================================
-  // USER SELF PASSWORD CHANGE FEATURE
+  // USER PASSWORD CHANGE
   // =========================================================================
   function userSelfChangePass() {
     if (!currentUser) return;
@@ -1621,7 +1615,7 @@
         ? '<strong style="color:#d84315;">🎁 ' + rec.itemDesc + (rec.itemVal ? ' (₹' + rec.itemVal + ')' : '') + '</strong>'
         : '<strong style="' + (rec.isCancelled ? 'color:#888; text-decoration:line-through;' : 'color:#2e7d32;') + '">रु. ' + rec.amt + '</strong>';
 
-      infoDiv.innerHTML = '<strong style="color:#b71c1c;">' + rec.no + ' - ' + rec.name + '</strong> ' + modeBadge + cancelledText + '<br>' +
+      infoDiv.innerHTML = '<strong style="color:#b71c1c;">' + rec.no + ' - ' + rec.name + ' <span style="font-size:11px; color:#b71c1c;">[' + rec.code + ']</span></strong> ' + modeBadge + cancelledText + '<br>' +
         '<small style="color:#555;">' + rec.phone + ' • ' + rec.date + '<br>रसीद कर्ता: ' + (rec.by || 'समिति') + ' (' + rec.code + ')</small><br>' +
         amtOrItemDisplay;
 
@@ -1910,6 +1904,7 @@
     }
   }
 
+  // USER MANAGEMENT: SHOWS RECEIPT CODE DIRECTLY IN FRONT OF NAME [A, B] & KEEPS PASSWORDS HIDDEN
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
