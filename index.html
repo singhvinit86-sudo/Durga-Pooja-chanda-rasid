@@ -34,13 +34,23 @@
 
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: bold; color: #333; }
+    .input-mic-wrap { display: flex; gap: 6px; align-items: center; }
     .form-input { width: 100%; padding: 10px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 14px; outline: none; }
     .form-input:focus { border-color: #d32f2f; }
+
+    .mic-btn { background: #fff3f3; border: 1.5px solid #d32f2f; color: #b71c1c; border-radius: 8px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; flex-shrink: 0; }
+    .mic-btn.listening { background: #b71c1c; color: #fff; animation: pulseMic 1s infinite alternate; }
+    @keyframes pulseMic { from { transform: scale(1); } to { transform: scale(1.08); } }
 
     /* Type & Mode Pill Selectors */
     .pill-wrap { display: flex; gap: 8px; margin-top: 4px; }
     .pill-btn { flex: 1; border: 1.5px solid #dcdde1; padding: 8px 6px; border-radius: 8px; text-align: center; font-size: 13px; font-weight: bold; cursor: pointer; background: #fff; color: #444; }
     .pill-btn.active { border-color: #b71c1c; background: #fff3f3; color: #b71c1c; }
+
+    /* Quick Amount Pills */
+    .amt-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .amt-pill { background: #f1f2f6; border: 1px solid #dcdde1; border-radius: 16px; padding: 4px 10px; font-size: 12px; font-weight: bold; cursor: pointer; color: #333; }
+    .amt-pill:hover { background: #ffebee; border-color: #d32f2f; color: #b71c1c; }
 
     /* Splash Screen */
     #screen-splash { background: linear-gradient(180deg, #4a0000 0%, #800000 40%, #b71c1c 100%); color: white; text-align: center; padding: 30px 20px; justify-content: space-between; align-items: center; }
@@ -89,6 +99,11 @@
 
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 4px; font-weight: bold; border-bottom: 1px solid #c8e6c9; }
     
+    /* Digital Danpeti Standee Style */
+    .standee-card { background: #fffdf5; border: 4px solid #b71c1c; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.12); position: relative; }
+    .standee-header { border-bottom: 2px dashed #b71c1c; padding-bottom: 8px; margin-bottom: 12px; }
+    .standee-qr-frame { background: white; border: 2px solid #ff9800; border-radius: 10px; padding: 12px; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin: 10px 0; }
+
     /* Audit & Report Sheet Styles */
     .audit-sheet { background: #ffffff; border: 2px solid #8e0000; border-radius: 8px; padding: 16px; font-size: 12px; color: #222; }
     .audit-table { width: 100%; border-collapse: collapse; margin-top: 8px; margin-bottom: 14px; }
@@ -98,8 +113,8 @@
 
     @media print {
       body * { visibility: hidden; }
-      #print-area, #print-area *, #audit-capture-target, #audit-capture-target *, #day-report-capture, #day-report-capture * { visibility: visible; }
-      #print-area, #audit-capture-target, #day-report-capture { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-area, #print-area *, #audit-capture-target, #audit-capture-target *, #day-report-capture, #day-report-capture *, #danpeti-standee-target, #danpeti-standee-target * { visibility: visible; }
+      #print-area, #audit-capture-target, #day-report-capture, #danpeti-standee-target { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
@@ -209,6 +224,9 @@
     </div>
 
     <div class="admin-grid">
+      <div class="menu-box" style="background: #e91e63;" onclick="openDanpetiScreen()">
+        <div style="font-size: 22px;">🪔</div>डिजिटल दानपेटी QR
+      </div>
       <div class="menu-box" style="background: #1976d2;" onclick="showScreen('screen-create-user')">
         <div style="font-size: 22px;">➕</div>Create User
       </div>
@@ -227,15 +245,12 @@
       <div class="menu-box" style="background: #00796b;" onclick="exportReceiptsToCSV()">
         <div style="font-size: 22px;">📊</div>Excel / CSV
       </div>
-      
-      <div class="menu-box" style="background: #0288d1; grid-column: span 2;" onclick="openDayEndReportScreen()">
-        <div style="font-size: 22px;">📅</div>दैनिक डे-एंड रिपोर्ट (Daily Closing)
+      <div class="menu-box" style="background: #0288d1;" onclick="openDayEndReportScreen()">
+        <div style="font-size: 22px;">📅</div>दैनिक रिपोर्ट
       </div>
-
       <div class="menu-box" style="background: #b71c1c; grid-column: span 2;" onclick="openAuditSummaryScreen()">
         <div style="font-size: 22px;">📑</div>ऑडिट रिपोर्ट PDF (वित्तीय क्लोजिंग)
       </div>
-
       <div class="menu-box" style="background: #f57c00; grid-column: span 2;" onclick="showScreen('screen-settings')">
         <div style="font-size: 22px;">⚙️</div>Settings & UPI QR
       </div>
@@ -253,7 +268,6 @@
       <button class="icon-btn" onclick="doLogout()">⏻</button>
     </div>
 
-    <!-- कार्यकर्ता प्रोफाइल कार्ड -->
     <div style="padding: 12px 16px; background: #e8f5e9; margin: 12px 16px 6px 16px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
       <div style="display: flex; align-items: center; gap: 10px;">
         <div class="user-circle" id="usr-code-avatar">A</div>
@@ -267,7 +281,6 @@
       </button>
     </div>
 
-    <!-- 1. आज का मेरा कलेक्शन कार्ड (My Today's Collection Card) -->
     <div style="margin: 6px 16px; background: #e3f2fd; border: 1.5px solid #2196f3; border-radius: 10px; padding: 12px 14px; box-shadow: 0 2px 5px rgba(33,150,243,0.15);">
       <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #90caf9; padding-bottom: 5px; margin-bottom: 8px;">
         <span style="font-size: 13px; font-weight: 800; color: #0d47a1;">📅 आज का मेरा कलेक्शन</span>
@@ -289,7 +302,6 @@
       </div>
     </div>
 
-    <!-- 2. कुल चंदा पासबुक एवं एडमिन को जमा पर्ची -->
     <div class="collector-passbook">
       <div style="font-weight: bold; font-size: 13px; color: #b71c1c; border-bottom: 1px dashed #ffe082; padding-bottom: 4px;">
         📋 मेरा कुल चंदा हिसाब पासबुक
@@ -309,9 +321,8 @@
         </div>
       </div>
 
-      <!-- एडमिन को WhatsApp पर सीधे हिसाब पर्ची भेजने का बटन -->
       <div style="margin-top: 12px;">
-        <button class="btn btn-green" style="padding: 10px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 2px 6px rgba(46,125,50,0.3);" onclick="sendWorkerDepositSlipWhatsApp()">
+        <button class="btn btn-green" style="padding: 10px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="sendWorkerDepositSlipWhatsApp()">
           📲 एडमिन को आज का हिसाब पर्ची भेजें (WhatsApp)
         </button>
       </div>
@@ -328,6 +339,7 @@
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 4px;">
       <button class="btn" style="background: #f57c00;" onclick="openReceiptForm()">✏ नई रसीद बनाएं (रुपये / वस्तु)</button>
       <button class="btn" style="background: #1976d2;" onclick="openReceiptsList()">📋 मेरी काटी हुई सभी रसीदें</button>
+      <button class="btn" style="background: #e91e63;" onclick="openDanpetiScreen()">🪔 पंडाल डिजिटल दानपेटी QR</button>
     </div>
 
     <div style="padding: 16px; margin-top: auto;">
@@ -357,13 +369,13 @@
     </div>
   </div>
 
-  <!-- 5. CREATE / EDIT RECEIPT FORM -->
+  <!-- 5. CREATE / EDIT RECEIPT FORM (With Voice Typing Feature) -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> <span id="form-receipt-title">रसीद बनाएं</span></h2>
     </div>
 
-    <div style="padding: 18px; flex: 1;">
+    <div style="padding: 18px; flex: 1; overflow-y: auto;">
       <input type="hidden" id="edit-receipt-no" value="" />
 
       <div class="form-group">
@@ -378,23 +390,42 @@
         </div>
       </div>
 
+      <!-- दानदाता नाम + वॉयस टाइपिंग -->
       <div class="form-group">
-        <label>दानदाता का नाम *</label>
-        <input type="text" id="r-name" class="form-input" placeholder="दानदाता का नाम" />
+        <label>दानदाता का नाम * <small style="color:#b71c1c;">(बोलकर लिखने हेतु 🎙️ दबाएं)</small></label>
+        <div class="input-mic-wrap">
+          <input type="text" id="r-name" class="form-input" placeholder="उदा. रमेश कुमार सिंह" />
+          <button type="button" class="mic-btn" id="mic-btn-name" onclick="startVoiceInput('r-name', 'mic-btn-name')" title="बोलकर लिखें">🎙️</button>
+        </div>
       </div>
+
       <div class="form-group">
         <label>मोबाइल नंबर *</label>
-        <input type="tel" id="r-phone" class="form-input" placeholder="10 अंकों का मोबाइल" maxlength="10" />
+        <input type="tel" id="r-phone" class="form-input" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" />
       </div>
+
+      <!-- पता + वॉयस टाइपिंग -->
       <div class="form-group">
-        <label>पता / ग्राम</label>
-        <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
+        <label>पता / ग्राम <small style="color:#b71c1c;">(वॉयस टाइपिंग 🎙️)</small></label>
+        <div class="input-mic-wrap">
+          <input type="text" id="r-addr" class="form-input" placeholder="उदा. रेलवे गेट, मारकुंडी" />
+          <button type="button" class="mic-btn" id="mic-btn-addr" onclick="startVoiceInput('r-addr', 'mic-btn-addr')" title="बोलकर लिखें">🎙️</button>
+        </div>
       </div>
 
       <div id="section-money-fields">
         <div class="form-group">
           <label>सहयोग राशि (रु.) *</label>
           <input type="number" id="r-amt" class="form-input" placeholder="51, 101, 501, 1100..." />
+          <div class="amt-pills">
+            <span class="amt-pill" onclick="setQuickAmt(51)">₹51</span>
+            <span class="amt-pill" onclick="setQuickAmt(101)">₹101</span>
+            <span class="amt-pill" onclick="setQuickAmt(251)">₹251</span>
+            <span class="amt-pill" onclick="setQuickAmt(501)">₹501</span>
+            <span class="amt-pill" onclick="setQuickAmt(1100)">₹1,100</span>
+            <span class="amt-pill" onclick="setQuickAmt(2100)">₹2,100</span>
+            <span class="amt-pill" onclick="setQuickAmt(5100)">₹5,100</span>
+          </div>
         </div>
 
         <div class="form-group">
@@ -412,8 +443,11 @@
 
       <div id="section-item-fields" style="display: none; background: #fff8e1; border: 1.5px dashed #ffa000; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
         <div class="form-group">
-          <label>दान की गई सामग्री का नाम व मात्रा *</label>
-          <input type="text" id="r-item-name" class="form-input" placeholder="उदा. 1 पंखा, 5 किग्रा घी, 2 बोरी चावल" />
+          <label>दान सामग्री का नाम व मात्रा *</label>
+          <div class="input-mic-wrap">
+            <input type="text" id="r-item-name" class="form-input" placeholder="उदा. 1 पंखा, 5 किग्रा घी, 2 बोरी चावल" />
+            <button type="button" class="mic-btn" id="mic-btn-item" onclick="startVoiceInput('r-item-name', 'mic-btn-item')" title="बोलकर लिखें">🎙️</button>
+          </div>
         </div>
         <div class="form-group" style="margin-bottom: 0;">
           <label>अनुमानित मूल्य रु. (वैकल्पिक / Optional)</label>
@@ -425,7 +459,7 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW -->
+  <!-- 6. RECEIPT PREVIEW (With Call, SMS & WhatsApp Options) -->
   <div id="screen-preview" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" id="preview-back-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
@@ -490,7 +524,6 @@
             </tr>
           </table>
 
-          <!-- UPI QR कोड -->
           <div id="pv-qr-wrap" style="display: none; text-align: center; margin: 8px auto; padding: 6px; background: #fffde7; border: 1.5px dashed #fbc02d; border-radius: 6px;">
             <div id="pv-qrcode-box" style="display: inline-block; padding: 4px; background: white; border: 1px solid #ddd;"></div>
             <div style="font-size: 10px; color: #555; margin-top: 3px; font-weight: bold;">
@@ -506,36 +539,26 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 6px; font-size: 11px; font-weight: bold;">
             <div>
               दिनांक : <strong id="pv-date">-</strong><br>
-              
               <div style="width: 105px; height: 105px; margin-top: 4px; transform: rotate(-7deg); opacity: 0.95;">
                 <svg viewBox="0 0 120 120" width="100%" height="100%">
                   <circle cx="60" cy="60" r="56" fill="none" stroke="#b71c1c" stroke-width="2.2" stroke-dasharray="3,2" />
                   <circle cx="60" cy="60" r="50" fill="none" stroke="#b71c1c" stroke-width="1.2" />
                   <circle cx="60" cy="60" r="28" fill="none" stroke="#b71c1c" stroke-width="1" stroke-dasharray="2,2" />
-
                   <defs>
                     <path id="sealTopCurve" d="M 18,60 A 42,42 0 1,1 102,60" fill="none" />
                     <path id="sealBottomCurve" d="M 102,60 A 42,42 0 0,1 18,60" fill="none" />
                   </defs>
-
                   <text font-size="8.8" font-weight="900" fill="#b71c1c" letter-spacing="0.3">
-                    <textPath href="#sealTopCurve" startOffset="50%" text-anchor="middle">
-                      नवयुवा दुर्गा पूजा समिति
-                    </textPath>
+                    <textPath href="#sealTopCurve" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
                   </text>
-
                   <text font-size="8.2" font-weight="800" fill="#b71c1c" letter-spacing="1">
-                    <textPath href="#sealBottomCurve" startOffset="50%" text-anchor="middle">
-                      ★ मारकुंडी ★
-                    </textPath>
+                    <textPath href="#sealBottomCurve" startOffset="50%" text-anchor="middle">★ मारकुंडी ★</textPath>
                   </text>
-
                   <text x="60" y="55" text-anchor="middle" font-size="6" font-weight="bold" fill="#b71c1c">◆ ◆ ◆</text>
                   <text x="60" y="64" text-anchor="middle" font-size="11" font-weight="900" fill="#900c3f" letter-spacing="0.5">*सत्यापित*</text>
                   <text x="60" y="72" text-anchor="middle" font-size="6" font-weight="bold" fill="#b71c1c">◆ ◆ ◆</text>
                 </svg>
               </div>
-
             </div>
             <div style="text-align: right;">
               <span style="font-size: 10px; color: #666;">अधिकृत रसीद कर्ता / Signature</span><br />
@@ -546,14 +569,72 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन -->
+    <!-- बटन सेक्शन (WhatsApp, Call, SMS & PDF) -->
     <div style="padding: 14px; display: flex; flex-direction: column; gap: 8px;">
       <button class="btn" style="background: #b71c1c;" id="btn-dl-pdf" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
       </button>
       <button class="btn btn-green" id="btn-share-wa" onclick="shareWhatsApp()">💬 WhatsApp पर भेजें</button>
+
+      <!-- ऑटो-कॉलिंग व SMS फॉलबैक बटन -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;" id="comm-action-row">
+        <button class="btn" style="background: #0288d1; padding: 10px; font-size: 13px;" onclick="callDonor()">
+          📞 दानदाता को कॉल करें
+        </button>
+        <button class="btn" style="background: #7b1fa2; padding: 10px; font-size: 13px;" onclick="sendFallbackSMS()">
+          ✉️ SMS फॉलबैक भेजें
+        </button>
+      </div>
+
       <button class="btn" style="background: #546e7a;" onclick="window.print()">🖨️ प्रिंट करें</button>
       <button class="btn" id="btn-back-home" onclick="backToHome()">🏠 होम पर जाएं</button>
+    </div>
+  </div>
+
+  <!-- 6.1 DIGITAL DANPETI (QR STANDEE POSTER SCREEN) -->
+  <div id="screen-danpeti" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> डिजिटल दानपेटी QR स्टैंडी</h2>
+    </div>
+
+    <div style="padding: 14px; flex: 1; overflow-y: auto;">
+      <div class="standee-card" id="danpeti-standee-target">
+        <div class="standee-header">
+          <div style="font-size: 13px; color: #b71c1c; font-weight: bold;">🚩 || जय माता दी || 🚩</div>
+          <h2 style="font-size: 20px; color: #b71c1c; margin: 4px 0;">नवयुवा दुर्गा पूजा समिति</h2>
+          <p style="font-size: 12px; font-weight: bold; color: #4a148c;">रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.)</p>
+        </div>
+
+        <div style="background: #b71c1c; color: #ffea00; padding: 6px 12px; border-radius: 20px; font-size: 14px; font-weight: 900; display: inline-block; margin-bottom: 8px;">
+          🪔 पंडाल डिजिटल दानपेटी 🪔
+        </div>
+
+        <p style="font-size: 11px; color: #555; margin-bottom: 4px;">माँ दुर्गा पूजन व भोग-प्रसाद हेतु स्वेच्छा से दान करें</p>
+
+        <div class="standee-qr-frame">
+          <div id="danpeti-qrcode-box"></div>
+          <div style="margin-top: 6px; font-size: 11px; font-weight: bold; color: #333;">
+            Google Pay • PhonePe • Paytm • BHIM UPI
+          </div>
+        </div>
+
+        <div style="background: #fff3e0; border: 1px solid #ffe082; border-radius: 6px; padding: 6px; margin: 8px auto; max-width: 280px;">
+          <div style="font-size: 10px; color: #666; font-weight: bold;">समिति UPI ID:</div>
+          <div style="font-size: 14px; font-weight: 900; color: #b71c1c;" id="danpeti-upi-display">-</div>
+        </div>
+
+        <div style="font-size: 11px; font-weight: bold; color: #2e7d32; margin-top: 6px;">
+          ✨ दान की गई पाई-पाई माँ के भव्य पूजन व भंडारे में समर्पित है ✨
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+        <button class="btn" style="background: #b71c1c;" onclick="downloadDanpetiPosterPDF()">
+          📥 पोस्टर PDF डाउनलोड करें (पंडाल हेतु प्रिंट)
+        </button>
+        <button class="btn" style="background: #546e7a;" onclick="window.print()">🖨️ पोस्टर सीधे प्रिंट करें</button>
+        <button class="btn btn-green" onclick="shareDanpetiWhatsApp()">📲 WhatsApp पर डिजिटल दानपेटी भेजें</button>
+      </div>
     </div>
   </div>
 
@@ -637,7 +718,6 @@
     </div>
 
     <div style="padding: 12px; flex: 1; overflow-y: auto;">
-      
       <div style="background: #e1f5fe; border: 1.5px solid #81d4fa; border-radius: 8px; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
         <span style="font-size: 12px; font-weight: bold; color: #0277bd;">तारीख चुनें:</span>
         <input type="date" id="day-report-date-picker" class="form-input" style="padding: 6px 8px; font-size: 13px; flex: 1; max-width: 170px;" onchange="loadDayEndReport()" />
@@ -723,7 +803,6 @@
         <button class="btn" style="background: #546e7a;" onclick="window.print()">🖨️ रिपोर्ट प्रिंट करें</button>
         <button class="btn" style="background: #424242;" onclick="showScreen('screen-admin')">⬅️ एडमिन पैनल पर लौटें</button>
       </div>
-
     </div>
   </div>
 
@@ -734,7 +813,6 @@
     </div>
 
     <div style="padding: 12px; flex: 1; overflow-y: auto;">
-      
       <div class="audit-sheet" id="audit-capture-target">
         <div style="text-align: center; border-bottom: 2px double #8e0000; padding-bottom: 8px; margin-bottom: 10px;">
           <h2 style="color: #8e0000; font-size: 18px;">नवयुवा दुर्गा पूजा समिति</h2>
@@ -817,7 +895,6 @@
         <button class="btn" style="background: #546e7a;" onclick="window.print()">🖨️ रिपोर्ट प्रिंट करें</button>
         <button class="btn" style="background: #424242;" onclick="showScreen('screen-admin')">⬅️ एडमिन पैनल पर लौटें</button>
       </div>
-
     </div>
   </div>
 
@@ -861,7 +938,6 @@
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Settings & Data</h2>
     </div>
     <div style="padding: 18px; overflow-y: auto;">
-      
       <h3 style="font-size: 14px; margin-bottom: 6px; color: #333;">💳 समिति UPI ID व QR प्रबंधन</h3>
       <div style="border: 1.5px solid #81c784; background: #f1f8e9; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
         <div class="form-group" style="margin-bottom: 8px;">
@@ -909,7 +985,6 @@
           🔄 डिफ़ॉल्ट वास्तविक फोटो पर रीसेट करें
         </button>
       </div>
-
     </div>
   </div>
 
@@ -1006,7 +1081,6 @@
     if (!num || isNaN(num) || num <= 0) return 'शून्य रुपये मात्र';
 
     var result = '';
-
     if (Math.floor(num / 100000) > 0) {
       result += (hindiNumbers[Math.floor(num / 100000)] || Math.floor(num / 100000)) + ' लाख ';
       num %= 100000;
@@ -1022,7 +1096,6 @@
     if (num > 0) {
       result += (hindiNumbers[num] || num) + ' ';
     }
-
     return result.trim() + ' रुपये मात्र';
   }
 
@@ -1293,7 +1366,71 @@
   }
 
   // =========================================================================
-  // कार्यकर्ता पासबुक व आज का कलेक्शन अपडेट (User Passbook & Today's Card)
+  // वॉयस टाइपिंग (Web Speech Recognition API)
+  // =========================================================================
+  var activeRecognition = null;
+  function startVoiceInput(targetInputId, btnId) {
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("आपके ब्राउज़र में वॉयस टाइपिंग सपोर्ट नहीं है। कृपया Google Chrome इस्तेमाल करें।");
+      return;
+    }
+
+    var btn = document.getElementById(btnId);
+    var inputEl = document.getElementById(targetInputId);
+
+    if (activeRecognition) {
+      try { activeRecognition.stop(); } catch(e) {}
+      activeRecognition = null;
+      if (btn) btn.classList.remove('listening');
+      return;
+    }
+
+    var recognition = new SpeechRecognition();
+    recognition.lang = 'hi-IN'; // शुद्ध हिंदी वॉयस पहचान
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = function() {
+      if (btn) {
+        btn.classList.add('listening');
+        btn.innerText = '🔴';
+      }
+    };
+
+    recognition.onresult = function(event) {
+      var transcript = event.results[0][0].transcript;
+      if (transcript && inputEl) {
+        inputEl.value = (inputEl.value ? inputEl.value + ' ' : '') + transcript;
+      }
+    };
+
+    recognition.onerror = function() {
+      if (btn) {
+        btn.classList.remove('listening');
+        btn.innerText = '🎙️';
+      }
+    };
+
+    recognition.onend = function() {
+      if (btn) {
+        btn.classList.remove('listening');
+        btn.innerText = '🎙️';
+      }
+      activeRecognition = null;
+    };
+
+    activeRecognition = recognition;
+    recognition.start();
+  }
+
+  function setQuickAmt(val) {
+    var amtInput = document.getElementById('r-amt');
+    if (amtInput) amtInput.value = val;
+  }
+
+  // =========================================================================
+  // कार्यकर्ता पासबुक व आज का कलेक्शन अपडेट
   // =========================================================================
   var workerCurrentReport = {};
 
@@ -1322,7 +1459,6 @@
           tot += rAmt;
         }
 
-        // आज के कलेक्शन का हिसाब
         if (r.date === todayStr) {
           todayCount++;
           if (!isItm) {
@@ -1353,20 +1489,16 @@
       allPending: pend
     };
 
-    // आज के कलेक्शन कार्ड में मान सेट करें
     var tcEl = document.getElementById('usr-today-count');
     var tCashEl = document.getElementById('usr-today-cash');
     var tOnlEl = document.getElementById('usr-today-online');
     var tTotEl = document.getElementById('usr-today-total');
-    var tDateEl = document.getElementById('usr-today-date');
 
-    if (tDateEl) tDateEl.innerText = todayStr;
     if (tcEl) tcEl.innerText = todayCount + ' रसीदें';
     if (tCashEl) tCashEl.innerText = 'रु. ' + todayCash;
     if (tOnlEl) tOnlEl.innerText = 'रु. ' + todayOnline;
     if (tTotEl) tTotEl.innerText = 'रु. ' + todayTotal;
 
-    // संपूर्ण पासबुक में मान सेट करें
     document.getElementById('usr-stat-total').innerText = 'रु. ' + tot;
     document.getElementById('usr-stat-paid').innerText = 'रु. ' + paid;
     document.getElementById('usr-stat-pending').innerText = 'रु. ' + pend;
@@ -1395,7 +1527,6 @@
     }
   }
 
-  // कार्यकर्ता द्वारा एडमिन को हिसाब पर्ची भेजना
   function sendWorkerDepositSlipWhatsApp() {
     var rpt = workerCurrentReport;
     if (!rpt || !rpt.name) {
@@ -1404,7 +1535,6 @@
     }
 
     var adminNumber = "7905106011";
-
     var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n" +
       "📋 *कार्यकर्ता दैनिक हिसाब जमा पर्ची*\n" +
       "━━━━━━━━━━━━━━━━━━━\n" +
@@ -1599,7 +1729,6 @@
       document.getElementById('pv-paymode').innerText = modeDisplay;
       mainLbl.innerText = "सहयोग राशि";
       mainVal.innerText = 'रु. ' + (r.amt || 0) + '/-';
-      
       document.getElementById('pv-words').innerText = numberToHindiWords(r.amt || 0);
 
       if (r.mode === 'Online') {
@@ -1632,20 +1761,121 @@
     if (previewImg) previewImg.src = currentDurgaImg || DEFAULT_DURGA;
 
     var shareBtn = document.getElementById('btn-share-wa');
+    var commRow = document.getElementById('comm-action-row');
     var homeBtn = document.getElementById('btn-back-home');
     var backBtn = document.getElementById('preview-back-btn');
 
     if (isDonorView) {
       if (shareBtn) shareBtn.style.display = 'none';
+      if (commRow) commRow.style.display = 'none';
       if (homeBtn) homeBtn.style.display = 'none';
       if (backBtn) backBtn.style.display = 'none';
     } else {
       if (shareBtn) shareBtn.style.display = 'block';
+      if (commRow) commRow.style.display = 'grid';
       if (homeBtn) homeBtn.style.display = 'block';
       if (backBtn) backBtn.style.display = 'inline-block';
     }
 
     showScreen('screen-preview');
+  }
+
+  // =========================================================================
+  // ऑटो-कॉलिंग व SMS फॉलबैक फंक्शंस
+  // =========================================================================
+  function callDonor() {
+    if (!currentReceipt || !currentReceipt.phone) {
+      alert("दानदाता का मोबाइल नंबर उपलब्ध नहीं है!");
+      return;
+    }
+    window.location.href = "tel:" + currentReceipt.phone;
+  }
+
+  function sendFallbackSMS() {
+    if (!currentReceipt || !currentReceipt.phone) {
+      alert("दानदाता का मोबाइल नंबर उपलब्ध नहीं है!");
+      return;
+    }
+
+    var token = generateReceiptToken(currentReceipt);
+    var baseLink = window.location.href.split('?')[0];
+    var link = baseLink + '?id=' + encodeURIComponent(currentReceipt.no) + '&k=' + encodeURIComponent(token);
+
+    var smsText = "जय माता दी! नवयुवा दुर्गा पूजा समिति, मारकुंडी में आपके सहयोग रु." + 
+      (currentReceipt.amt || currentReceipt.itemName) + " हेतु धन्यवाद। रसीद सं: " + currentReceipt.no + 
+      " देखने हेतु लिंक: " + link;
+
+    var smsUrl = "sms:" + currentReceipt.phone + (navigator.userAgent.match(/iPhone/i) ? "&" : "?") + "body=" + encodeURIComponent(smsText);
+    window.location.href = smsUrl;
+  }
+
+  // =========================================================================
+  // डिजिटल दानपेटी QR पोस्टर
+  // =========================================================================
+  function openDanpetiScreen() {
+    var upiId = samitiUpi || '7905106011@upi';
+    document.getElementById('danpeti-upi-display').innerText = upiId;
+
+    var qrBox = document.getElementById('danpeti-qrcode-box');
+    qrBox.innerHTML = '';
+
+    // दानपेटी जेनरिक UPI URL (दानदाता अपनी मर्ज़ी से राशि डालेगा)
+    var danpetiUrl = "upi://pay?pa=" + encodeURIComponent(upiId) + "&pn=" + encodeURIComponent("Navyuva Durga Samiti Danpeti") + "&cu=INR&tn=" + encodeURIComponent("Pandal Daanpeti Sahayog");
+
+    try {
+      new QRCode(qrBox, {
+        text: danpetiUrl,
+        width: 170,
+        height: 170,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch(e) {}
+
+    showScreen('screen-danpeti');
+  }
+
+  function shareDanpetiWhatsApp() {
+    var upiId = samitiUpi || '7905106011@upi';
+    var text = "🚩 *नवयुवा दुर्गा पूजा समिति, रेलवे गेट मारकुंडी* 🚩\n\n" +
+      "🌺 *डिजिटल दानपेटी (Online Daanpeti)* 🌺\n" +
+      "माँ दुर्गा के भव्य पूजन, महाप्रसाद एवं भंडारे हेतु भक्तजन सीधे समिति खाते में ऑनलाइन सहयोग कर सकते हैं:\n\n" +
+      "💳 *UPI ID:* `" + upiId + "`\n\n" +
+      "🙏 माँ भगवती दुर्गा आप एवं आपके परिवार पर सदैव कृपा बनाए रखें। जय माता दी! 🚩";
+
+    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
+  }
+
+  async function downloadDanpetiPosterPDF() {
+    var target = document.getElementById('danpeti-standee-target');
+    try {
+      var canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#fffdf5',
+        logging: false
+      });
+
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+      var pW = 210, pH = 297, margin = 15;
+      var maxW = pW - (margin * 2);
+      var imgW = maxW;
+      var imgH = (canvas.height * imgW) / canvas.width;
+
+      var x = margin;
+      var y = margin + 10;
+
+      pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+      pdf.save('डिजिटल_दानपेटी_स्टैंडी_मारकुंडी.pdf');
+    } catch(err) {
+      alert("PDF नहीं बन सकी। कृपया प्रिंट स्क्रीन से सेव करें।");
+      window.print();
+    }
   }
 
   async function downloadReceiptPDF() {
@@ -1658,7 +1888,6 @@
     btn.innerText = "⏳ PDF बन रही है...";
 
     var target = document.getElementById('receipt-capture-target');
-
     try {
       var canvas = await html2canvas(target, {
         scale: 2,
@@ -1689,7 +1918,6 @@
       pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
       pdf.save('रसीद_' + currentReceipt.no + '.pdf');
     } catch(err) {
-      console.error("PDF Error:", err);
       alert("सीधे PDF डाउनलोड नहीं हो सकी। प्रिंट स्क्रीन से 'Save as PDF' करें।");
       window.print();
     } finally {
@@ -1860,6 +2088,13 @@
 
       var actDiv = document.createElement('div');
       actDiv.style.textAlign = 'right';
+
+      var callLink = document.createElement('a');
+      callLink.href = 'tel:' + rec.phone;
+      callLink.innerText = '📞';
+      callLink.title = 'कॉल करें';
+      callLink.style.cssText = 'display:inline-block; padding:4px 6px; background:#e1f5fe; border-radius:4px; margin-right:4px; text-decoration:none; font-size:12px;';
+      actDiv.appendChild(callLink);
 
       var viewBtn = document.createElement('button');
       viewBtn.innerText = 'देखें';
@@ -2035,9 +2270,6 @@
     });
   }
 
-  // =========================================================================
-  // DAILY DAY-END REPORT MODULE
-  // =========================================================================
   function getTodayDateFormatted() {
     var d = new Date();
     return String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
@@ -2120,7 +2352,6 @@
     });
 
     var dayTotCol = dayCash + dayOnline;
-
     var dayExp = 0;
     var dayExpList = [];
     expenses.forEach(function(e) {
@@ -2217,7 +2448,6 @@
 
   async function downloadDayReportPDF() {
     var target = document.getElementById('day-report-capture');
-
     try {
       var canvas = await html2canvas(target, {
         scale: 2,
@@ -2233,30 +2463,20 @@
 
       var pW = 210, pH = 297, margin = 10;
       var maxW = pW - (margin * 2);
-      var maxH = pH - (margin * 2);
-
       var imgW = maxW;
       var imgH = (canvas.height * imgW) / canvas.width;
-      if (imgH > maxH) {
-        imgH = maxH;
-        imgW = (canvas.width * imgH) / canvas.height;
-      }
 
-      var x = margin + (maxW - imgW) / 2;
+      var x = margin;
       var y = margin;
 
       pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
       pdf.save('दैनिक_क्लोजिंग_रिपोर्ट_' + (currentDayReportData.date || Date.now()) + '.pdf');
     } catch(err) {
-      console.error("Day Report PDF Error:", err);
       alert("PDF नहीं बन सकी। कृपया प्रिंट स्क्रीन से सेव करें।");
       window.print();
     }
   }
 
-  // =========================================================================
-  // FINANCIAL AUDIT REPORT GENERATION
-  // =========================================================================
   function openAuditSummaryScreen() {
     var d = new Date();
     var dateStr = String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
@@ -2356,7 +2576,6 @@
     btn.innerText = "⏳ ऑडिट PDF तैयार हो रही है...";
 
     var target = document.getElementById('audit-capture-target');
-
     try {
       var canvas = await html2canvas(target, {
         scale: 2,
@@ -2372,22 +2591,15 @@
 
       var pW = 210, pH = 297, margin = 10;
       var maxW = pW - (margin * 2);
-      var maxH = pH - (margin * 2);
-
       var imgW = maxW;
       var imgH = (canvas.height * imgW) / canvas.width;
-      if (imgH > maxH) {
-        imgH = maxH;
-        imgW = (canvas.width * imgH) / canvas.height;
-      }
 
-      var x = margin + (maxW - imgW) / 2;
+      var x = margin;
       var y = margin;
 
       pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
       pdf.save('वित्तीय_ऑडिट_रिपोर्ट_मारकुंडी_' + Date.now() + '.pdf');
     } catch(err) {
-      console.error("Audit PDF Error:", err);
       alert("PDF नहीं बन सकी। कृपया प्रिंट विकल्प से 'Save as PDF' चुनें।");
       window.print();
     } finally {
@@ -2438,7 +2650,7 @@
 
       var passDisplay = "";
       if (u.isPrivatePass) {
-        passDisplay = '<span style="color:#e65100; font-size:11px;">•••••• (सुरक्षित / यूजर द्वारा बदला गया)</span>';
+        passDisplay = '<span style="color:#e65100; font-size:11px;">•••••• (सुरक्षित / बदला गया)</span>';
       } else {
         passDisplay = '<strong>' + (u.pass || '1234') + '</strong>';
       }
@@ -2457,10 +2669,11 @@
             </div>
           </div>
           <div style="display:flex; gap:8px; align-items:center;">
+            <a href="tel:${u.mobile}" style="text-decoration:none; font-size:16px;" title="कॉल करें">📞</a>
             <button onclick="toggleUserStatus(${u.id})" style="border:none; background:${isAct ? '#ffebee' : '#e8f5e9'}; color:${isAct ? '#d32f2f' : '#2e7d32'}; padding:4px 6px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
               ${isAct ? '🔴 OFF' : '🟢 ON'}
             </button>
-            <span onclick="changeUserPass(${u.id})" style="cursor:pointer; font-size:16px;" title="पासवर्ड रीसेट करें (अगर यूजर भूल गया हो)">✏</span>
+            <span onclick="changeUserPass(${u.id})" style="cursor:pointer; font-size:16px;" title="पासवर्ड रीसेट करें">✏</span>
             <span onclick="deleteUser(${u.id})" style="cursor:pointer; font-size:16px;" title="यूज़र हटाएं">🗑️</span>
           </div>
         </div>
@@ -2501,10 +2714,7 @@
   function changeUserPass(id) {
     var u = users.find(function(x) { return x.id === id; });
     if (!u) return;
-    
-    var promptMsg = "'" + u.name + "' के लिए नया पासवर्ड दर्ज करें:\n(यूजर के भूल जाने पर एडमिन द्वारा रीसेट)";
-    var newP = prompt(promptMsg, "1234");
-    
+    var newP = prompt("'" + u.name + "' के लिए नया पासवर्ड दर्ज करें:", "1234");
     if (newP !== null && newP.trim() !== '') {
       u.pass = newP.trim();
       u.isPrivatePass = false;
@@ -2587,7 +2797,7 @@
     samitiUpi = val;
     localStorage.setItem('durga_samiti_upi', samitiUpi);
     syncToFirebase("samitiUpi", samitiUpi);
-    alert("समिति UPI ID (" + samitiUpi + ") सफलतापूर्वक अपडेट हो गई!\nअब सभी ऑनलाइन रसीदों पर यही QR कोड बनेगा।");
+    alert("समिति UPI ID (" + samitiUpi + ") सफलतापूर्वक अपडेट हो गई!\nअब सभी ऑनलाइन रसीदों व डिजिटल दानपेटी पर यही QR कोड बनेगा।");
   }
 
   function changeAdminPass() {
