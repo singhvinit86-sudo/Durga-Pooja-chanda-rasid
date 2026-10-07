@@ -27,6 +27,7 @@
     .btn-green { background: #2e7d32; }
     .btn-blue { background: #1976d2; }
     .btn-orange { background: #e65100; }
+    .btn-purple { background: #6a1b9a; }
     .btn-grey { background: #546e7a; }
 
     .form-group { margin-bottom: 13px; }
@@ -42,7 +43,7 @@
     /* Splash Screen */
     #screen-splash { background: linear-gradient(180deg, #4a0000 0%, #800000 40%, #b71c1c 100%); color: white; text-align: center; padding: 30px 20px; justify-content: space-between; align-items: center; }
     .durga-circle { width: 180px; height: 180px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 5px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.7); background: #ffffff; }
-    .durga-circle img, .login-durga-logo img, .receipt-header-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* Login Screen */
     .tab-wrap { display: flex; background: #f1f2f6; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
@@ -91,6 +92,12 @@
     .seal-mid { font-size: 11px; font-weight: 900; color: #b71c1c; border-top: 1px solid #b71c1c; border-bottom: 1px solid #b71c1c; padding: 1px 4px; margin: 2px 0; letter-spacing: 0.5px; }
     .seal-bot { font-size: 7.5px; font-weight: 800; line-height: 1.1; }
 
+    /* Certificate Card Styling */
+    .cert-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
+    .cert-border { width: 100%; background: #fffdf5; border: 4px double #b71c1c; border-radius: 12px; padding: 14px; position: relative; }
+    .cert-inner { border: 2px solid #ffb300; padding: 20px 14px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; }
+    .cert-header-photo { width: 85px; height: 85px; margin: 0 auto 8px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ff9800; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+
     .user-list-item { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
     .user-circle { width: 40px; height: 40px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; }
 
@@ -106,8 +113,8 @@
 
     @media print {
       body * { visibility: hidden; }
-      #print-area, #print-area * { visibility: visible; }
-      #print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-area, #print-area *, #cert-print-area, #cert-print-area * { visibility: visible; }
+      #print-area, #cert-print-area { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
@@ -200,6 +207,11 @@
         </div>
       </div>
 
+      <!-- शाम की पूरी समिति रिपोर्ट (Consolidated WhatsApp Report) -->
+      <button class="btn btn-green" style="margin-bottom: 10px;" onclick="sendAdminEveningReport()">
+        📢 आज की महा-रिपोर्ट WhatsApp पर भेजें
+      </button>
+
       <button class="btn" onclick="openReceiptForm()">➕ रसीद बनाएं (Create Receipt)</button>
     </div>
 
@@ -220,7 +232,7 @@
         <div style="font-size: 22px;">➕</div>नया यूज़र बनाएं
       </div>
       <div class="menu-box" style="background: #f57c00;" onclick="showScreen('screen-settings')">
-        <div style="font-size: 22px;">⚙️</div>सेटिंग्स व पासवर्ड
+        <div style="font-size: 22px;">⚙️</div>सेटिंग्स, बैकअप व QR
       </div>
     </div>
 
@@ -269,7 +281,11 @@
       </div>
     </div>
 
-    <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px;">
+    <!-- कार्यकर्ता दैनिक शाम की समरी (User Daily Evening Dispatch) -->
+    <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
+      <button class="btn btn-green" onclick="sendUserDailyEveningSummary()">
+        📤 आज का मेरा हिसाब WhatsApp पर भेजें
+      </button>
       <button class="btn btn-orange" onclick="openReceiptForm()">✏️ नई रसीद बनाएं</button>
       <button class="btn btn-blue" onclick="openReceiptsList()">📋 मेरी कटी हुई रसीदें</button>
     </div>
@@ -328,7 +344,7 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW (SEAL & SWASTIK SAFE PADDING) -->
+  <!-- 6. RECEIPT PREVIEW -->
   <div id="screen-preview" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" id="preview-back-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
@@ -406,7 +422,6 @@
 
           <!-- Bottom Footer Area with Circular Stamp & Signature -->
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; padding: 0 4px 6px 4px; font-size: 12px; font-weight: bold;">
-            <!-- Left Side: Circular Committee Seal Stamp -->
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
               <div class="seal-wrap">
                 <span class="seal-top">नवयुवा दुर्गा पूजा समिति</span>
@@ -416,7 +431,6 @@
               <div style="font-size: 11px; color: #444; margin-top: 2px;">दिनांक : <strong id="pv-date">-</strong></div>
             </div>
 
-            <!-- Right Side: Collector Name & Signature -->
             <div style="text-align: right; padding-right: 6px;">
               <span style="font-size: 10px; color: #666;">अधिकृत रसीद कर्ता / Signature</span><br />
               <span id="pv-by" style="color: #b71c1c; font-size: 15px; font-weight: bold; display: block; margin-top: 2px;">-</span>
@@ -426,14 +440,86 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन -->
+    <!-- बटन सेक्शन (Added Certificate Generator Button) -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+      <button class="btn btn-purple" onclick="openCertificateScreen()">
+        📜 सम्मान पत्र / आभार पत्र देखें (Certificate)
+      </button>
       <button class="btn" style="background: #b71c1c;" id="btn-dl-pdf" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
       </button>
       <button class="btn btn-green" id="btn-share-wa" onclick="shareWhatsApp()">💬 WhatsApp पर भेजें</button>
       <button class="btn btn-grey" onclick="window.print()">🖨️ प्रिंट करें</button>
       <button class="btn" id="btn-back-home" onclick="backToHome()">🏠 होम पर जाएं</button>
+    </div>
+  </div>
+
+  <!-- 6.1 DONOR CERTIFICATE SCREEN (सम्मान पत्र / आभार पत्र जनरेटर) -->
+  <div id="screen-certificate" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="showScreen('screen-preview')">⬅</button> सम्मान पत्र / आभार पत्र</h2>
+    </div>
+
+    <div class="cert-box" id="cert-print-area">
+      <div class="cert-border" id="cert-capture-target">
+        <div class="cert-inner">
+          <div style="color: #b71c1c; font-size: 12px; font-weight: bold; margin-bottom: 6px;">
+            🚩 || श्री गणेशाय नमः || जय माता दी || 🚩
+          </div>
+
+          <div class="cert-header-photo">
+            <img id="cert-img-show" alt="माँ दुर्गा" />
+          </div>
+
+          <h2 style="color: #b71c1c; font-size: 20px; font-weight: 900; margin: 4px 0;">नवयुवा दुर्गा पूजा समिति</h2>
+          <p style="font-size: 12px; font-weight: bold; color: #4a148c; margin-bottom: 12px;">रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.)</p>
+
+          <div style="background: linear-gradient(135deg, #b71c1c, #d32f2f); color: #ffea00; font-size: 14px; font-weight: 900; padding: 5px 20px; border-radius: 20px; display: inline-block; margin-bottom: 14px; letter-spacing: 0.5px;">
+            ★ सम्मान व आभार पत्र ★
+          </div>
+
+          <p style="font-size: 13px; color: #444; line-height: 1.6; margin-bottom: 12px;">
+            माँ दुर्गा पूजा महोत्सव 2026 के पावन अवसर पर आपके द्वारा प्रदत्त अमूल्य सहयोग एवं श्रद्धा हेतु समिति आपका हार्दिक आभार व अभिनंदन व्यक्त करती है।
+          </p>
+
+          <div style="background: #fff8e1; border: 1.5px dashed #ffa000; border-radius: 8px; padding: 12px; margin: 10px 0;">
+            <div style="font-size: 11px; color: #666; font-weight: bold;">परम आदरणीय दानदाता:</div>
+            <div id="cert-donor-name" style="font-size: 18px; font-weight: 900; color: #b71c1c; margin: 4px 0;">-</div>
+            <div id="cert-donor-desc" style="font-size: 13px; font-weight: bold; color: #2e7d32;">-</div>
+          </div>
+
+          <p style="font-size: 12px; color: #b71c1c; font-weight: bold; margin: 12px 0;">
+            🌺 माँ भगवती दुर्गा की कृपा आप एवं आपके समस्त परिवार पर सदैव बनी रहे। 🌺
+          </p>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 18px; padding: 0 8px;">
+            <div style="text-align: left;">
+              <div class="seal-wrap">
+                <span class="seal-top">नवयुवा दुर्गा पूजा समिति</span>
+                <span class="seal-mid">★ प्रमाणित ★</span>
+                <span class="seal-bot">मारकुंडी (सोनभद्र)</span>
+              </div>
+              <div style="font-size: 10px; color: #555; margin-top: 4px;">दिनांक: <strong id="cert-date">-</strong></div>
+            </div>
+
+            <div style="text-align: right;">
+              <span style="font-size: 10px; color: #666;">समिति अध्यक्ष / अधिकृत पदाधिकारी</span><br />
+              <strong id="cert-by" style="color: #b71c1c; font-size: 14px;">नवयुवा समिति</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+      <button class="btn" style="background: #b71c1c;" id="btn-dl-cert" onclick="downloadCertificatePDF()">
+        📥 Save Certificate PDF (सम्मान पत्र डाउनलोड करें)
+      </button>
+      <button class="btn btn-green" onclick="shareCertificateWhatsApp()">
+        💬 WhatsApp पर सम्मान पत्र शेयर करें
+      </button>
+      <button class="btn btn-grey" onclick="window.print()">🖨️ प्रिंट करें</button>
+      <button class="btn btn-blue" onclick="showScreen('screen-preview')">⬅ रसीद पर वापस जाएं</button>
     </div>
   </div>
 
@@ -525,7 +611,7 @@
     </div>
   </div>
 
-  <!-- 10. USERS LIST & हिसाब (DISPLAYS RECEIPT CODE LIKE [A, B] & KEEPS PASSWORDS HIDDEN) -->
+  <!-- 10. USERS LIST & हिसाब -->
   <div id="screen-users-list" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Users & हिसाब</h2>
@@ -533,13 +619,29 @@
     <div id="users-list-box" style="padding: 14px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 11. SETTINGS & QR MANAGEMENT (ADMIN PASSWORD CHANGE) -->
+  <!-- 11. SETTINGS, BACKUP/RESTORE & QR MANAGEMENT -->
   <div id="screen-settings" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Settings</h2>
     </div>
     <div style="padding: 20px; overflow-y: auto;">
       
+      <!-- संपूर्ण डेटा बैकअप और रिस्टोर (Full Data Backup & Restore) -->
+      <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">💾 संपूर्ण डेटा बैकअप व रिस्टोर</h3>
+      <div style="border: 1.5px solid #81c784; background: #f1f8e9; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
+        <p style="font-size: 12px; color: #555; margin-bottom: 10px;">
+          पूरे साल का रिकॉर्ड (सभी रसीदें, खर्च, कार्यकर्ता व सेटिंग्स) सुरक्षित अपने फोन में सेव करें या पुरानी बैकअप फ़ाइल से लोड करें।
+        </p>
+        <button class="btn btn-green" style="margin-bottom: 10px;" onclick="downloadFullBackupJSON()">
+          📥 संपूर्ण बैकअप डाउनलोड करें (.json)
+        </button>
+
+        <input type="file" id="restore-file-input" accept=".json" style="display: none;" onchange="handleRestoreBackup(event)" />
+        <button class="btn btn-orange" onclick="document.getElementById('restore-file-input').click()">
+          📤 बैकअप फ़ाइल से डेटा रिस्टोर करें
+        </button>
+      </div>
+
       <!-- एडमिन पासवर्ड बदलें -->
       <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">🔒 एडमिन पासवर्ड बदलें</h3>
       <div style="border: 1px solid #ffe082; background: #fffdf5; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
@@ -671,7 +773,7 @@
   var currentQRImg = localStorage.getItem('durga_samiti_qr') || DEFAULT_QR;
 
   function updateImages() {
-    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'settings-preview-img'];
+    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'cert-img-show', 'settings-preview-img'];
     for (var i = 0; i < ids.length; i++) {
       var el = document.getElementById(ids[i]);
       if (el) el.src = currentDurgaImg;
@@ -825,7 +927,290 @@
     }
   }
 
+  // =========================================================================
+  // 1. कार्यकता (USER) दैनिक शाम की समरी
+  // =========================================================================
+  function sendUserDailyEveningSummary() {
+    if (!currentUser) return;
+
+    var today = new Date();
+    var todayStr = String(today.getDate()).padStart(2, '0') + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + today.getFullYear();
+
+    var count = 0;
+    var cashAmt = 0;
+    var onlineAmt = 0;
+    var itemsCount = 0;
+
+    for (var i = 0; i < receipts.length; i++) {
+      var r = receipts[i];
+      if (r.code === currentUser.code && !r.isCancelled && r.date === todayStr) {
+        count++;
+        if (r.type === 'ONLINE') onlineAmt += Number(r.amt);
+        else if (r.type === 'ITEM') itemsCount++;
+        else cashAmt += Number(r.amt);
+      }
+    }
+
+    var totalMoney = cashAmt + onlineAmt;
+
+    var text = "🚩 *दैनिक चंदा संग्रह रिपोर्ट (कार्यकर्ता)* 🚩\n" +
+      "*नवयुवा दुर्गा पूजा समिति, मारकुंडी*\n" +
+      "-----------------------------------\n" +
+      "👤 कार्यकर्ता: *" + currentUser.name + "* [कोड: " + currentUser.code + "]\n" +
+      "📅 दिनांक: " + todayStr + "\n" +
+      "-----------------------------------\n" +
+      "📄 आज कुल काटी रसीदें: " + count + "\n" +
+      "💵 आज नकद संग्रह: *रु. " + cashAmt + "/-*\n" +
+      "📲 आज ऑनलाइन संग्रह: *रु. " + onlineAmt + "/-*\n" +
+      "🎁 आज वस्तु दान रसीदें: " + itemsCount + "\n" +
+      "💰 आज का कुल संग्रह: *रु. " + totalMoney + "/-*\n" +
+      "-----------------------------------\n" +
+      "माँ दुर्गा की कृपा हम सब पर सदैव बनी रहे। जय माता दी! 🙏";
+
+    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
+  }
+
+  // =========================================================================
+  // 2. एडमिन (ADMIN) शाम की पूरी समिति रिपोर्ट
+  // =========================================================================
+  function sendAdminEveningReport() {
+    var today = new Date();
+    var todayStr = String(today.getDate()).padStart(2, '0') + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + today.getFullYear();
+
+    var todayReceiptsCount = 0;
+    var todayCash = 0;
+    var todayOnline = 0;
+    var todayItems = 0;
+
+    // Karyakarta wise count
+    var userMap = {};
+    for (var u = 0; u < users.length; u++) {
+      userMap[users[u].code] = { name: users[u].name, total: 0, count: 0 };
+    }
+    userMap['ADM'] = { name: 'एडमिन/समिति', total: 0, count: 0 };
+
+    for (var i = 0; i < receipts.length; i++) {
+      var r = receipts[i];
+      if (!r.isCancelled && r.date === todayStr) {
+        todayReceiptsCount++;
+        if (r.type === 'ONLINE') {
+          todayOnline += Number(r.amt);
+        } else if (r.type === 'ITEM') {
+          todayItems++;
+        } else {
+          todayCash += Number(r.amt);
+        }
+
+        var c = r.code || 'ADM';
+        if (!userMap[c]) userMap[c] = { name: r.by || c, total: 0, count: 0 };
+        if (r.type !== 'ITEM') userMap[c].total += Number(r.amt);
+        userMap[c].count++;
+      }
+    }
+
+    var todayExpense = 0;
+    for (var j = 0; j < expenses.length; j++) {
+      if (expenses[j].date === todayStr || expenses[j].date === today.toISOString().split('T')[0]) {
+        todayExpense += Number(expenses[j].amt);
+      }
+    }
+
+    var todayTotalIncome = todayCash + todayOnline;
+    var netSavings = todayTotalIncome - todayExpense;
+
+    var collectorSummary = "";
+    for (var key in userMap) {
+      if (userMap[key].count > 0) {
+        collectorSummary += "• " + userMap[key].name + " [" + key + "]: रु. " + userMap[key].total + " (" + userMap[key].count + " रसीदें)\n";
+      }
+    }
+    if (!collectorSummary) collectorSummary = "• आज कोई नई रसीद दर्ज नहीं हुई।\n";
+
+    var text = "🚩 *दैनिक महा-रिपोर्ट (दैनिक लेखा-जोखा)* 🚩\n" +
+      "*नवयुवा दुर्गा पूजा समिति, मारकुंडी, सोनभद्र*\n" +
+      "📅 दिनांक: " + todayStr + "\n" +
+      "===================================\n" +
+      "📊 *आज का कुल विवरण:*\n" +
+      "• कुल काटी रसीदें: " + todayReceiptsCount + "\n" +
+      "• 💵 नकद चंदा: *रु. " + todayCash + "/-*\n" +
+      "• 📲 ऑनलाइन/UPI: *रु. " + todayOnline + "/-*\n" +
+      "• 🎁 वस्तु दान: " + todayItems + " रसीदें\n" +
+      "• 💰 आज का कुल संग्रह: *रु. " + todayTotalIncome + "/-*\n" +
+      "• 💸 आज का कुल खर्च: *रु. " + todayExpense + "/-*\n" +
+      "• 🟢 आज की शुद्ध बचत: *रु. " + netSavings + "/-*\n" +
+      "===================================\n" +
+      "👥 *कार्यकर्ता-वार आज का संग्रह:*\n" +
+      collectorSummary +
+      "===================================\n" +
+      "🚩 || बोलो सांचे दरबार की जय || 🚩";
+
+    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
+  }
+
+  // =========================================================================
+  // 3. सम्मान पत्र / आभार पत्र जनरेटर (CERTIFICATE OF HONOR)
+  // =========================================================================
+  function openCertificateScreen() {
+    if (!currentReceipt) {
+      alert("पहले कोई रसीद चुनें!");
+      return;
+    }
+
+    document.getElementById('cert-donor-name').innerText = currentReceipt.name + " जी";
+    
+    var desc = "";
+    if (currentReceipt.type === 'ITEM') {
+      desc = "समर्पित वस्तु: " + currentReceipt.itemDesc + (currentReceipt.itemVal ? " (अनुमानित मूल्य: ₹" + currentReceipt.itemVal + "/-)" : "");
+    } else {
+      desc = "सहयोग राशि: ₹" + currentReceipt.amt + "/- (" + (currentReceipt.type === 'ONLINE' ? 'ऑनलाइन/UPI' : 'नकद') + ")";
+    }
+    document.getElementById('cert-donor-desc').innerText = desc;
+    document.getElementById('cert-date').innerText = currentReceipt.date;
+    document.getElementById('cert-by').innerText = currentReceipt.by || "नवयुवा समिति";
+
+    var certImg = document.getElementById('cert-img-show');
+    if (certImg) certImg.src = currentDurgaImg || DEFAULT_DURGA;
+
+    showScreen('screen-certificate');
+  }
+
+  async function downloadCertificatePDF() {
+    var btn = document.getElementById('btn-dl-cert');
+    var origTxt = btn.innerText;
+    btn.innerText = "⏳ सम्मान पत्र PDF बन रही है...";
+
+    var target = document.getElementById('cert-capture-target');
+
+    try {
+      var canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#fffdf5',
+        logging: false
+      });
+
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+      var pW = 210, pH = 297, margin = 10;
+      var maxW = pW - (margin * 2);
+      var maxH = pH - (margin * 2);
+
+      var imgW = maxW;
+      var imgH = (canvas.height * imgW) / canvas.width;
+      if (imgH > maxH) {
+        imgH = maxH;
+        imgW = (canvas.width * imgH) / canvas.height;
+      }
+
+      var x = margin + (maxW - imgW) / 2;
+      var y = margin + (maxH - imgH) / 2;
+
+      pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+      pdf.save('सम्मान_पत्र_' + (currentReceipt ? currentReceipt.name : 'दानदाता') + '.pdf');
+    } catch(err) {
+      console.error("Certificate PDF Error:", err);
+      alert("सीधे PDF डाउनलोड नहीं हो सकी। प्रिंट स्क्रीन से 'Save as PDF' करें।");
+      window.print();
+    } finally {
+      btn.innerText = origTxt;
+    }
+  }
+
+  function shareCertificateWhatsApp() {
+    if (!currentReceipt) return;
+
+    var baseLink = window.location.href.split('?')[0];
+    var link = baseLink + '?id=' + encodeURIComponent(currentReceipt.no);
+
+    var text = "🚩 *॥ सम्मान व आभार पत्र ॥* 🚩\n" +
+      "*नवयुवा दुर्गा पूजा समिति, रेलवे गेट, मारकुंडी (सोनभद्र)*\n\n" +
+      "परम आदरणीय *" + currentReceipt.name + "* जी,\n" +
+      "माँ दुर्गा पूजा महोत्सव 2026 में आपके द्वारा दिए गए पावन सहयोग हेतु समिति आपको यह सम्मान व आभार पत्र सादर समर्पित करती है।\n\n" +
+      "📜 अपना डिजिटल सम्मान पत्र देखने व डाउनलोड करने हेतु यहाँ क्लिक करें:\n" + link + "\n\n" +
+      "माँ भगवती आपके परिवार पर सदैव कृपा बनाए रखें! 🙏";
+
+    window.open("https://api.whatsapp.com/send?phone=91" + currentReceipt.phone + "&text=" + encodeURIComponent(text), "_blank");
+  }
+
+  // =========================================================================
+  // 4. संपूर्ण डेटा बैकअप और रिस्टोर (FULL BACKUP & RESTORE)
+  // =========================================================================
+  function downloadFullBackupJSON() {
+    var backupData = {
+      backupDate: new Date().toISOString(),
+      receipts: receipts,
+      expenses: expenses,
+      users: users,
+      adminPass: adminPass,
+      samitiQR: currentQRImg,
+      durgaImg: currentDurgaImg
+    };
+
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+    var dlAnchor = document.createElement('a');
+    var d = new Date();
+    var fileDate = d.getDate() + "_" + (d.getMonth() + 1) + "_" + d.getFullYear();
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", "Durga_Puja_Full_Backup_" + fileDate + ".json");
+    document.body.appendChild(dlAnchor);
+    dlAnchor.click();
+    dlAnchor.remove();
+    alert("✅ पूरे साल का संपूर्ण डेटा बैकअप (.json) फ़ाइल में डाउनलोड हो गया है!");
+  }
+
+  function handleRestoreBackup(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        var restored = JSON.parse(e.target.result);
+        if (restored && restored.receipts && Array.isArray(restored.receipts)) {
+          if (confirm("⚠️ क्या आप सच में इस बैकअप फ़ाइल से डेटा रिस्टोर करना चाहते हैं? इससे वर्तमान डेटा इस बैकअप से बदल जाएगा।")) {
+            receipts = restored.receipts || [];
+            expenses = restored.expenses || [];
+            users = restored.users || [];
+            if (restored.adminPass) adminPass = restored.adminPass;
+            if (restored.samitiQR) currentQRImg = restored.samitiQR;
+            if (restored.durgaImg) currentDurgaImg = restored.durgaImg;
+
+            localStorage.setItem('durga_receipts', JSON.stringify(receipts));
+            localStorage.setItem('durga_expenses', JSON.stringify(expenses));
+            localStorage.setItem('durga_users', JSON.stringify(users));
+            localStorage.setItem('durga_admin_pass', adminPass);
+            localStorage.setItem('durga_samiti_qr', currentQRImg);
+            localStorage.setItem('durga_app_img', currentDurgaImg);
+
+            // Firebase sync
+            syncToFirebase("receipts", receipts);
+            syncToFirebase("expenses", expenses);
+            syncToFirebase("users", users);
+            syncToFirebase("adminPass", adminPass);
+            syncToFirebase("samitiQR", currentQRImg);
+
+            updateImages();
+            updateQRImages();
+            updateAdminSummary();
+            alert("🎉 डेटा सफलतापूर्वक रिस्टोर हो गया है!");
+            showScreen('screen-admin');
+          }
+        } else {
+          alert("गलत बैकअप फ़ाइल फॉर्मेट! कृपया सही .json फ़ाइल चुनें।");
+        }
+      } catch(err) {
+        alert("फ़ाइल पढ़ने में त्रुटि: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // =========================================================================
   // USER SELF PASSWORD CHANGE FEATURE
+  // =========================================================================
   function userSelfChangePass() {
     if (!currentUser) return;
 
@@ -864,7 +1249,6 @@
     alert("✅ आपका पासवर्ड सफलतापूर्वक बदल गया है!\nअब से केवल इसी नए पासवर्ड से लॉगिन होगा, पुराना पासवर्ड काम नहीं करेगा।");
   }
 
-  // ADMIN PASSWORD CHANGE FEATURE
   function changeAdminPass() {
     var oldP = document.getElementById('set-old-pass').value.trim();
     var newP = document.getElementById('set-new-pass').value.trim();
@@ -1526,7 +1910,6 @@
     }
   }
 
-  // USER MANAGEMENT: SHOWS RECEIPT CODE DIRECTLY IN FRONT OF NAME [A, B] & KEEPS PASSWORDS HIDDEN
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -1580,7 +1963,6 @@
     showScreen('screen-users-list');
   }
 
-  // ADMIN CAN RESET USER PASSWORD IF FORGOTTEN
   function adminResetUserPass(id) {
     var u = null;
     for (var i = 0; i < users.length; i++) {
