@@ -10,6 +10,16 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
+  <!-- Prevent Splash Flash on Direct Donor Link -->
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('id')) {
+        document.documentElement.classList.add('donor-direct-view');
+      }
+    })();
+  </script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { background-color: #f1f2f6; display: flex; justify-content: center; min-height: 100vh; }
@@ -17,6 +27,10 @@
 
     .screen { display: none; flex-direction: column; flex: 1; }
     .screen.active { display: flex !important; }
+
+    /* Bypass splash immediately if direct link */
+    html.donor-direct-view #screen-splash { display: none !important; }
+    html.donor-direct-view #screen-preview { display: flex !important; }
 
     .top-bar { background: linear-gradient(135deg, #b71c1c, #d32f2f); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
     .top-bar h2 { font-size: 17px; display: flex; align-items: center; gap: 8px; font-weight: bold; }
@@ -111,6 +125,9 @@
     .receipt-qr-wrap img { width: 115px; height: 115px; object-fit: contain; display: block; margin: 0 auto 4px auto; }
     .receipt-qr-wrap span { font-size: 10px; font-weight: bold; color: #b71c1c; display: block; }
 
+    /* Tamper error message box */
+    #tamper-error-box { display: none; padding: 30px 20px; text-align: center; }
+
     @media print {
       body * { visibility: hidden; }
       #print-area, #print-area *, #cert-print-area, #cert-print-area * { visibility: visible; }
@@ -142,7 +159,7 @@
     </div>
   </div>
 
-  <!-- 2. LOGIN SCREEN (PLACEHOLDER UPDATED TO '10 अंकों का मोबाइल नंबर दर्ज करें') -->
+  <!-- 2. LOGIN SCREEN -->
   <div id="screen-login" class="screen">
     <div class="top-bar">
       <h2>ॐ दुर्गा पूजा समिति</h2>
@@ -185,7 +202,7 @@
     </div>
 
     <div style="padding: 14px 16px 0 16px;">
-      <!-- दैनिक आय-व्यय सारांश (Live Balance Sheet) -->
+      <!-- दैनिक आय-व्यय सारांश -->
       <div class="summary-card">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #ffb74d; padding-bottom: 4px;">
           <span style="font-weight: bold; font-size: 13px; color: #b71c1c;">📊 दैनिक आय-व्यय सारांश</span>
@@ -207,7 +224,6 @@
         </div>
       </div>
 
-      <!-- शाम की पूरी समिति रिपोर्ट (Consolidated WhatsApp Report) -->
       <button class="btn btn-green" style="margin-bottom: 10px;" onclick="sendAdminEveningReport()">
         📢 आज की महा-रिपोर्ट WhatsApp पर भेजें
       </button>
@@ -281,7 +297,6 @@
       </div>
     </div>
 
-    <!-- कार्यकर्ता दैनिक शाम की समरी -->
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
       <button class="btn btn-green" onclick="sendUserDailyEveningSummary()">
         📤 आज का मेरा हिसाब WhatsApp पर भेजें
@@ -344,10 +359,19 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW -->
+  <!-- 6. RECEIPT PREVIEW (DIRECT DONOR VIEW: ONLY SAVE/DOWNLOAD AVAILABLE) -->
   <div id="screen-preview" class="screen">
-    <div class="top-bar">
+    <div class="top-bar" id="preview-top-bar">
       <h2><button class="icon-btn" id="preview-back-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
+    </div>
+
+    <!-- Tamper Alert Box -->
+    <div id="tamper-error-box">
+      <div style="font-size: 55px; margin-bottom: 12px;">🚫</div>
+      <h3 style="color: #b71c1c; font-size: 19px; margin-bottom: 10px;">अमान्य या छेड़छाड़ की गई रसीद लिंक!</h3>
+      <p style="color: #555; font-size: 13.5px; line-height: 1.6;">
+        इस रसीद लिंक के साथ छेड़छाड़ की गई है या यह लिंक अधूरा है। सुरक्षा कारणों से यह रसीद सत्यापित नहीं की जा सकी। कृपया समिति से सही डिजिटल लिंक प्राप्त करें।
+      </p>
     </div>
 
     <div class="receipt-box" id="print-area">
@@ -440,16 +464,16 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन -->
-    <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
-      <button class="btn btn-purple" onclick="openCertificateScreen()">
-        📜 सम्मान पत्र / आभार पत्र देखें (Certificate)
-      </button>
+    <!-- BUTTONS SECTION: In donor mode, ONLY Download/Save PDF will show -->
+    <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;" id="preview-action-buttons">
       <button class="btn" style="background: #b71c1c;" id="btn-dl-pdf" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
       </button>
+      <button class="btn btn-purple" id="btn-view-cert" onclick="openCertificateScreen()">
+        📜 सम्मान पत्र / आभार पत्र देखें (Certificate)
+      </button>
       <button class="btn btn-green" id="btn-share-wa" onclick="shareWhatsApp()">💬 WhatsApp पर भेजें</button>
-      <button class="btn btn-grey" onclick="window.print()">🖨️ प्रिंट करें</button>
+      <button class="btn btn-grey" id="btn-print" onclick="window.print()">🖨️ प्रिंट करें</button>
       <button class="btn" id="btn-back-home" onclick="backToHome()">🏠 होम पर जाएं</button>
     </div>
   </div>
@@ -707,6 +731,17 @@
   // =========================================================================
   var FIREBASE_DB_URL = "https://navyuva-durga-pooja-samiti-default-rtdb.firebaseio.com/";
 
+  // TAMPER-PROOF SECURITY SIGNATURE GENERATOR
+  function generateReceiptSig(r) {
+    var raw = (r.no || '') + '|' + (r.amt || 0) + '|' + (r.phone || '') + '|' + (r.name || '') + '|nydps2026';
+    var hash = 0;
+    for (var i = 0; i < raw.length; i++) {
+      hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash).toString(36);
+  }
+
   function syncToFirebase(endpoint, data, method) {
     if (!FIREBASE_DB_URL) return;
     try {
@@ -789,6 +824,7 @@
   }
 
   function showScreen(id) {
+    document.documentElement.classList.remove('donor-direct-view');
     var screens = document.querySelectorAll('.screen');
     for (var i = 0; i < screens.length; i++) {
       screens[i].classList.remove('active');
@@ -851,7 +887,6 @@
     }
   }
 
-  // UPDATED setRole: Always sets clean placeholder "10 अंकों का मोबाइल नंबर दर्ज करें"
   function setRole(role) {
     currentRole = role;
     document.getElementById('tab-adm').classList.toggle('active', role === 'admin');
@@ -923,9 +958,6 @@
     }
   }
 
-  // =========================================================================
-  // USER DAILY EVENING DISPATCH
-  // =========================================================================
   function sendUserDailyEveningSummary() {
     if (!currentUser) return;
 
@@ -966,9 +998,6 @@
     window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
   }
 
-  // =========================================================================
-  // ADMIN DAILY EVENING CONSOLIDATED REPORT
-  // =========================================================================
   function sendAdminEveningReport() {
     var today = new Date();
     var todayStr = String(today.getDate()).padStart(2, '0') + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + today.getFullYear();
@@ -1042,9 +1071,6 @@
     window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
   }
 
-  // =========================================================================
-  // CERTIFICATE OF HONOR
-  // =========================================================================
   function openCertificateScreen() {
     if (!currentReceipt) {
       alert("पहले कोई रसीद चुनें!");
@@ -1118,7 +1144,8 @@
     if (!currentReceipt) return;
 
     var baseLink = window.location.href.split('?')[0];
-    var link = baseLink + '?id=' + encodeURIComponent(currentReceipt.no);
+    var sig = generateReceiptSig(currentReceipt);
+    var link = baseLink + '?id=' + encodeURIComponent(currentReceipt.no) + '&sig=' + encodeURIComponent(sig);
 
     var text = "🚩 *॥ सम्मान व आभार पत्र ॥* 🚩\n" +
       "*नवयुवा दुर्गा पूजा समिति, रेलवे गेट, मारकुंडी (सोनभद्र)*\n\n" +
@@ -1130,9 +1157,6 @@
     window.open("https://api.whatsapp.com/send?phone=91" + currentReceipt.phone + "&text=" + encodeURIComponent(text), "_blank");
   }
 
-  // =========================================================================
-  // FULL BACKUP & RESTORE
-  // =========================================================================
   function downloadFullBackupJSON() {
     var backupData = {
       backupDate: new Date().toISOString(),
@@ -1202,9 +1226,6 @@
     reader.readAsText(file);
   }
 
-  // =========================================================================
-  // USER PASSWORD CHANGE
-  // =========================================================================
   function userSelfChangePass() {
     if (!currentUser) return;
 
@@ -1381,8 +1402,12 @@
     showPreview(currentReceipt, false);
   }
 
+  // UPDATED showPreview: STOPS FLASH & ONLY SHOWS DOWNLOAD IN DONOR VIEW
   function showPreview(r, isDonorView) {
     currentReceipt = r;
+    document.getElementById('tamper-error-box').style.display = 'none';
+    document.getElementById('print-area').style.display = 'flex';
+
     document.getElementById('pv-no').innerText = r.no;
     document.getElementById('pv-name').innerText = r.name;
     document.getElementById('pv-phone').innerText = r.phone;
@@ -1429,18 +1454,25 @@
       badgeBox.innerHTML = '<span style="background: linear-gradient(135deg, #b71c1c, #d32f2f); color: #ffea00; font-size: 13px; font-weight: bold; padding: 4px 18px; border-radius: 20px; display: inline-block; margin-bottom: 6px;">✨ ' + (r.type === 'ITEM' ? 'वस्तु दान समर्पित रसीद' : 'चंदा सहयोग रसीद') + ' ✨</span>';
     }
 
+    // DONOR VIEW RESTRICTIONS: ONLY DOWNLOAD/SAVE BUTTON VISIBLE
+    var certBtn = document.getElementById('btn-view-cert');
     var shareBtn = document.getElementById('btn-share-wa');
+    var printBtn = document.getElementById('btn-print');
     var homeBtn = document.getElementById('btn-back-home');
-    var backBtn = document.getElementById('preview-back-btn');
+    var topBar = document.getElementById('preview-top-bar');
 
     if (isDonorView) {
+      if (certBtn) certBtn.style.display = 'none';
       if (shareBtn) shareBtn.style.display = 'none';
+      if (printBtn) printBtn.style.display = 'none';
       if (homeBtn) homeBtn.style.display = 'none';
-      if (backBtn) backBtn.style.display = 'none';
+      if (topBar) topBar.style.display = 'none';
     } else {
+      if (certBtn) certBtn.style.display = 'block';
       if (shareBtn) shareBtn.style.display = r.isCancelled ? 'none' : 'block';
+      if (printBtn) printBtn.style.display = 'block';
       if (homeBtn) homeBtn.style.display = 'block';
-      if (backBtn) backBtn.style.display = 'inline-block';
+      if (topBar) topBar.style.display = 'flex';
     }
 
     showScreen('screen-preview');
@@ -1495,6 +1527,7 @@
     }
   }
 
+  // WHATSAPP SHARE GENERATES SECURE TAMPER-PROOF SIGNATURE IN LINK
   function shareWhatsApp() {
     if (!currentReceipt) return;
     if (currentReceipt.isCancelled) {
@@ -1503,7 +1536,8 @@
     }
 
     var baseLink = window.location.href.split('?')[0];
-    var link = baseLink + '?id=' + encodeURIComponent(currentReceipt.no);
+    var sig = generateReceiptSig(currentReceipt);
+    var link = baseLink + '?id=' + encodeURIComponent(currentReceipt.no) + '&sig=' + encodeURIComponent(sig);
 
     var donationLine = (currentReceipt.type === 'ITEM') 
       ? ("समर्पित वस्तु: *" + currentReceipt.itemDesc + "* " + (currentReceipt.itemVal ? "(मूल्य: ₹" + currentReceipt.itemVal + "/-)" : ""))
@@ -1904,7 +1938,6 @@
     }
   }
 
-  // USER MANAGEMENT: SHOWS RECEIPT CODE DIRECTLY IN FRONT OF NAME [A, B] & KEEPS PASSWORDS HIDDEN
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -2118,13 +2151,12 @@
     }
   }
 
+  // =========================================================================
+  // PAGE LOAD: STRICT TAMPER-PROOF VERIFICATION & DIRECT DONOR VIEW
+  // =========================================================================
   window.addEventListener('load', function() {
-    if (!currentDurgaImg) {
-      currentDurgaImg = DEFAULT_DURGA;
-    }
-    if (!currentQRImg) {
-      currentQRImg = DEFAULT_QR;
-    }
+    if (!currentDurgaImg) currentDurgaImg = DEFAULT_DURGA;
+    if (!currentQRImg) currentQRImg = DEFAULT_QR;
     updateImages();
     updateQRImages();
     fetchFromFirebase();
@@ -2132,14 +2164,41 @@
 
     var urlParams = new URLSearchParams(window.location.search);
     var recId = urlParams.get('id');
+    var recSig = urlParams.get('sig');
 
     if (recId) {
+      // Hide top sync bar on donor view
       var syncBar = document.getElementById('sync-bar');
       if (syncBar) syncBar.style.display = 'none';
 
-      var found = receipts.find(function(r) { return r.no === recId; });
-      if (found) {
-        showPreview(found, true);
+      function verifyAndDisplay(foundRec) {
+        if (!foundRec) {
+          showTamperError();
+          return;
+        }
+
+        // Strict Hash / Signature Check: If changed by 1 character, reject!
+        var expectedSig = generateReceiptSig(foundRec);
+        if (!recSig || recSig !== expectedSig) {
+          showTamperError();
+          return;
+        }
+
+        showPreview(foundRec, true); // true = Direct Donor view (Only Save/Download PDF)
+      }
+
+      function showTamperError() {
+        document.getElementById('tamper-error-box').style.display = 'block';
+        document.getElementById('print-area').style.display = 'none';
+        document.getElementById('preview-action-buttons').style.display = 'none';
+        var topBar = document.getElementById('preview-top-bar');
+        if (topBar) topBar.style.display = 'none';
+        showScreen('screen-preview');
+      }
+
+      var localMatch = receipts.find(function(r) { return r.no === recId; });
+      if (localMatch) {
+        verifyAndDisplay(localMatch);
       } else if (FIREBASE_DB_URL) {
         var url = FIREBASE_DB_URL.replace(/\/$/, "") + "/receipts.json";
         fetch(url)
@@ -2147,17 +2206,17 @@
           .then(function(data) {
             if (data) {
               var allRecs = Array.isArray(data) ? data : Object.values(data);
-              var match = allRecs.find(function(x) { return x.no === recId; });
-              if (match) {
-                showPreview(match, true);
-              } else {
-                alert("रसीद संख्या [" + recId + "] सर्वर पर नहीं मिली!");
-              }
+              var serverMatch = allRecs.find(function(x) { return x.no === recId; });
+              verifyAndDisplay(serverMatch);
+            } else {
+              showTamperError();
             }
           })
           .catch(function(err) {
-            console.error("रसीद फेच एरर:", err);
+            showTamperError();
           });
+      } else {
+        showTamperError();
       }
     }
   });
