@@ -74,7 +74,7 @@
     .receipt-border { width: 100%; background: #fffdf2; border: 3px solid #b71c1c; border-radius: 10px; padding: 10px; position: relative; }
     .receipt-inner { border: 2px dashed #d97706; padding: 16px 14px 18px 14px; background: #ffffff; border-radius: 6px; position: relative; }
     
-    /* Swastik Positioning - Non overlapping */
+    /* Swastik Positioning */
     .corner-swastik { position: absolute; font-size: 13px; color: #b71c1c; font-weight: bold; line-height: 1; pointer-events: none; opacity: 0.85; }
     .corner-tl { top: 6px; left: 6px; }
     .corner-tr { top: 6px; right: 6px; }
@@ -328,7 +328,7 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW (UPDATED WITH SEAL & SAFE SWASTIK PADDING) -->
+  <!-- 6. RECEIPT PREVIEW (SEAL & SWASTIK SAFE PADDING) -->
   <div id="screen-preview" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" id="preview-back-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
@@ -404,7 +404,7 @@
             🌺 माँ भगवती दुर्गा की कृपा आप एवं आपके परिवार पर सदैव बनी रहे। 🌺
           </div>
 
-          <!-- Bottom Footer Area with Circular Stamp & Signature (Swastik-Safe) -->
+          <!-- Bottom Footer Area with Circular Stamp & Signature -->
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; padding: 0 4px 6px 4px; font-size: 12px; font-weight: bold;">
             <!-- Left Side: Circular Committee Seal Stamp -->
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
@@ -416,7 +416,7 @@
               <div style="font-size: 11px; color: #444; margin-top: 2px;">दिनांक : <strong id="pv-date">-</strong></div>
             </div>
 
-            <!-- Right Side: Collector Name & Signature (Swastik safe padding) -->
+            <!-- Right Side: Collector Name & Signature -->
             <div style="text-align: right; padding-right: 6px;">
               <span style="font-size: 10px; color: #666;">अधिकृत रसीद कर्ता / Signature</span><br />
               <span id="pv-by" style="color: #b71c1c; font-size: 15px; font-weight: bold; display: block; margin-top: 2px;">-</span>
@@ -525,7 +525,7 @@
     </div>
   </div>
 
-  <!-- 10. USERS LIST & हिसाब (PASSWORD HIDDEN FOR PRIVACY WITH ADMIN RESET) -->
+  <!-- 10. USERS LIST & हिसाब (DISPLAYS RECEIPT CODE LIKE [A, B] & KEEPS PASSWORDS HIDDEN) -->
   <div id="screen-users-list" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> Users & हिसाब</h2>
@@ -764,7 +764,6 @@
     }
   }
 
-  // LOGIN SYSTEM - STRICT PASSWORD VALIDATION (OLD PASSWORDS CANNOT LOGIN)
   function doLogin() {
     var m = document.getElementById('inp-mobile').value.trim();
     var p = document.getElementById('inp-pass').value.trim();
@@ -798,7 +797,6 @@
         return;
       }
 
-      // Strict user password match (No fallback bypass to ensure new password is required)
       if (found.pass === p) {
         currentUser = found;
         document.getElementById('usr-name-show').innerText = found.name;
@@ -853,7 +851,6 @@
       return;
     }
 
-    // Update in memory and database
     currentUser.pass = newP;
     for (var i = 0; i < users.length; i++) {
       if (users[i].id === currentUser.id) {
@@ -1436,7 +1433,6 @@
     document.body.removeChild(link);
   }
 
-  // EXPENSE MANAGER
   function openExpensesScreen() {
     var dateInput = document.getElementById('exp-date');
     if (dateInput) {
@@ -1530,7 +1526,7 @@
     }
   }
 
-  // USER MANAGEMENT: USER PASSWORD HIDDEN FROM ADMIN (PRIVACY PROTECTED) BUT ADMIN CAN RESET IT
+  // USER MANAGEMENT: SHOWS RECEIPT CODE DIRECTLY IN FRONT OF NAME [A, B] & KEEPS PASSWORDS HIDDEN
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -1556,7 +1552,7 @@
           <div style="display:flex; align-items:center; gap:10px;">
             <div class="user-circle" style="background:${isAct ? '#1976d2' : '#757575'};">${u.code}</div>
             <div>
-              <strong>${u.name}</strong> 
+              <strong>${u.name} <span style="color:#b71c1c; font-weight:bold;">[कोड: ${u.code}]</span></strong> 
               <span style="font-size:11px; font-weight:bold; color:${isAct ? '#2e7d32' : '#d32f2f'};">${isAct ? '● Active' : '● Blocked'}</span><br>
               <small style="color:#666;">${u.mobile} • पासवर्ड: <strong style="letter-spacing:2px; color:#b71c1c;">••••••</strong> (गोपनीय)</small>
             </div>
@@ -1584,7 +1580,7 @@
     showScreen('screen-users-list');
   }
 
-  // ADMIN CAN RESET FORGOTTEN USER PASSWORD
+  // ADMIN CAN RESET USER PASSWORD IF FORGOTTEN
   function adminResetUserPass(id) {
     var u = null;
     for (var i = 0; i < users.length; i++) {
@@ -1592,7 +1588,7 @@
     }
     if (!u) return;
 
-    var newP = prompt("कार्यकर्ता '" + u.name + "' के लिए नया पासवर्ड दर्ज करें:\n(पुराना पासवर्ड एक्सपायर हो जाएगा)", "1234");
+    var newP = prompt("कार्यकर्ता '" + u.name + "' के लिए नया पासवर्ड दर्ज करें:\n(पुराना पासवर्ड निरस्त हो जाएगा)", "1234");
     if (newP !== null && newP.trim() !== '') {
       u.pass = newP.trim();
       localStorage.setItem('durga_users', JSON.stringify(users));
