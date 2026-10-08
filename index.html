@@ -31,6 +31,7 @@
 
     /* सख्त डोनर-व्यू स्टाइल: केवल Save PDF दिखेगा */
     html.donor-direct-view #screen-splash,
+    html.donor-direct-view #screen-public-card,
     html.donor-direct-view #sync-bar,
     html.donor-direct-view .admin-action-btn,
     html.donor-direct-view .nav-home-btn,
@@ -67,7 +68,7 @@
     .type-pill.active { border-color: #b71c1c; background: #ffebee; color: #b71c1c; }
 
     #screen-splash { background: linear-gradient(180deg, #4a0000 0%, #800000 40%, #b71c1c 100%); color: white; text-align: center; padding: 30px 20px; justify-content: space-between; align-items: center; }
-    .durga-circle { width: 180px; height: 180px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 5px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.7); background: #ffffff; }
+    .durga-circle { width: 180px; height: 180px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 5px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.7); background: #ffffff; cursor: pointer; }
     .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img, .id-top-durga img, .id-user-photo img, .handover-durga-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .tab-wrap { display: flex; background: #f1f2f6; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
@@ -137,54 +138,9 @@
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 5px; font-weight: bold; border-bottom: 1px solid #c8e6c9; display: flex; justify-content: space-around; }
     .cancelled-badge { background: #ffebee; border: 2px solid #c62828; color: #c62828; padding: 6px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; }
 
-    /* VIP ID Badge */
-    .id-card-wrap { padding: 18px 12px; background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%); display: flex; justify-content: center; }
-    .id-card-border { width: 100%; max-width: 340px; background: #ffffff; border-radius: 20px; position: relative; box-shadow: 0 14px 32px rgba(99, 102, 241, 0.25); border: 3px solid #b71c1c; outline: 3px solid #ffb300; overflow: hidden; }
-    .id-card-inner-frame { border: 2px dashed #f59e0b; margin: 4px; border-radius: 16px; overflow: hidden; background: radial-gradient(circle at 50% 15%, #fffdf5 0%, #ffffff 85%); }
-    .id-lanyard-hole { width: 46px; height: 7px; background: #cbd5e1; border-radius: 5px; margin: 8px auto 4px auto; border: 1px solid #94a3b8; }
-    .id-card-top-banner { background: linear-gradient(135deg, #880e4f 0%, #b71c1c 45%, #ea580c 100%); color: #ffffff; text-align: center; padding: 10px; border-bottom: 3px solid #facc15; }
-    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
-    .id-top-durga { width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid #facc15; overflow: hidden; background: #ffffff; flex-shrink: 0; }
-    .id-top-durga img { width: 100%; height: 100%; object-fit: cover; }
-    .id-card-top-banner h3 { font-size: 15px; font-weight: 900; color: #fef08a; }
-    .id-card-top-banner p { font-size: 10.5px; color: #fff; font-weight: bold; }
-    .id-card-body-content { padding: 12px 14px 8px 14px; text-align: center; }
-    .id-user-photo { width: 106px; height: 116px; border-radius: 12px; overflow: hidden; border: 3.5px solid #b71c1c; background: #f8fafc; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-    .id-role-ribbon { background: linear-gradient(180deg, #fef08a 0%, #f59e0b 50%, #d97706 100%); color: #450a0a; font-size: 11px; font-weight: 900; padding: 3px 14px; border-radius: 14px; display: inline-block; margin-top: -14px; position: relative; z-index: 2; }
-    .id-name-display { font-size: 18px; font-weight: 900; color: #b71c1c; margin: 4px 0 2px 0; }
-    .id-badge-code-tag { display: inline-block; background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; font-size: 11.5px; font-weight: 900; padding: 2px 12px; border-radius: 12px; margin-bottom: 8px; }
-    .id-modern-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; text-align: left; }
-    .id-info-item { display: flex; flex-direction: column; padding: 6px 8px; border-radius: 8px; border: 1px solid; }
-    .id-info-item.full-width { grid-column: span 2; }
-    .tile-role { background: #fdf2f8; border-color: #fbcfe8; }
-    .tile-phone { background: #f0fdf4; border-color: #bbf7d0; }
-    .tile-addr { background: #fffbeb; border-color: #fde68a; }
-    .tile-session { background: #f5f3ff; border-color: #ddd6fe; }
-    .id-info-label { font-size: 9px; font-weight: 800; color: #880e4f; }
-    .id-info-val { font-size: 12px; font-weight: bold; color: #333; }
-    .id-card-footer-modern { border-top: 1.5px dashed #f59e0b; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; background: #fffdf7; }
-
-    /* Cash Handover Voucher Card */
-    .handover-box { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
-    .handover-border { width: 100%; background: #fffdf2; border: 3px solid #2e7d32; border-radius: 12px; padding: 10px; position: relative; }
-    .handover-inner { border: 2px dashed #388e3c; padding: 16px 14px; background: #ffffff; border-radius: 8px; position: relative; }
-    .handover-durga-photo { width: 68px; height: 68px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 2.5px solid #ffb300; }
-
-    /* Audit Report */
-    .audit-box { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
-    .audit-border { width: 100%; background: #ffffff; border: 2.5px solid #b71c1c; border-radius: 10px; padding: 14px; }
-    .audit-header { text-align: center; border-bottom: 2px dashed #b71c1c; padding-bottom: 8px; margin-bottom: 12px; }
-    .audit-tbl { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 12px; }
-    .audit-tbl th, .audit-tbl td { border: 1px solid #e0e0e0; padding: 6px 4px; }
-    .audit-tbl th { background: #ffebee; color: #b71c1c; }
-
-    .user-list-item { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
-    .user-circle { width: 40px; height: 40px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; }
-
-    /* Bill Image Viewer Modal */
-    #bill-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center; padding: 16px; }
-    #bill-modal.active { display: flex; }
-    #bill-modal-content { max-width: 100%; max-height: 85vh; border-radius: 8px; box-shadow: 0 4px 20px rgba(255,255,255,0.2); }
+    /* Public Screen */
+    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; }
+    .pub-card { background: white; border-radius: 14px; padding: 28px 20px; border-top: 6px solid #b71c1c; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
 
     @media print {
       body * { visibility: hidden; }
@@ -206,18 +162,27 @@
   <input type="file" id="user-photo-file-input" accept="image/*" style="display: none;" onchange="handleUserPhotoUpload(event)" />
   <input type="file" id="expense-bill-input" accept="image/*" capture="environment" style="display: none;" onchange="handleExpenseBillUpload(event)" />
 
-  <!-- Fullscreen Bill Image Modal -->
-  <div id="bill-modal" onclick="closeBillModal()">
-    <div style="position: relative; width: 100%; max-width: 440px; text-align: center;">
-      <button style="position: absolute; right: 4px; top: -38px; background: white; color: black; border: none; border-radius: 50%; width: 32px; height: 32px; font-weight: bold; cursor: pointer;">✕</button>
-      <img id="bill-modal-img" src="" alt="बिल का फोटो" style="max-width: 100%; max-height: 80vh; border-radius: 8px; border: 2px solid #ffb74d;" />
+  <!-- 0. PUBLIC SCREEN (लिंक एडिट करने या सीधे खोलने पर दिखने वाली स्क्रीन) -->
+  <div id="screen-public-card" class="screen">
+    <div class="pub-card">
+      <!-- लोगो पर 3 बार टैप करने से कार्यकर्ता/एडमिन का गुप्त पिन डायलॉग खुलेगा -->
+      <div class="durga-circle" style="width: 105px; height: 105px; margin: 0 auto 12px auto;" onclick="handleLogoMultiTap()">
+        <img id="pub-durga-img" alt="माँ दुर्गा" />
+      </div>
+      <h2 style="color: #b71c1c; font-size: 19px; line-height: 1.3;">नवयुवा दुर्गा पूजा समिति</h2>
+      <p style="color: #555; font-size: 13px; font-weight: bold; margin-top: 4px;">रेलवे गेट, मारकुंडी, सोनभद्र</p>
+      <div style="background: #fff8e1; border: 1.5px dashed #ffb74d; border-radius: 8px; padding: 14px; margin-top: 16px; font-size: 13px; color: #444; line-height: 1.5;">
+        🚩 <strong>डिजिटल चंदा सत्यापन पोर्टल</strong><br><br>
+        दानदाता अपनी चंदा रसीद देखने हेतु समिति द्वारा <strong>WhatsApp</strong> पर भेजे गए आधिकारिक सुरक्षित लिंक का उपयोग करें।
+      </div>
+      <p style="color: #b71c1c; font-weight: bold; font-size: 13px; margin-top: 20px;">🚩 || जय माता दी || 🚩</p>
     </div>
   </div>
 
-  <!-- 1. SPLASH SCREEN -->
-  <div id="screen-splash" class="screen active">
+  <!-- 1. SPLASH SCREEN (केवल अधिकृत कार्यकर्ताओं/एडमिन के लिए) -->
+  <div id="screen-splash" class="screen">
     <div style="margin-top: 10px;">
-      <div class="durga-circle">
+      <div class="durga-circle" onclick="handleLogoMultiTap()">
         <img id="splash-img" alt="माँ दुर्गा" />
       </div>
       <h1 style="font-size: 24px; color: #ffea00; margin-top: 10px;">नवयुवा दुर्गा पूजा समिति</h1>
@@ -236,7 +201,7 @@
   <div id="screen-login" class="screen">
     <div class="top-bar">
       <h2>ॐ दुर्गा पूजा समिति</h2>
-      <button class="icon-btn" onclick="showScreen('screen-splash')">🏠</button>
+      <button class="icon-btn" onclick="backToHome()">🏠</button>
     </div>
 
     <div style="padding: 24px 20px; flex: 1;">
@@ -786,7 +751,6 @@
   <div id="screen-preview" class="screen">
     <div class="top-bar">
       <h2>
-        <!-- डोनर व्यू में यह बटन छिप जाएगा -->
         <button class="icon-btn nav-home-btn" id="btn-top-back" onclick="backToHome()">⬅</button> 
         रसीद प्रिव्यू
       </h2>
@@ -881,7 +845,6 @@
               <!-- वृत्ताकार मुहर: ऊपर व नीचे गोलाई में नाम और बीच में दो रेखाओं में प्रमाणित -->
               <div class="seal-wrap">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                  <!-- बाहरी सुरक्षा चक्र -->
                   <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
                   <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
                   <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
@@ -891,25 +854,21 @@
                     <path id="seal-bot-curve" d="M 176,100 A 76,76 0 0,1 24,100" />
                   </defs>
 
-                  <!-- ऊपर गोलाई में समिति का नाम -->
                   <text fill="#b71c1c" font-size="14.5" font-weight="900" letter-spacing="1">
                     <textPath href="#seal-top-curve" startOffset="50%" text-anchor="middle">
                       नवयुवा दुर्गा पूजा समिति
                     </textPath>
                   </text>
 
-                  <!-- नीचे गोलाई में स्थान का नाम -->
                   <text fill="#b71c1c" font-size="13" font-weight="900" letter-spacing="0.8">
                     <textPath href="#seal-bot-curve" startOffset="50%" text-anchor="middle">
                       रेलवे गेट, मारकुंडी
                     </textPath>
                   </text>
 
-                  <!-- केंद्र में 2 समानांतर रेखाएं -->
                   <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
                   <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
 
-                  <!-- दोनों रेखाओं के बीच में 'प्रमाणित' -->
                   <text x="100" y="106" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
                     ★ प्रमाणित ★
                   </text>
@@ -932,12 +891,10 @@
 
     <!-- बटन सेक्शन: दानदाता के लिंक पर केवल Save PDF का बटन रहेगा -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
-      <!-- केवल यह बटन दानदाता को दिखेगा -->
       <button class="btn" id="btn-donor-save-pdf" style="background: #b71c1c; font-size: 16px;" onclick="downloadReceiptPDF()">
         📥 Save PDF (रसीद डाउनलोड करें)
       </button>
 
-      <!-- नीचे के सभी बटन 'receipt-staff-btn' हैं और लिंक से खुलने पर गायब रहेंगे -->
       <button class="btn btn-green receipt-staff-btn" id="btn-share-receipt-pdf" onclick="shareDirectReceiptPDFWhatsApp()">
         📤 सीधा WhatsApp PDF भेजें (Direct PDF)
       </button>
@@ -1195,8 +1152,9 @@
   var DEFAULT_USER_IMG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b71c1c'><circle cx='50' cy='35' r='25'/><path d='M10,90 Q50,55 90,90 Z'/></svg>";
   var currentNotice = localStorage.getItem('durga_notice_text') || "समिति के सभी सदस्य समय पर अपनी चंदा रसीदें व नकद संग्रह एडमिन कार्यालय में जमा करें। जय माता दी!";
 
-  // क्रिप्टोग्राफिक गुप्त सुरक्षा कुंजी (Secret Signing Key)
+  // सुरक्षा कुंजियाँ
   var SECRET_SIGNING_KEY = "NYDPS_MARG_SONBHADRA_SECURE_KEY_2026";
+  var SECRET_ACCESS_KEY = "nydps2026"; // कार्यकर्ता/एडमिन अनलॉक कोड
 
   var currentRole = 'admin';
   var currentUser = null;
@@ -1206,9 +1164,12 @@
   var adminPass = localStorage.getItem('durga_admin_pass') || '7905106011';
   var tempExpenseBillPhoto = "";
 
-  // डोनर लिंक व्यू का स्थायी स्टेट
   var urlParams = new URLSearchParams(window.location.search);
   var isDonorLinkView = (urlParams.get('id') || urlParams.get('verify')) ? true : false;
+  var isStaffAccessRequested = (urlParams.get('login') === SECRET_ACCESS_KEY || urlParams.get('portal') === 'staff');
+
+  var logoTapCounter = 0;
+  var logoTapTimer = null;
 
   var users = [
     { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', role: 'व्यवस्था सहयोगी', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true, activeToken: '' },
@@ -1252,13 +1213,12 @@
     return str.trim() + ' रुपये मात्र';
   }
 
-  // HMAC-SHA256 क्रिप्टोग्राफिक डिजिटल सिग्नेचर
+  // HMAC-SHA256 डिजिटल सिग्नेचर
   function generateSecureReceiptSignature(r) {
     var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.name || '') + "_" + (r.code || '');
     return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex);
   }
 
-  // सुरक्षित डिजिटल सत्यापन लिंक
   function getSecureVerificationLink(r) {
     var sig = generateSecureReceiptSignature(r);
     var base = window.location.origin + window.location.pathname;
@@ -1267,6 +1227,26 @@
            "&amt=" + encodeURIComponent(r.amt) + 
            "&phone=" + encodeURIComponent(r.phone) + 
            "&sig=" + sig;
+  }
+
+  // गुप्त ट्रिपल-टैप अनलॉक (कार्यकर्ता/एडमिन के लिए)
+  function handleLogoMultiTap() {
+    logoTapCounter++;
+    clearTimeout(logoTapTimer);
+    logoTapTimer = setTimeout(function() {
+      logoTapCounter = 0;
+    }, 1200);
+
+    if (logoTapCounter >= 3) {
+      logoTapCounter = 0;
+      var inputKey = prompt("🔒 समिति कार्यकर्ता व एडमिन एक्सेस कोड दर्ज करें:");
+      if (inputKey === SECRET_ACCESS_KEY || inputKey === adminPass) {
+        localStorage.setItem('durga_staff_device_unlocked', 'true');
+        showScreen('screen-login');
+      } else if (inputKey) {
+        alert("अवैध एक्सेस कोड!");
+      }
+    }
   }
 
   // =========================================================================
@@ -1482,6 +1462,7 @@
     if (currentRole === 'admin') {
       if (m === '7905106011' && p === adminPass) {
         currentUser = null;
+        localStorage.setItem('durga_current_logged_role', 'admin');
         updateAdminSummary();
         showScreen('screen-admin');
       } else {
@@ -1501,6 +1482,8 @@
         var myToken = generateDeviceToken();
         found.activeToken = myToken;
         localStorage.setItem('my_device_token', myToken);
+        localStorage.setItem('durga_current_logged_role', 'user');
+        localStorage.setItem('durga_current_logged_user_id', found.id);
         localStorage.setItem('durga_users', JSON.stringify(users));
         syncToFirebase("users", users);
 
@@ -1529,7 +1512,10 @@
   function doLogout() {
     currentUser = null;
     localStorage.removeItem('my_device_token');
-    showScreen('screen-login');
+    localStorage.removeItem('durga_current_logged_role');
+    localStorage.removeItem('durga_current_logged_user_id');
+    localStorage.removeItem('durga_staff_device_unlocked');
+    showScreen('screen-public-card');
   }
 
   // =========================================================================
@@ -2270,9 +2256,11 @@
     if (currentUser) {
       updateUserPassbook();
       showScreen('screen-user');
-    } else {
+    } else if (localStorage.getItem('durga_current_logged_role') === 'admin') {
       updateAdminSummary();
       showScreen('screen-admin');
+    } else {
+      showScreen('screen-public-card');
     }
   }
 
@@ -2539,21 +2527,62 @@
   }
 
   function updateImages() {
-    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'id-top-durga-img', 'handover-durga-img', 'cert-durga-img'];
+    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'id-top-durga-img', 'handover-durga-img', 'cert-durga-img', 'pub-durga-img'];
     ids.forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.src = currentDurgaImg;
     });
   }
 
+  // =========================================================================
+  // GATE ROUTING & APP INITIALIZATION (सख्त सुरक्षा रूटिंग)
+  // =========================================================================
   window.addEventListener('load', function() {
     updateImages();
     renderNoticeBoard();
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
-    // सुरक्षित डोनर वेरिफिकेशन
-    checkUrlVerification();
+    // 1. यदि वैध रसीद लिंक खोला गया है
+    if (isDonorLinkView) {
+      checkUrlVerification();
+      fetchFromFirebase();
+      return;
+    }
+
+    // 2. यदि उपयोगकर्ता पहले से लॉग इन है (सत्र बहाल करें)
+    var savedRole = localStorage.getItem('durga_current_logged_role');
+    var savedUid = localStorage.getItem('durga_current_logged_user_id');
+
+    if (savedRole === 'admin') {
+      currentUser = null;
+      updateAdminSummary();
+      showScreen('screen-admin');
+      fetchFromFirebase();
+      return;
+    } else if (savedRole === 'user' && savedUid) {
+      var foundU = users.find(function(x) { return x.id == savedUid; });
+      if (foundU && foundU.isActive !== false) {
+        currentUser = foundU;
+        document.getElementById('usr-name-show').innerText = foundU.name;
+        document.getElementById('usr-code-show').innerText = foundU.code;
+        document.getElementById('usr-code-avatar').innerText = foundU.code;
+        updateUserPassbook();
+        showScreen('screen-user');
+        fetchFromFirebase();
+        return;
+      }
+    }
+
+    // 3. यदि कार्यकर्ता ने गुप्त पोर्टल लिंक खोला है या डिवाइस पहले से अनलॉक्ड है
+    if (isStaffAccessRequested || localStorage.getItem('durga_staff_device_unlocked') === 'true') {
+      showScreen('screen-login');
+      fetchFromFirebase();
+      return;
+    }
+
+    // 4. डिफ़ॉल्ट: बाहरी लोग सीधे URL खोलने या एडिट करने पर केवल पब्लिक कार्ड देखेंगे (लॉगिन पूरी तरह लॉक)
+    showScreen('screen-public-card');
     fetchFromFirebase();
   });
 </script>
