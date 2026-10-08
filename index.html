@@ -23,11 +23,12 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #f1f2f6; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+    html, body { width: 100%; height: 100%; background-color: #f1f2f6; overflow-x: hidden; }
+    body { display: flex; justify-content: center; }
     #app { width: 100%; max-width: 460px; min-height: 100vh; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
 
-    /* सभी स्क्रीन को पूरी तरह छुपा कर रखना जब तक वो सक्रिय न हों */
-    .screen { display: none !important; flex-direction: column; flex: 1; width: 100%; }
+    /* Strict Screen Display Control - No Slide/Overlapping */
+    .screen { display: none !important; flex-direction: column; width: 100%; min-height: 100vh; }
     .screen.active { display: flex !important; }
 
     /* Donor Direct View Styling */
@@ -69,8 +70,8 @@
     .type-pill.active { border-color: #b71c1c; background: #ffebee; color: #b71c1c; }
 
     #screen-splash { background: linear-gradient(180deg, #4a0000 0%, #800000 40%, #b71c1c 100%); color: white; text-align: center; padding: 30px 20px; justify-content: space-between; align-items: center; }
-    .durga-circle { width: 180px; height: 180px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 5px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.7); background: #ffffff; cursor: pointer; }
-    .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img, .id-top-durga img, .id-user-photo img, .handover-durga-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .durga-circle { width: 140px; height: 140px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 4px solid #ffcc00; box-shadow: 0 0 16px rgba(255, 204, 0, 0.6); background: #ffffff; cursor: pointer; user-select: none; }
+    .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img, .id-top-durga img, .id-user-photo img, .handover-durga-photo img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
 
     .tab-wrap { display: flex; background: #f1f2f6; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
     .tab-btn { flex: 1; padding: 9px; border: none; background: transparent; font-weight: bold; border-radius: 6px; cursor: pointer; color: #555; }
@@ -176,8 +177,8 @@
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 5px; font-weight: bold; border-bottom: 1px solid #c8e6c9; display: flex; justify-content: space-around; }
     .cancelled-badge { background: #ffebee; border: 2px solid #c62828; color: #c62828; padding: 6px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; }
 
-    /* Public Screen */
-    #screen-public-card { background: #f1f2f6; display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; }
+    /* Public Screen Specific */
+    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
     .pub-card { background: white; border-radius: 14px; padding: 28px 20px; border-top: 6px solid #b71c1c; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
 
     @media print {
@@ -203,7 +204,7 @@
   <!-- 0. PUBLIC SCREEN -->
   <div id="screen-public-card" class="screen">
     <div class="pub-card">
-      <div class="durga-circle" style="width: 105px; height: 105px; margin: 0 auto 12px auto;" onclick="handleLogoMultiTap()">
+      <div class="durga-circle" id="pub-circle-btn" onclick="handleLogoMultiTap()">
         <img id="pub-durga-img" alt="माँ दुर्गा" />
       </div>
       <h2 style="color: #b71c1c; font-size: 19px; line-height: 1.3;">नवयुवा दुर्गा पूजा समिति</h2>
@@ -1293,20 +1294,25 @@
            "&sig=" + sig;
   }
 
-  // Triple Tap Unlocker
+  // Triple Tap Unlocker (Fixed)
   function handleLogoMultiTap() {
     logoTapCounter++;
     clearTimeout(logoTapTimer);
     logoTapTimer = setTimeout(function() {
       logoTapCounter = 0;
-    }, 1200);
+    }, 1500);
 
     if (logoTapCounter >= 3) {
       logoTapCounter = 0;
-      var inputKey = prompt("🔒 समिति कार्यकर्ता व एडमिन एक्सेस कोड दर्ज करें:");
+      var inputKey = prompt("🔒 समिति एक्सेस कोड दर्ज करें (उदा. nydps2026):");
       if (inputKey === SECRET_ACCESS_KEY || inputKey === adminPass) {
         localStorage.setItem('durga_staff_device_unlocked', 'true');
-        alert("✅ डिवाइस स्थायी रूप से अनलॉक हो गई है!");
+        // Turant card ko DOM se hide karke login screen dikhayen
+        var pubCard = document.getElementById('screen-public-card');
+        if (pubCard) {
+          pubCard.classList.remove('active');
+          pubCard.style.display = 'none';
+        }
         showScreen('screen-login');
       } else if (inputKey) {
         alert("अवैध एक्सेस कोड!");
@@ -2225,10 +2231,12 @@
     var screens = document.querySelectorAll('.screen');
     for (var i = 0; i < screens.length; i++) {
       screens[i].classList.remove('active');
+      screens[i].style.display = 'none';
     }
     var target = document.getElementById(id);
     if (target) {
       target.classList.add('active');
+      target.style.display = 'flex';
       window.scrollTo(0, 0);
     }
   }
@@ -2552,14 +2560,14 @@
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
-    // 1. यदि दानदाता सीधे WhatsApp वाले रसीद लिंक से आया है
+    // 1. Direct Donor View
     if (isDonorLinkView) {
       checkUrlVerification();
       fetchFromFirebase();
       return;
     }
 
-    // 2. यदि उपयोगकर्ता पहले से लॉग इन है
+    // 2. Logged In Sessions
     var savedRole = localStorage.getItem('durga_current_logged_role');
     var savedUid = localStorage.getItem('durga_current_logged_user_id');
 
@@ -2583,14 +2591,15 @@
       }
     }
 
-    // 3. यदि डिवाइस एक बार अनलॉक हो चुकी है, तो सीधे Login स्क्रीन पर भेजें
-    if (isStaffAccessRequested || localStorage.getItem('durga_staff_device_unlocked') === 'true') {
+    // 3. Permanent Staff Unlock Check
+    var isUnlocked = (localStorage.getItem('durga_staff_device_unlocked') === 'true');
+    if (isStaffAccessRequested || isUnlocked) {
       showScreen('screen-login');
       fetchFromFirebase();
       return;
     }
 
-    // 4. केवल पहली बार बिना अनलॉक किए खोलने पर ही पब्लिक कार्ड स्क्रीन दिखेगी
+    // 4. Sirf bilkul first time (bina unlock huye) hi ye screen aayegi
     showScreen('screen-public-card');
     fetchFromFirebase();
   });
