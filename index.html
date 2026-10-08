@@ -103,35 +103,148 @@
     .seal-wrap { width: 88px; height: 88px; flex-shrink: 0; transform: rotate(-6deg); }
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.2)); }
 
-    /* ID Card Styling */
-    .id-card-wrap { padding: 16px; background: #e0e5ec; display: flex; justify-content: center; }
-    .id-card-border { width: 100%; max-width: 335px; background: #ffffff; border-radius: 18px; position: relative; box-shadow: 0 12px 28px rgba(0,0,0,0.2); border: 3.5px solid #b71c1c; outline: 2px solid #ffb300; overflow: hidden; }
-    .id-card-inner-frame { border: 1.5px dashed #ffa000; margin: 4px; border-radius: 14px; overflow: hidden; background: #fffdf9; }
-    .id-lanyard-hole { width: 44px; height: 7px; background: #cfd8dc; border-radius: 5px; margin: 8px auto 4px auto; border: 1px solid #90a4ae; }
-    .id-card-top-banner { background: linear-gradient(135deg, #6a0000 0%, #b71c1c 50%, #d32f2f 100%); color: #ffffff; text-align: center; padding: 10px 10px 14px 10px; border-bottom: 2.5px solid #ffc107; }
-    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .id-top-durga { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #ffd54f; overflow: hidden; background: #ffffff; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+    /* ================= VIBRANT COLORFUL & ATTRACTIVE VIP ID BADGE ================= */
+    .id-card-wrap { padding: 18px 12px; background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%); display: flex; justify-content: center; }
+    .id-card-border { 
+      width: 100%; 
+      max-width: 340px; 
+      background: #ffffff; 
+      border-radius: 20px; 
+      position: relative; 
+      box-shadow: 0 14px 32px rgba(99, 102, 241, 0.25); 
+      border: 3px solid #b71c1c; 
+      outline: 3px solid #ffb300;
+      overflow: hidden;
+    }
+    .id-card-inner-frame {
+      border: 2px dashed #f59e0b;
+      margin: 4px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 15%, #fffdf5 0%, #ffffff 85%);
+    }
+    .id-lanyard-hole { 
+      width: 46px; 
+      height: 7px; 
+      background: #cbd5e1; 
+      border-radius: 5px; 
+      margin: 8px auto 4px auto; 
+      border: 1px solid #94a3b8; 
+    }
+    .id-card-top-banner { 
+      background: linear-gradient(135deg, #880e4f 0%, #b71c1c 45%, #ea580c 100%); 
+      color: #ffffff; 
+      text-align: center; 
+      padding: 10px 10px 12px 10px; 
+      border-bottom: 3px solid #facc15;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .id-top-durga { 
+      width: 50px; 
+      height: 50px; 
+      border-radius: 50%; 
+      border: 2.5px solid #facc15; 
+      overflow: hidden; 
+      background: #ffffff; 
+      flex-shrink: 0; 
+      box-shadow: 0 3px 10px rgba(0,0,0,0.35); 
+    }
     .id-top-durga img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .id-card-top-banner h3 { font-size: 15px; font-weight: 900; color: #fff9c4; line-height: 1.2; }
-    .id-card-top-banner p { font-size: 10px; color: #ffebee; font-weight: bold; margin-top: 1px; }
+    .id-card-top-banner h3 { font-size: 15.5px; font-weight: 900; color: #fef08a; line-height: 1.2; text-shadow: 0 1px 3px rgba(0,0,0,0.4); letter-spacing: 0.3px; }
+    .id-card-top-banner p { font-size: 10.5px; color: #fff; font-weight: bold; margin-top: 2px; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
 
-    .id-card-body-content { padding: 12px 12px 6px 12px; text-align: center; }
-    .id-user-photo-box { position: relative; width: 102px; margin: 0 auto 12px auto; }
-    .id-user-photo { width: 102px; height: 112px; border-radius: 10px; overflow: hidden; border: 3px solid #b71c1c; background: #f1f5f9; box-shadow: 0 4px 10px rgba(0,0,0,0.18); margin: 0 auto; }
+    .id-card-body-content { padding: 12px 14px 8px 14px; text-align: center; }
+    .id-user-photo-box { position: relative; width: 106px; margin: 0 auto 12px auto; }
+    .id-user-photo { 
+      width: 106px; 
+      height: 116px; 
+      border-radius: 12px; 
+      overflow: hidden; 
+      border: 3.5px solid #b71c1c; 
+      background: #f8fafc; 
+      box-shadow: 0 6px 14px rgba(183, 28, 28, 0.25); 
+      margin: 0 auto; 
+    }
     .id-user-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .id-role-ribbon { background: linear-gradient(180deg, #ffca28 0%, #ff8f00 100%); color: #4a0000; font-size: 10.5px; font-weight: 900; padding: 3px 12px; border-radius: 12px; border: 1px solid #e65100; box-shadow: 0 2px 4px rgba(0,0,0,0.15); display: inline-block; margin-top: -12px; position: relative; z-index: 2; }
-    .id-name-display { font-size: 18px; font-weight: 900; color: #b71c1c; margin: 2px 0; }
-    .id-badge-code-tag { display: inline-block; background: #e1f5fe; color: #0277bd; border: 1px solid #81d4fa; font-size: 11px; font-weight: 800; padding: 2px 10px; border-radius: 6px; margin-bottom: 8px; }
+    .id-role-ribbon { 
+      background: linear-gradient(180deg, #fef08a 0%, #f59e0b 50%, #d97706 100%); 
+      color: #450a0a; 
+      font-size: 11px; 
+      font-weight: 900; 
+      padding: 3px 14px; 
+      border-radius: 14px; 
+      border: 1px solid #b45309; 
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2); 
+      display: inline-block; 
+      margin-top: -14px; 
+      position: relative; 
+      z-index: 2; 
+      letter-spacing: 0.3px;
+    }
+    .id-name-display { font-size: 19px; font-weight: 900; color: #b71c1c; margin: 3px 0 2px 0; text-shadow: 0 1px 1px rgba(0,0,0,0.05); }
+    .id-badge-code-tag { 
+      display: inline-block; 
+      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); 
+      color: #0369a1; 
+      border: 1px solid #7dd3fc; 
+      font-size: 11.5px; 
+      font-weight: 900; 
+      padding: 2px 12px; 
+      border-radius: 12px; 
+      margin-bottom: 10px; 
+    }
 
-    .id-modern-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: left; background: #ffffff; border: 1.5px solid #ffe082; border-radius: 8px; padding: 8px 10px; }
-    .id-info-item { display: flex; flex-direction: column; }
+    /* Colorful Multi-Tile Modern Info Grid */
+    .id-modern-info-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 7px; 
+      text-align: left; 
+    }
+    .id-info-item { 
+      display: flex; 
+      flex-direction: column; 
+      padding: 7px 9px;
+      border-radius: 9px;
+      border: 1px solid;
+    }
     .id-info-item.full-width { grid-column: span 2; }
-    .id-info-label { font-size: 9.5px; color: #78909c; font-weight: 800; text-transform: uppercase; }
-    .id-info-val { font-size: 12px; color: #263238; font-weight: 800; word-break: break-word; }
+    
+    /* Individual Tile Colors */
+    .tile-role { background: #fdf2f8; border-color: #fbcfe8; }
+    .tile-role .id-info-label { color: #9d174d; }
+    .tile-role .id-info-val { color: #831843; font-weight: 900; }
 
-    .id-card-footer-modern { border-top: 1.5px dashed #ffd54f; padding: 8px 12px 10px 12px; display: flex; justify-content: space-between; align-items: center; background: #fffdf5; }
-    .id-barcode-strip { font-family: monospace; font-size: 8.5px; letter-spacing: 2px; color: #455a64; text-align: left; }
-    .id-barcode-lines { height: 18px; width: 95px; background: repeating-linear-gradient(90deg, #263238 0, #263238 2px, transparent 2px, transparent 4px, #263238 4px, #263238 7px, transparent 7px, transparent 9px); margin-bottom: 2px; }
+    .tile-phone { background: #f0fdf4; border-color: #bbf7d0; }
+    .tile-phone .id-info-label { color: #166534; }
+    .tile-phone .id-info-val { color: #14532d; font-weight: 900; }
+
+    .tile-addr { background: #fffbeb; border-color: #fde68a; }
+    .tile-addr .id-info-label { color: #92400e; }
+    .tile-addr .id-info-val { color: #78350f; font-weight: 800; }
+
+    .tile-session { background: #f5f3ff; border-color: #ddd6fe; }
+    .tile-session .id-info-label { color: #5b21b6; }
+    .tile-session .id-info-val { color: #4c1d95; font-weight: 900; }
+
+    .tile-auth { background: #eff6ff; border-color: #bfdbfe; }
+    .tile-auth .id-info-label { color: #1e40af; }
+    .tile-auth .id-info-val { color: #1e3a8a; font-weight: 900; }
+
+    .id-info-label { font-size: 9.5px; font-weight: 800; text-transform: uppercase; margin-bottom: 1px; }
+    .id-info-val { font-size: 12.5px; word-break: break-word; }
+
+    .id-card-footer-modern { 
+      border-top: 1.5px dashed #f59e0b; 
+      padding: 8px 12px 10px 12px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: linear-gradient(180deg, #fffdf7 0%, #fef3c7 100%); 
+    }
+    .id-barcode-strip { font-family: monospace; font-size: 8.5px; letter-spacing: 2px; color: #475569; text-align: left; }
+    .id-barcode-lines { height: 18px; width: 95px; background: repeating-linear-gradient(90deg, #1e293b 0, #1e293b 2px, transparent 2px, transparent 4px, #1e293b 4px, #1e293b 7px, transparent 7px, transparent 9px); margin-bottom: 2px; }
 
     /* Cash Handover Voucher Card */
     .handover-box { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
@@ -377,7 +490,7 @@
     </div>
   </div>
 
-  <!-- 4.0 USER PROFILE UPDATE SCREEN -->
+  <!-- 4.0 USER PROFILE UPDATE SCREEN (WITHOUT BLOOD GROUP) -->
   <div id="screen-user-profile" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> प्रोफ़ाइल विवरण व फोटो</h2>
@@ -400,7 +513,7 @@
 
       <div class="form-group">
         <label>पद / दायित्व (Designation) *</label>
-        <input type="text" id="prof-inp-role" class="form-input" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष" />
+        <input type="text" id="prof-inp-role" class="form-input" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष, सदस्य" />
       </div>
 
       <div class="form-group">
@@ -409,20 +522,15 @@
       </div>
 
       <div class="form-group">
-        <label>पता / ग्राम *</label>
+        <label>निवास / ग्राम *</label>
         <input type="text" id="prof-inp-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
-      </div>
-
-      <div class="form-group">
-        <label>रक्त समूह (Blood Group)</label>
-        <input type="text" id="prof-inp-blood" class="form-input" placeholder="उदा. O+, B+, A+" />
       </div>
 
       <button class="btn btn-green" onclick="saveUserProfileDetails()">💾 सुरक्षित करें</button>
     </div>
   </div>
 
-  <!-- 4.1 VOLUNTEER ID CARD SCREEN (VIP BADGE) -->
+  <!-- 4.1 VOLUNTEER ID CARD SCREEN (COLORFUL VIP BADGE - NO BLOOD GROUP) -->
   <div id="screen-id-card" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> कार्यकर्ता पहचान पत्र</h2>
@@ -433,6 +541,7 @@
         <div class="id-card-inner-frame">
           <div class="id-lanyard-hole"></div>
 
+          <!-- Top Banner with Durga Photo & Gradient -->
           <div class="id-card-top-banner">
             <div class="id-header-logo-row">
               <div class="id-top-durga">
@@ -445,6 +554,7 @@
             </div>
           </div>
 
+          <!-- Body Content: Photo, Name & Multi-Color Badges -->
           <div class="id-card-body-content">
             <div class="id-user-photo-box">
               <div class="id-user-photo">
@@ -456,30 +566,32 @@
             <div class="id-name-display" id="idc-name">-</div>
             <div class="id-badge-code-tag">रसीद कोड (ID): <span id="idc-code">-</span></div>
 
+            <!-- Colorful Multi-Tile Info Grid (Clean, Balanced & No Blood Group) -->
             <div class="id-modern-info-grid">
-              <div class="id-info-item">
+              <div class="id-info-item tile-role">
+                <span class="id-info-label">🎖️ समिति पद</span>
+                <span class="id-info-val" id="idc-role-text">व्यवस्था सहयोगी</span>
+              </div>
+              <div class="id-info-item tile-phone">
                 <span class="id-info-label">📞 संपर्क नंबर</span>
                 <span class="id-info-val" id="idc-phone">-</span>
               </div>
-              <div class="id-info-item">
-                <span class="id-info-label">🩸 रक्त समूह</span>
-                <span class="id-info-val" id="idc-blood">O+</span>
-              </div>
-              <div class="id-info-item full-width">
+              <div class="id-info-item full-width tile-addr">
                 <span class="id-info-label">📍 निवास / कार्यक्षेत्र</span>
                 <span class="id-info-val" id="idc-addr">मारकुंडी</span>
               </div>
-              <div class="id-info-item">
-                <span class="id-info-label">🎖️ समिति पद</span>
-                <span class="id-info-val" id="idc-role-text" style="color: #b71c1c;">सहयोगी</span>
+              <div class="id-info-item tile-session">
+                <span class="id-info-label">🗓️ सत्र वर्ष</span>
+                <span class="id-info-val">सत्र 2026</span>
               </div>
-              <div class="id-info-item">
-                <span class="id-info-label">🗓️ वैधता सत्र</span>
-                <span class="id-info-val" style="color: #2e7d32;">सत्र 2026</span>
+              <div class="id-info-item tile-auth">
+                <span class="id-info-label">🛡️ पहचान स्थिति</span>
+                <span class="id-info-val">सत्यापित पास</span>
               </div>
             </div>
           </div>
 
+          <!-- Bottom Footer Area with Barcode, Signature & Stamp -->
           <div class="id-card-footer-modern">
             <div>
               <div class="id-barcode-lines"></div>
@@ -495,7 +607,7 @@
             </div>
 
             <div style="text-align: right;">
-              <span style="font-size: 9px; color: #78909c; font-weight: 800;">अधिकृत हस्ताक्षर</span><br />
+              <span style="font-size: 9.5px; color: #475569; font-weight: 800;">अधिकृत हस्ताक्षर</span><br />
               <strong style="color: #b71c1c; font-size: 11.5px;">अध्यक्ष / सचिव</strong>
             </div>
           </div>
@@ -513,7 +625,7 @@
     </div>
   </div>
 
-  <!-- 4.2 CASH HANDOVER VOUCHER SCREEN (NEW) -->
+  <!-- 4.2 CASH HANDOVER VOUCHER SCREEN -->
   <div id="screen-handover-voucher" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-users-list')">⬅</button> कैश हैंडओवर रसीद</h2>
@@ -862,8 +974,20 @@
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
               <div class="seal-wrap">
                 <svg viewBox="0 0 160 160">
+                  <defs>
+                    <path id="upper-arc" d="M 22,80 A 58,58 0 1,1 138,80" fill="none" />
+                    <path id="lower-arc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
+                  </defs>
                   <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
+                  <circle cx="80" cy="80" r="70" fill="none" stroke="#b71c1c" stroke-width="1.5" stroke-dasharray="3,2" />
                   <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
+                  <text font-size="11" font-weight="900" fill="#b71c1c">
+                    <textPath href="#upper-arc" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
+                  </text>
+                  <text font-size="10.5" font-weight="900" fill="#b71c1c">
+                    <textPath href="#lower-arc" startOffset="50%" text-anchor="middle">★ मारकुंडी सोनभद्र ★</textPath>
+                  </text>
+                  <rect x="42" y="70" width="76" height="20" rx="3" fill="#fff3f3" stroke="#b71c1c" stroke-width="1" />
                   <text x="80" y="84" font-size="12" font-weight="900" fill="#b71c1c" text-anchor="middle">★ प्रमाणित ★</text>
                 </svg>
               </div>
@@ -951,7 +1075,7 @@
     <div id="expenses-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 9. CREATE USER SCREEN -->
+  <!-- 9. CREATE USER SCREEN (WITHOUT BLOOD GROUP) -->
   <div id="screen-create-user" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> नया यूज़र बनाएं</h2>
@@ -963,7 +1087,7 @@
       </div>
       <div class="form-group">
         <label>समिति पद / दायित्व (Designation) *</label>
-        <input type="text" id="nu-role" class="form-input" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष" value="व्यवस्था सहयोगी" />
+        <input type="text" id="nu-role" class="form-input" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष, सदस्य" value="व्यवस्था सहयोगी" />
       </div>
       <div class="form-group">
         <label>मोबाइल नंबर *</label>
@@ -974,11 +1098,7 @@
         <input type="text" id="nu-pass" class="form-input" placeholder="पासवर्ड (उदा. 1234)" value="1234" />
       </div>
       <div class="form-group">
-        <label>रक्त समूह (Blood Group)</label>
-        <input type="text" id="nu-blood" class="form-input" placeholder="उदा. O+, B+, A+" value="O+" />
-      </div>
-      <div class="form-group">
-        <label>पता / ग्राम</label>
+        <label>निवास / ग्राम</label>
         <input type="text" id="nu-addr" class="form-input" placeholder="ग्राम, पोस्ट" value="मारकुंडी" />
       </div>
       <button class="btn" onclick="saveNewUser()">Create User</button>
@@ -1202,7 +1322,7 @@
   }
 
   function updateImages() {
-    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'cert-img-show', 'settings-preview-img', 'id-top-durga-img', 'handover-durga-img'];
+    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'settings-preview-img', 'id-top-durga-img', 'handover-durga-img'];
     for (var i = 0; i < ids.length; i++) {
       var el = document.getElementById(ids[i]);
       if (el) el.src = currentDurgaImg;
@@ -1244,9 +1364,9 @@
   var adminPass = localStorage.getItem('durga_admin_pass') || '7905106011';
 
   var users = [
-    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', role: 'व्यवस्था सहयोगी', blood: 'O+', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true },
-    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', role: 'कोषाध्यक्ष', blood: 'B+', photo: '', addr: 'रेलवे गेट, मारकुंडी', deposited: 0, isActive: true },
-    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', role: 'प्रचार प्रमुख', blood: 'A+', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true }
+    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', role: 'व्यवस्था सहयोगी', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true },
+    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', role: 'कोषाध्यक्ष', photo: '', addr: 'रेलवे गेट, मारकुंडी', deposited: 0, isActive: true },
+    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', role: 'प्रचार प्रमुख', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true }
   ];
   try {
     var storedU = localStorage.getItem('durga_users');
@@ -1350,7 +1470,7 @@
     }
   }
 
-  // ================= USER PROFILE (PHOTO & DETAILS MANAGEMENT) =================
+  // ================= USER PROFILE (PHOTO & DETAILS MANAGEMENT - NO BLOOD GROUP) =================
   function openProfileUpdateModal() {
     if (!currentUser) return;
     var uRecord = users.find(function(x) { return x.id === currentUser.id; }) || currentUser;
@@ -1358,7 +1478,6 @@
     document.getElementById('prof-inp-role').value = uRecord.role || 'व्यवस्था सहयोगी';
     document.getElementById('prof-inp-mobile').value = uRecord.mobile || '';
     document.getElementById('prof-inp-addr').value = uRecord.addr || 'मारकुंडी';
-    document.getElementById('prof-inp-blood').value = uRecord.blood || 'O+';
     document.getElementById('profile-preview-photo').src = uRecord.photo || DEFAULT_USER_IMG;
     showScreen('screen-user-profile');
   }
@@ -1406,7 +1525,6 @@
     var nameVal = document.getElementById('prof-inp-name').value.trim();
     var roleVal = document.getElementById('prof-inp-role').value.trim();
     var addrVal = document.getElementById('prof-inp-addr').value.trim();
-    var bloodVal = document.getElementById('prof-inp-blood').value.trim();
 
     if (!nameVal || !roleVal) {
       alert("कृपया नाम और पद अवश्य भरें!");
@@ -1416,14 +1534,12 @@
     currentUser.name = nameVal;
     currentUser.role = roleVal;
     currentUser.addr = addrVal || 'मारकुंडी';
-    currentUser.blood = bloodVal || 'O+';
 
     for (var i = 0; i < users.length; i++) {
       if (users[i].id === currentUser.id) {
         users[i].name = nameVal;
         users[i].role = roleVal;
         users[i].addr = currentUser.addr;
-        users[i].blood = currentUser.blood;
         break;
       }
     }
@@ -1432,21 +1548,20 @@
     syncToFirebase("users", users);
     
     document.getElementById('usr-name-show').innerText = nameVal;
-    alert("✅ आपकी प्रोफ़ाइल व फोटो विवरण सफलतापूर्वक सुरक्षित हो गया!");
+    alert("✅ आपकी प्रोफ़ाइल व फोटो विवरण सुरक्षित हो गया!");
     backToHome();
   }
 
-  // ================= VOLUNTEER ID CARD SCREEN =================
+  // ================= VOLUNTEER ID CARD SCREEN (COLORFUL VIP BADGE) =================
   function openUserIdCard() {
     if (!currentUser) return;
     var uRecord = users.find(function(x) { return x.id === currentUser.id; }) || currentUser;
     document.getElementById('idc-name').innerText = uRecord.name;
     document.getElementById('idc-code').innerText = uRecord.code;
     document.getElementById('idc-phone').innerText = uRecord.mobile;
-    document.getElementById('idc-blood').innerText = uRecord.blood || 'O+';
     document.getElementById('idc-addr').innerText = uRecord.addr || 'मारकुंडी';
     document.getElementById('idc-role-ribbon').innerText = uRecord.role || 'अधिकृत कार्यकर्ता';
-    document.getElementById('idc-role-text').innerText = uRecord.role || 'सहयोगी';
+    document.getElementById('idc-role-text').innerText = uRecord.role || 'व्यवस्था सहयोगी';
 
     var userImg = document.getElementById('id-card-user-img');
     if (userImg) userImg.src = uRecord.photo || DEFAULT_USER_IMG;
@@ -1488,7 +1603,7 @@
     }
   }
 
-  // ================= CASH HANDOVER RECEIPT SYSTEM (NEW) =================
+  // ================= CASH HANDOVER VOUCHER SCREEN =================
   function showHandoverVoucher(h) {
     currentHandover = h;
     document.getElementById('hov-no').innerText = h.voucherNo;
@@ -2295,7 +2410,7 @@
             <div>
               <strong>${u.name} [${u.code}]</strong> 
               <span style="font-size:11px; font-weight:bold; color:${isAct ? '#2e7d32' : '#d32f2f'};">${isAct ? '● Active' : '● Blocked'}</span><br>
-              <small style="color:#666;">पद: <strong>${u.role || 'सहयोगी'}</strong> • ${u.mobile} • रक्त: <strong>${u.blood || 'O+'}</strong></small>
+              <small style="color:#666;">पद: <strong>${u.role || 'सहयोगी'}</strong> • ${u.mobile}</small>
             </div>
           </div>
           <div style="display:flex; gap:6px; align-items:center;">
@@ -2344,7 +2459,6 @@
     var role = document.getElementById('nu-role').value.trim() || 'व्यवस्था सहयोगी';
     var p = document.getElementById('nu-phone').value.trim();
     var pass = document.getElementById('nu-pass').value.trim();
-    var blood = document.getElementById('nu-blood').value.trim() || 'O+';
     var addr = document.getElementById('nu-addr').value.trim() || 'मारकुंडी';
 
     if (!n || p.length < 10 || !pass) {
@@ -2353,7 +2467,7 @@
     }
 
     var code = String.fromCharCode(65 + (users.length % 26));
-    users.push({ id: Date.now(), name: n, mobile: p, pass: pass, role: role, blood: blood, photo: '', code: code, addr: addr, deposited: 0, isActive: true });
+    users.push({ id: Date.now(), name: n, mobile: p, pass: pass, role: role, photo: '', code: code, addr: addr, deposited: 0, isActive: true });
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
     alert("यूज़र बन गया! रसीद कोड: " + code);
