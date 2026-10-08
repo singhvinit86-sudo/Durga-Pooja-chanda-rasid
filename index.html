@@ -62,7 +62,7 @@
     /* Splash Screen */
     #screen-splash { background: linear-gradient(180deg, #4a0000 0%, #800000 40%, #b71c1c 100%); color: white; text-align: center; padding: 30px 20px; justify-content: space-between; align-items: center; }
     .durga-circle { width: 180px; height: 180px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 5px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.7); background: #ffffff; }
-    .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img, .id-card-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     /* Login Screen */
     .tab-wrap { display: flex; background: #f1f2f6; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
@@ -115,6 +115,22 @@
     .cert-inner { border: 2px solid #ffb300; padding: 20px 14px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; }
     .cert-header-photo { width: 85px; height: 85px; margin: 0 auto 8px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ff9800; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
 
+    /* Volunteer ID Card Styling */
+    .id-card-wrap { padding: 16px; background: #f0f2f5; display: flex; justify-content: center; }
+    .id-card-border { width: 100%; max-width: 350px; background: #fffdf5; border: 3px solid #b71c1c; border-radius: 12px; padding: 10px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    .id-card-inner { border: 2px dashed #d97706; padding: 14px 12px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; }
+    .id-card-photo { width: 80px; height: 80px; margin: 0 auto 8px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ff9800; background: #fff; }
+    .id-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 12.5px; text-align: left; }
+    .id-table td { padding: 5px 4px; border-bottom: 1px dashed #ffe082; }
+
+    /* Audit Report Styling */
+    .audit-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
+    .audit-border { width: 100%; background: #ffffff; border: 2px solid #37474f; border-radius: 8px; padding: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+    .audit-header { text-align: center; border-bottom: 2px double #b71c1c; padding-bottom: 8px; margin-bottom: 10px; }
+    .audit-tbl { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 12px; }
+    .audit-tbl th, .audit-tbl td { border: 1px solid #cfd8dc; padding: 6px 4px; text-align: left; }
+    .audit-tbl th { background: #eceff1; font-weight: bold; color: #263238; }
+
     .user-list-item { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
     .user-circle { width: 40px; height: 40px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; }
 
@@ -132,8 +148,8 @@
 
     @media print {
       body * { visibility: hidden; }
-      #print-area, #print-area *, #cert-print-area, #cert-print-area * { visibility: visible; }
-      #print-area, #cert-print-area { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-area, #print-area *, #cert-print-area, #cert-print-area *, #id-card-capture-target, #id-card-capture-target *, #audit-capture-target, #audit-capture-target * { visibility: visible; }
+      #print-area, #cert-print-area, #id-card-capture-target, #audit-capture-target { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
@@ -225,7 +241,11 @@
         </div>
       </div>
 
-      <button class="btn btn-green" style="margin-bottom: 10px;" onclick="sendAdminEveningReport()">
+      <button class="btn btn-purple" style="margin-bottom: 8px;" onclick="openAuditReportScreen()">
+        📑 समिति संपूर्ण ऑडिट रिपोर्ट (बैलेंस शीट)
+      </button>
+
+      <button class="btn btn-green" style="margin-bottom: 8px;" onclick="sendAdminEveningReport()">
         📢 आज की महा-रिपोर्ट WhatsApp पर भेजें
       </button>
 
@@ -299,6 +319,9 @@
     </div>
 
     <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 10px;">
+      <button class="btn btn-purple" onclick="openUserIdCard()">
+        🪪 मेरा डिजिटल पहचान पत्र (Volunteer ID Card)
+      </button>
       <button class="btn btn-green" onclick="sendUserDailyEveningSummary()">
         📤 आज का मेरा हिसाब WhatsApp पर भेजें
       </button>
@@ -308,6 +331,199 @@
 
     <div style="padding: 16px; margin-top: auto;">
       <button class="btn btn-grey" onclick="doLogout()">लॉगआउट</button>
+    </div>
+  </div>
+
+  <!-- 4.1 VOLUNTEER ID CARD SCREEN -->
+  <div id="screen-id-card" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="backToHome()">⬅</button> कार्यकर्ता पहचान पत्र</h2>
+    </div>
+
+    <div class="id-card-wrap">
+      <div class="id-card-border" id="id-card-capture-target">
+        <div class="id-card-inner">
+          <span class="corner-swastik corner-tl">卐</span>
+          <span class="corner-swastik corner-tr">卐</span>
+          <span class="corner-swastik corner-bl">卐</span>
+          <span class="corner-swastik corner-br">卐</span>
+
+          <div style="color: #b71c1c; font-size: 11px; font-weight: bold; margin-bottom: 4px;">
+            🚩 || जय माता दी || 🚩
+          </div>
+
+          <div class="id-card-photo">
+            <img id="id-card-durga-logo" alt="माँ दुर्गा" />
+          </div>
+
+          <h3 style="color: #b71c1c; font-size: 16px; font-weight: 900; line-height: 1.2;">नवयुवा दुर्गा पूजा समिति</h3>
+          <p style="font-size: 11px; color: #4a148c; font-weight: bold; margin-bottom: 6px;">रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.)</p>
+
+          <span style="background: linear-gradient(135deg, #b71c1c, #d32f2f); color: #ffea00; font-size: 11.5px; font-weight: 900; padding: 3px 12px; border-radius: 14px; display: inline-block; margin-bottom: 8px;">
+            ★ अधिकृत कार्यकर्ता पहचान पत्र ★
+          </span>
+
+          <table class="id-table">
+            <tr>
+              <td style="width: 100px; font-weight: bold; color: #880e4f;">कार्यकर्ता नाम</td>
+              <td style="width: 6px; font-weight: bold; color: #b71c1c;">:</td>
+              <td id="idc-name" style="font-weight: 900; color: #b71c1c; font-size: 14px;">-</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; color: #880e4f;">रसीद कोड (ID)</td>
+              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td id="idc-code" style="font-weight: 900; color: #1976d2; font-size: 15px;">-</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; color: #880e4f;">मोबाइल नंबर</td>
+              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td id="idc-phone" style="font-weight: bold;">-</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; color: #880e4f;">दायित्व / पद</td>
+              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td style="font-weight: bold; color: #2e7d32;">चंदा व व्यवस्था सहयोगी</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; color: #880e4f;">निवास / क्षेत्र</td>
+              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td id="idc-addr">-</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; color: #880e4f;">वैधता सत्र</td>
+              <td style="font-weight: bold; color: #b71c1c;">:</td>
+              <td style="font-weight: bold;">दुर्गा पूजा महोत्सव 2026</td>
+            </tr>
+          </table>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; padding: 0 4px;">
+            <div class="seal-wrap" style="width: 68px; height: 68px;">
+              <svg viewBox="0 0 160 160">
+                <defs>
+                  <path id="idc-upper-arc" d="M 22,80 A 58,58 0 1,1 138,80" fill="none" />
+                  <path id="idc-lower-arc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
+                </defs>
+                <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
+                <circle cx="80" cy="80" r="70" fill="none" stroke="#b71c1c" stroke-width="1.5" stroke-dasharray="3,2" />
+                <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
+                <text font-size="11" font-weight="900" fill="#b71c1c">
+                  <textPath href="#idc-upper-arc" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
+                </text>
+                <text font-size="10" font-weight="900" fill="#b71c1c">
+                  <textPath href="#idc-lower-arc" startOffset="50%" text-anchor="middle">★ मारकुंडी सोनभद्र ★</textPath>
+                </text>
+                <rect x="42" y="70" width="76" height="20" rx="3" fill="#fff3f3" stroke="#b71c1c" stroke-width="1" />
+                <text x="80" y="84" font-size="12" font-weight="900" fill="#b71c1c" text-anchor="middle">★ अधिकृत ★</text>
+              </svg>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 10px; color: #666;">अधिकृत हस्ताक्षर</span><br />
+              <strong style="color: #b71c1c; font-size: 13px;">अध्यक्ष / सचिव</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+      <button class="btn btn-green" id="btn-dl-idc" onclick="downloadIdCardPDF()">
+        📥 Save ID Card PDF (पहचान पत्र डाउनलोड करें)
+      </button>
+      <button class="btn btn-grey" onclick="window.print()">🖨️ प्रिंट करें</button>
+      <button class="btn" onclick="backToHome()">⬅ वापस जाएं</button>
+    </div>
+  </div>
+
+  <!-- 4.2 FULL AUDIT REPORT / BALANCE SHEET SCREEN -->
+  <div id="screen-audit" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅</button> संपूर्ण ऑडिट रिपोर्ट (बैलेंस शीट)</h2>
+      <button class="icon-btn" onclick="window.print()" title="प्रिंट करें">🖨️</button>
+    </div>
+
+    <div class="audit-box">
+      <div class="audit-border" id="audit-capture-target">
+        <div class="audit-header">
+          <div style="font-size: 11px; font-weight: bold; color: #b71c1c;">|| श्री गणेशाय नमः || जय माता दी ||</div>
+          <h2 style="color: #b71c1c; font-size: 19px; margin-top: 2px;">नवयुवा दुर्गा पूजा समिति</h2>
+          <p style="font-size: 12px; color: #455a64; font-weight: bold;">रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.)</p>
+          <div style="background: #b71c1c; color: #ffea00; font-weight: 900; font-size: 13px; padding: 4px 14px; border-radius: 14px; display: inline-block; margin-top: 6px;">
+            ★ संपूर्ण आय-व्यय व वित्तीय ऑडिट रिपोर्ट (सत्र 2026) ★
+          </div>
+          <div style="font-size: 11px; color: #666; margin-top: 4px;" id="audit-gen-date">दिनांक: -</div>
+        </div>
+
+        <div style="background: #fff8e1; border: 1.5px solid #ffe082; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 4px;">
+            <span>कुल चंदा संग्रह (वैध आय):</span>
+            <span style="color: #2e7d32;" id="aud-tot-inc">₹0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 4px;">
+            <span>कुल समिति खर्च (व्यय):</span>
+            <span style="color: #c62828;" id="aud-tot-exp">₹0</span>
+          </div>
+          <div style="border-top: 1.5px dashed #ffa000; padding-top: 6px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 900;">
+            <span style="color: #b71c1c;">शुद्ध शेष बचत (Net Balance):</span>
+            <span style="color: #1b5e20;" id="aud-tot-bal">₹0</span>
+          </div>
+        </div>
+
+        <h4 style="color: #b71c1c; font-size: 13px; margin-bottom: 6px; border-bottom: 1px solid #ffcdd2; padding-bottom: 2px;">
+          👥 1. कार्यकर्ता-वार चंदा संग्रह विवरण (Income Ledger)
+        </h4>
+        <table class="audit-tbl">
+          <thead>
+            <tr>
+              <th style="width: 45px;">कोड</th>
+              <th>कार्यकर्ता नाम</th>
+              <th style="width: 65px; text-align: center;">कुल रसीदें</th>
+              <th style="width: 85px; text-align: right;">संग्रह राशि</th>
+            </tr>
+          </thead>
+          <tbody id="aud-collector-tbody"></tbody>
+        </table>
+
+        <h4 style="color: #b71c1c; font-size: 13px; margin: 12px 0 6px 0; border-bottom: 1px solid #ffcdd2; padding-bottom: 2px;">
+          💸 2. मद-वार समिति खर्च विवरण (Expense Ledger)
+        </h4>
+        <table class="audit-tbl">
+          <thead>
+            <tr>
+              <th>मद / विवरण</th>
+              <th>खर्चकर्ता</th>
+              <th style="width: 80px;">दिनांक</th>
+              <th style="width: 75px; text-align: right;">राशि (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="aud-exp-tbody"></tbody>
+        </table>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px; padding: 0 8px;">
+          <div style="text-align: center;">
+            <div class="seal-wrap" style="width: 60px; height: 60px; margin-bottom: 4px;">
+              <svg viewBox="0 0 160 160">
+                <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
+                <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
+                <text x="80" y="86" font-size="16" font-weight="900" fill="#b71c1c" text-anchor="middle">लेखा परीक्षित</text>
+              </svg>
+            </div>
+            <span style="font-size: 11px; color: #444; font-weight: bold;">समिति कोषाध्यक्ष</span>
+          </div>
+
+          <div style="text-align: center;">
+            <span style="font-size: 11px; color: #444; font-weight: bold;">सत्यापित एवं अनुमोदित</span><br /><br />
+            <strong style="color: #b71c1c; font-size: 13px;">समिति अध्यक्ष / सचिव</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+      <button class="btn btn-green" id="btn-dl-audit" onclick="downloadAuditPDF()">
+        📥 Save Audit Report PDF (ऑडिट शीट डाउनलोड करें)
+      </button>
+      <button class="btn btn-grey" onclick="window.print()">🖨️ प्रिंट करें</button>
+      <button class="btn btn-blue" onclick="showScreen('screen-admin')">⬅ एडमिन पैनल पर लौटें</button>
     </div>
   </div>
 
@@ -924,7 +1140,7 @@
   var currentQRImg = localStorage.getItem('durga_samiti_qr') || DEFAULT_QR;
 
   function updateImages() {
-    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'cert-img-show', 'settings-preview-img'];
+    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'cert-img-show', 'settings-preview-img', 'id-card-durga-logo'];
     for (var i = 0; i < ids.length; i++) {
       var el = document.getElementById(ids[i]);
       if (el) el.src = currentDurgaImg;
@@ -960,9 +1176,9 @@
   var adminPass = localStorage.getItem('durga_admin_pass') || '7905106011';
 
   var users = [
-    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', deposited: 0, isActive: true },
-    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', deposited: 0, isActive: true },
-    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', deposited: 0, isActive: true }
+    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', addr: 'मारकुंडी', deposited: 0, isActive: true },
+    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', addr: 'रेलवे गेट', deposited: 0, isActive: true },
+    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', addr: 'मारकुंडी', deposited: 0, isActive: true }
   ];
   try {
     var storedU = localStorage.getItem('durga_users');
@@ -1071,6 +1287,161 @@
     } else {
       updateAdminSummary();
       showScreen('screen-admin');
+    }
+  }
+
+  // ================= NEW FEATURE 1: VOLUNTEER ID CARD =================
+  function openUserIdCard() {
+    if (!currentUser) return;
+    document.getElementById('idc-name').innerText = currentUser.name;
+    document.getElementById('idc-code').innerText = currentUser.code;
+    document.getElementById('idc-phone').innerText = currentUser.mobile;
+    document.getElementById('idc-addr').innerText = currentUser.addr || 'मारकुंडी';
+    updateImages();
+    showScreen('screen-id-card');
+  }
+
+  async function downloadIdCardPDF() {
+    var btn = document.getElementById('btn-dl-idc');
+    var origTxt = btn.innerText;
+    btn.innerText = "⏳ पहचान पत्र PDF बन रही है...";
+
+    var target = document.getElementById('id-card-capture-target');
+    try {
+      var canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: [100, 150] });
+
+      var imgW = 90;
+      var imgH = (canvas.height * imgW) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 5, 6, imgW, imgH);
+      pdf.save('पहचान_पत्र_' + (currentUser ? currentUser.name : 'कार्यकर्ता') + '.pdf');
+    } catch(err) {
+      console.error("ID Card PDF Error:", err);
+      alert("सीधे PDF डाउनलोड नहीं हो सकी। प्रिंट स्क्रीन से 'Save as PDF' करें।");
+      window.print();
+    } finally {
+      btn.innerText = origTxt;
+    }
+  }
+
+  // ================= NEW FEATURE 2: ALL-IN-ONE AUDIT REPORT =================
+  function openAuditReportScreen() {
+    var now = new Date();
+    var dateStr = String(now.getDate()).padStart(2, '0') + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + now.getFullYear() + ' ' + now.toLocaleTimeString();
+    document.getElementById('audit-gen-date').innerText = 'रिपोर्ट दिनांक: ' + dateStr;
+
+    var totalIncome = 0;
+    var userMap = {};
+    for (var u = 0; u < users.length; u++) {
+      userMap[users[u].code] = { name: users[u].name, total: 0, count: 0 };
+    }
+    userMap['ADM'] = { name: 'एडमिन/समिति', total: 0, count: 0 };
+
+    for (var i = 0; i < receipts.length; i++) {
+      var r = receipts[i];
+      if (!r.isCancelled && r.type !== 'ITEM') {
+        var amt = Number(r.amt) || 0;
+        totalIncome += amt;
+        var c = r.code || 'ADM';
+        if (!userMap[c]) userMap[c] = { name: r.by || c, total: 0, count: 0 };
+        userMap[c].total += amt;
+        userMap[c].count++;
+      }
+    }
+
+    var totalExpense = 0;
+    for (var j = 0; j < expenses.length; j++) {
+      totalExpense += Number(expenses[j].amt) || 0;
+    }
+    var netSavings = totalIncome - totalExpense;
+
+    document.getElementById('aud-tot-inc').innerText = '₹' + totalIncome;
+    document.getElementById('aud-tot-exp').innerText = '₹' + totalExpense;
+    document.getElementById('aud-tot-bal').innerText = '₹' + netSavings;
+
+    // 1. Populate Collector Table
+    var colBody = document.getElementById('aud-collector-tbody');
+    colBody.innerHTML = '';
+    for (var codeKey in userMap) {
+      if (userMap[codeKey].count > 0 || userMap[codeKey].total > 0) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><strong style="color:#b71c1c;">' + codeKey + '</strong></td>' +
+          '<td>' + userMap[codeKey].name + '</td>' +
+          '<td style="text-align:center;">' + userMap[codeKey].count + '</td>' +
+          '<td style="text-align:right;"><strong style="color:#2e7d32;">₹' + userMap[codeKey].total + '</strong></td>';
+        colBody.appendChild(tr);
+      }
+    }
+
+    // 2. Populate Expense Table
+    var expBody = document.getElementById('aud-exp-tbody');
+    expBody.innerHTML = '';
+    if (expenses.length === 0) {
+      expBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#888;">कोई खर्च दर्ज नहीं है</td></tr>';
+    } else {
+      expenses.forEach(function(e) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><strong>' + e.title + '</strong></td>' +
+          '<td>' + (e.by || 'समिति') + '</td>' +
+          '<td>' + e.date + '</td>' +
+          '<td style="text-align:right;"><strong style="color:#c62828;">₹' + e.amt + '</strong></td>';
+        expBody.appendChild(tr);
+      });
+    }
+
+    showScreen('screen-audit');
+  }
+
+  async function downloadAuditPDF() {
+    var btn = document.getElementById('btn-dl-audit');
+    var origTxt = btn.innerText;
+    btn.innerText = "⏳ ऑडिट रिपोर्ट PDF बन रही है...";
+
+    var target = document.getElementById('audit-capture-target');
+    try {
+      var canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false
+      });
+
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+      var pW = 210, pH = 297, margin = 10;
+      var maxW = pW - (margin * 2);
+      var maxH = pH - (margin * 2);
+
+      var imgW = maxW;
+      var imgH = (canvas.height * imgW) / canvas.width;
+      if (imgH > maxH) {
+        imgH = maxH;
+        imgW = (canvas.width * imgH) / canvas.height;
+      }
+
+      var x = margin + (maxW - imgW) / 2;
+      var y = margin;
+
+      pdf.addImage(imgData, 'PNG', x, y, imgW, imgH);
+      pdf.save('समिति_ऑडिट_रिपोर्ट_2026.pdf');
+    } catch(err) {
+      console.error("Audit PDF Error:", err);
+      alert("सीधे PDF डाउनलोड नहीं हो सकी। प्रिंट स्क्रीन से 'Save as PDF' करें।");
+      window.print();
+    } finally {
+      btn.innerText = origTxt;
     }
   }
 
@@ -1489,11 +1860,14 @@
     }
 
     var code = currentUser ? currentUser.code : 'ADM';
-    var count = 0;
-    for (var i = 0; i < receipts.length; i++) {
-      if (receipts[i].code === code) count++;
-    }
-    var num = code + String(count + 1).padStart(3, '0');
+    var maxNum = 0;
+    receipts.forEach(function(r) {
+      if (r.code === code) {
+        var numPart = parseInt(r.no.replace(code, ''), 10);
+        if (!isNaN(numPart) && numPart > maxNum) maxNum = numPart;
+      }
+    });
+    var num = code + String(maxNum + 1).padStart(3, '0');
     var d = new Date();
     var dateStr = String(d.getDate()).padStart(2, '0') + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + d.getFullYear();
     
