@@ -161,6 +161,11 @@
     .user-list-item { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid #eee; background: white; gap: 8px; }
     .user-circle { width: 40px; height: 40px; border-radius: 50%; background: #1976d2; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; }
 
+    /* Bill Image Viewer Modal */
+    #bill-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center; padding: 16px; }
+    #bill-modal.active { display: flex; }
+    #bill-modal-content { max-width: 100%; max-height: 85vh; border-radius: 8px; box-shadow: 0 4px 20px rgba(255,255,255,0.2); }
+
     @media print {
       body * { visibility: hidden; }
       #print-area, #print-area *, #id-card-capture-target, #id-card-capture-target *, #audit-capture-target, #audit-capture-target *, #handover-capture-target, #handover-capture-target * { visibility: visible; }
@@ -179,6 +184,15 @@
   </div>
 
   <input type="file" id="user-photo-file-input" accept="image/*" style="display: none;" onchange="handleUserPhotoUpload(event)" />
+  <input type="file" id="expense-bill-input" accept="image/*" capture="environment" style="display: none;" onchange="handleExpenseBillUpload(event)" />
+
+  <!-- Fullscreen Bill Image Modal -->
+  <div id="bill-modal" onclick="closeBillModal()">
+    <div style="position: relative; width: 100%; max-width: 440px; text-align: center;">
+      <button style="position: absolute; right: 4px; top: -38px; background: white; color: black; border: none; border-radius: 50%; width: 32px; height: 32px; font-weight: bold; cursor: pointer;">✕</button>
+      <img id="bill-modal-img" src="" alt="बिल का फोटो" style="max-width: 100%; max-height: 80vh; border-radius: 8px; border: 2px solid #ffb74d;" />
+    </div>
+  </div>
 
   <!-- 1. SPLASH SCREEN -->
   <div id="screen-splash" class="screen active">
@@ -290,7 +304,7 @@
         <div style="font-size: 22px;">📄</div>रसीदें व रद्दीकरण
       </div>
       <div class="menu-box" style="background: #c2185b;" onclick="openExpensesScreen()">
-        <div style="font-size: 22px;">💸</div>समिति खर्च रजिस्टर
+        <div style="font-size: 22px;">💸</div>खर्च रजिस्टर व बिल
       </div>
       <div class="menu-box" style="background: #2e7d32;" onclick="openUsersList()">
         <div style="font-size: 22px;">👥</div>कार्यकर्ता & हिसाब
@@ -644,6 +658,7 @@
               <th>खर्चकर्ता</th>
               <th style="width: 70px;">दिनांक</th>
               <th style="width: 70px; text-align: right;">राशि (₹)</th>
+              <th style="width: 45px; text-align: center;">बिल</th>
             </tr>
           </thead>
           <tbody id="aud-exp-tbody"></tbody>
@@ -678,7 +693,7 @@
     </div>
   </div>
 
-  <!-- 5. CREATE RECEIPT FORM (With Dynamic UPI & Offline Support) -->
+  <!-- 5. CREATE RECEIPT FORM -->
   <div id="screen-create-receipt" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> नई रसीद बनाएं</h2>
@@ -747,7 +762,7 @@
     </div>
   </div>
 
-  <!-- 6. RECEIPT PREVIEW (With Verification QR Code & Cancel Watermark) -->
+  <!-- 6. RECEIPT PREVIEW -->
   <div id="screen-preview" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
@@ -905,14 +920,14 @@
     <div id="receipts-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 8. EXPENSES SCREEN -->
+  <!-- 8. EXPENSES SCREEN (With Bill Photo Upload & Preview) -->
   <div id="screen-expenses" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> खर्च रजिस्टर</h2>
     </div>
 
     <div style="padding: 14px 16px; background: #fff8e1; border-bottom: 1.5px solid #ffe082;">
-      <h3 style="font-size: 14px; color: #b71c1c; margin-bottom: 8px; font-weight: bold;">➕ नया खर्च दर्ज करें</h3>
+      <h3 style="font-size: 14px; color: #b71c1c; margin-bottom: 8px; font-weight: bold;">➕ नया खर्च व बिल दर्ज करें</h3>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
         <input type="text" id="exp-title" class="form-input" placeholder="मद (उदा. टेंट, प्रसाद)" />
         <input type="number" id="exp-amt" class="form-input" placeholder="रकम (₹)" />
@@ -921,7 +936,23 @@
         <input type="text" id="exp-by" class="form-input" placeholder="खर्चकर्ता का नाम" />
         <input type="date" id="exp-date" class="form-input" />
       </div>
-      <button class="btn btn-green" style="margin-top: 8px; padding: 9px;" onclick="saveExpense()">💾 खर्च सुरक्षित करें</button>
+
+      <!-- Bill/Voucher Upload Control -->
+      <div style="margin-top: 10px; background: #fff; padding: 10px; border-radius: 8px; border: 1px dashed #ffa000;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-size: 12px; font-weight: bold; color: #b71c1c;">📸 बिल / वाउचर फोटो:</span>
+          <button type="button" onclick="triggerExpenseBillSelect()" style="background: #1976d2; color: #fff; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer;">
+            📷 फोटो खींचें / चुनें
+          </button>
+        </div>
+        <div id="exp-bill-preview-box" style="display: none; margin-top: 8px; align-items: center; gap: 10px;">
+          <img id="exp-bill-preview-img" src="" alt="बिल प्रिव्यू" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1.5px solid #1976d2;" />
+          <span style="font-size: 11px; color: #2e7d32; font-weight: bold;">✓ फोटो लोड हो गई</span>
+          <button type="button" onclick="removeTempBillPhoto()" style="margin-left: auto; background: #ffebee; color: #c62828; border: none; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer;">हटाएं</button>
+        </div>
+      </div>
+
+      <button class="btn btn-green" style="margin-top: 10px; padding: 10px;" onclick="saveExpense()">💾 खर्च व बिल सुरक्षित करें</button>
     </div>
 
     <div style="padding: 10px 14px; background: #fbe9e7; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ffccbc;">
@@ -1029,6 +1060,7 @@
   var currentHandover = null;
   var selectedType = 'CASH';
   var adminPass = localStorage.getItem('durga_admin_pass') || '7905106011';
+  var tempExpenseBillPhoto = "";
 
   var users = [
     { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', role: 'व्यवस्था सहयोगी', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true, activeToken: '' },
@@ -1073,7 +1105,6 @@
     return str.trim() + ' रुपये मात्र';
   }
 
-  // Digital Security Hash Generator for Verification QR
   function generateReceiptHash(r) {
     var raw = (r.no || '') + '|' + (r.amt || 0) + '|' + (r.phone || '') + '|' + (r.name || '') + '|nydps2026';
     var hash = 0;
@@ -1120,6 +1151,125 @@
   function setQuickAmount(amt) {
     document.getElementById('r-amt').value = amt;
     handleAmountChange();
+  }
+
+  // =========================================================================
+  // EXPENSE BILL PHOTO UPLOAD & PREVIEW LOGIC
+  // =========================================================================
+  function triggerExpenseBillSelect() {
+    document.getElementById('expense-bill-input').click();
+  }
+
+  function handleExpenseBillUpload(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var maxDim = 800; // Optimal size for bills: clear text, low memory
+        var scale = Math.min(maxDim / img.width, maxDim / img.height, 1);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        tempExpenseBillPhoto = canvas.toDataURL('image/jpeg', 0.75);
+
+        var previewBox = document.getElementById('exp-bill-preview-box');
+        var previewImg = document.getElementById('exp-bill-preview-img');
+        if (previewBox && previewImg) {
+          previewImg.src = tempExpenseBillPhoto;
+          previewBox.style.display = 'flex';
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeTempBillPhoto() {
+    tempExpenseBillPhoto = "";
+    document.getElementById('expense-bill-input').value = "";
+    document.getElementById('exp-bill-preview-box').style.display = 'none';
+  }
+
+  function viewFullBill(photoUrl) {
+    if (!photoUrl) return;
+    document.getElementById('bill-modal-img').src = photoUrl;
+    document.getElementById('bill-modal').classList.add('active');
+  }
+
+  function closeBillModal() {
+    document.getElementById('bill-modal').classList.remove('active');
+  }
+
+  function saveExpense() {
+    var title = document.getElementById('exp-title').value.trim();
+    var amt = document.getElementById('exp-amt').value.trim();
+    var by = document.getElementById('exp-by').value.trim() || 'समिति';
+    var date = document.getElementById('exp-date').value || new Date().toISOString().split('T')[0];
+
+    if (!title || !amt) {
+      alert("विवरण व रकम भरें!");
+      return;
+    }
+
+    expenses.unshift({
+      id: Date.now(),
+      title: title,
+      amt: parseInt(amt, 10),
+      by: by,
+      date: date,
+      billPhoto: tempExpenseBillPhoto || ''
+    });
+
+    localStorage.setItem('durga_expenses', JSON.stringify(expenses));
+    syncToFirebase("expenses", expenses);
+
+    // Reset input fields
+    document.getElementById('exp-title').value = '';
+    document.getElementById('exp-amt').value = '';
+    removeTempBillPhoto();
+
+    renderExpensesList();
+    updateAdminSummary();
+    alert("✅ खर्च व बिल रसीद सुरक्षित हो गई!");
+  }
+
+  function renderExpensesList() {
+    var box = document.getElementById('expenses-list-box');
+    box.innerHTML = '';
+    var tot = 0;
+    expenses.forEach(function(e) {
+      tot += Number(e.amt);
+      var div = document.createElement('div');
+      div.style.cssText = 'background:#fff; padding:10px; border-radius:6px; margin-bottom:8px; border-left:4px solid #c62828; display:flex; justify-content:space-between; align-items:center;';
+      
+      var billBtn = e.billPhoto 
+        ? `<button onclick="viewFullBill('${e.billPhoto}')" style="background:#e0f2fe; color:#0284c7; border:1px solid #7dd3fc; border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">🧾 बिल देखें</button>`
+        : `<span style="font-size:10.5px; color:#9e9e9e;">कोई बिल नहीं</span>`;
+
+      div.innerHTML = `
+        <div>
+          <strong>${e.title}</strong> - <span style="color:#c62828; font-weight:bold;">₹${e.amt}</span><br>
+          <small style="color:#666;">${e.by} • ${e.date}</small>
+        </div>
+        <div>${billBtn}</div>
+      `;
+      box.appendChild(div);
+    });
+    document.getElementById('tot-exp-count').innerText = expenses.length;
+    document.getElementById('tot-exp-amt').innerText = 'रु. ' + tot;
+  }
+
+  function openExpensesScreen() {
+    document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+    removeTempBillPhoto();
+    renderExpensesList();
+    showScreen('screen-expenses');
   }
 
   // =========================================================================
@@ -1416,7 +1566,6 @@
     showScreen('screen-preview');
   }
 
-  // Handle URL Direct Verification on load
   function checkUrlVerification() {
     var params = new URLSearchParams(window.location.search);
     var vNo = params.get('verify');
@@ -1564,7 +1713,10 @@
     expBody.innerHTML = '';
     expenses.forEach(function(e) {
       var tr = document.createElement('tr');
-      tr.innerHTML = `<td><strong>${e.title}</strong></td><td>${e.by}</td><td>${e.date}</td><td style="text-align:right; color:#c62828;"><strong>₹${e.amt}</strong></td>`;
+      var billLink = e.billPhoto 
+        ? `<button onclick="viewFullBill('${e.billPhoto}')" style="background:#e0f2fe; color:#0284c7; border:none; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer;">देखें</button>` 
+        : `-`;
+      tr.innerHTML = `<td><strong>${e.title}</strong></td><td>${e.by}</td><td>${e.date}</td><td style="text-align:right; color:#c62828;"><strong>₹${e.amt}</strong></td><td style="text-align:center;">${billLink}</td>`;
       expBody.appendChild(tr);
     });
 
@@ -1670,7 +1822,7 @@
   }
 
   // =========================================================================
-  // ID CARD & PHOTO LOGIC
+  // ID CARD & USER PHOTO LOGIC
   // =========================================================================
   function triggerUserPhotoSelect() {
     document.getElementById('user-photo-file-input').click();
@@ -1935,46 +2087,6 @@
     showScreen('screen-receipts-list');
   }
 
-  function openExpensesScreen() {
-    document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
-    renderExpensesList();
-    showScreen('screen-expenses');
-  }
-
-  function saveExpense() {
-    var title = document.getElementById('exp-title').value.trim();
-    var amt = document.getElementById('exp-amt').value.trim();
-    var by = document.getElementById('exp-by').value.trim() || 'समिति';
-    var date = document.getElementById('exp-date').value || new Date().toISOString().split('T')[0];
-
-    if (!title || !amt) {
-      alert("विवरण व रकम भरें!");
-      return;
-    }
-
-    expenses.unshift({ id: Date.now(), title: title, amt: parseInt(amt, 10), by: by, date: date });
-    localStorage.setItem('durga_expenses', JSON.stringify(expenses));
-    syncToFirebase("expenses", expenses);
-    renderExpensesList();
-    updateAdminSummary();
-    alert("खर्च दर्ज हो गया!");
-  }
-
-  function renderExpensesList() {
-    var box = document.getElementById('expenses-list-box');
-    box.innerHTML = '';
-    var tot = 0;
-    expenses.forEach(function(e) {
-      tot += Number(e.amt);
-      var div = document.createElement('div');
-      div.style.cssText = 'background:#fff; padding:10px; border-radius:6px; margin-bottom:8px; border-left:4px solid #c62828;';
-      div.innerHTML = `<strong>${e.title}</strong> - ₹${e.amt}<br><small>${e.by} • ${e.date}</small>`;
-      box.appendChild(div);
-    });
-    document.getElementById('tot-exp-count').innerText = expenses.length;
-    document.getElementById('tot-exp-amt').innerText = 'रु. ' + tot;
-  }
-
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
@@ -2086,7 +2198,6 @@
     a.click();
   }
 
-  // Update static images
   function updateImages() {
     var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'id-top-durga-img', 'handover-durga-img'];
     ids.forEach(function(id) {
