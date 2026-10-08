@@ -28,7 +28,10 @@
     .screen { display: none; flex-direction: column; flex: 1; }
     .screen.active { display: flex !important; }
 
-    html.donor-direct-view #screen-splash { display: none !important; }
+    html.donor-direct-view #screen-splash,
+    html.donor-direct-view #sync-bar,
+    html.donor-direct-view .admin-action-btn,
+    html.donor-direct-view .nav-home-btn { display: none !important; }
     html.donor-direct-view #screen-preview { display: flex !important; }
 
     .top-bar { background: linear-gradient(135deg, #b71c1c, #d32f2f); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
@@ -101,8 +104,9 @@
     .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 13px; }
     .rec-table td { padding: 6px 4px; border-bottom: 1px dashed #ffe082; }
 
-    .seal-wrap { width: 75px; height: 75px; flex-shrink: 0; transform: rotate(-5deg); }
-    .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.2)); }
+    /* New Circular Stamp Layout */
+    .seal-wrap { width: 84px; height: 84px; flex-shrink: 0; transform: rotate(-5deg); }
+    .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.25)); }
 
     /* Certificate Box & Layout */
     .cert-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
@@ -636,7 +640,7 @@
             <span>कुल समिति खर्च (व्यय):</span>
             <span style="color: #c62828;" id="aud-tot-exp">₹0</span>
           </div>
-          <div style="border-top: 1.5px dashed #ffa000; padding-top: 6px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 900;">
+          <div style="border-top: 1.5px dashed #ffa000; padding-top: 6px; display: justify-content: space-between; font-size: 14px; font-weight: 900;">
             <span style="color: #b71c1c;">शुद्ध शेष बचत (Net Balance):</span>
             <span style="color: #1b5e20;" id="aud-tot-bal">₹0</span>
           </div>
@@ -774,7 +778,7 @@
   <!-- 6. RECEIPT PREVIEW -->
   <div id="screen-preview" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
+      <h2><button class="icon-btn nav-home-btn" onclick="backToHome()">⬅</button> रसीद प्रिव्यू</h2>
     </div>
 
     <div class="receipt-box" id="print-area">
@@ -863,11 +867,47 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 4px 4px 4px; font-size: 12px;">
             <div>
+              <!-- वृत्ताकार मुहर: ऊपर व नीचे गोलाई में नाम और बीच में दो रेखाओं में प्रमाणित -->
               <div class="seal-wrap">
-                <svg viewBox="0 0 160 160">
-                  <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
-                  <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
-                  <text x="80" y="84" font-size="12" font-weight="900" fill="#b71c1c" text-anchor="middle">★ प्रमाणित ★</text>
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                  <!-- बाहरी एवं भीतरी सुरक्षा चक्र -->
+                  <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
+                  <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
+                  <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
+                  
+                  <defs>
+                    <!-- ऊपर के टेक्स्ट हेतु वक्र पथ (Clockwise) -->
+                    <path id="seal-top-curve" d="M 24,100 A 76,76 0 0,1 176,100" />
+                    <!-- नीचे के टेक्स्ट हेतु वक्र पथ (Left-to-Right Readable Curve) -->
+                    <path id="seal-bot-curve" d="M 176,100 A 76,76 0 0,1 24,100" />
+                  </defs>
+
+                  <!-- ऊपर गोलाई में समिति का नाम -->
+                  <text fill="#b71c1c" font-size="14.5" font-weight="900" letter-spacing="1">
+                    <textPath href="#seal-top-curve" startOffset="50%" text-anchor="middle">
+                      नवयुवा दुर्गा पूजा समिति
+                    </textPath>
+                  </text>
+
+                  <!-- नीचे गोलाई में स्थान का नाम -->
+                  <text fill="#b71c1c" font-size="13" font-weight="900" letter-spacing="0.8">
+                    <textPath href="#seal-bot-curve" startOffset="50%" text-anchor="middle">
+                      रेलवे गेट, मारकुंडी
+                    </textPath>
+                  </text>
+
+                  <!-- केंद्र में 2 समानांतर रेखाएं -->
+                  <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
+                  <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
+
+                  <!-- दोनों रेखाओं के बीच में 'प्रमाणित' -->
+                  <text x="100" y="106" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
+                    ★ प्रमाणित ★
+                  </text>
+
+                  <!-- सजावटी सितारे -->
+                  <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
+                  <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
                 </svg>
               </div>
               <div style="font-size: 11px; color: #444; margin-top: 2px;">दिनांक: <strong id="pv-date">-</strong></div>
@@ -882,30 +922,30 @@
       </div>
     </div>
 
+    <!-- ऐक्शन बटन्स: दानदाता के मोबाइल पर केवल 'Save PDF' दिखेगा -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
-      <!-- सीधा WhatsApp PDF शेयर बटन (Web Share API) -->
-      <button class="btn btn-green" id="btn-share-receipt-pdf" onclick="shareDirectReceiptPDFWhatsApp()">
+      <!-- केवल यह बटन दानदाता को भी दिखेगा -->
+      <button class="btn" style="background: #b71c1c; font-size: 16px;" onclick="downloadReceiptPDF()">
+        📥 Save PDF (रसीद डाउनलोड करें)
+      </button>
+
+      <!-- नीचे दिए गए सभी बटन्स दानदाता लिंक पर स्वतः छिप जाएंगे (admin-action-btn) -->
+      <button class="btn btn-green admin-action-btn" id="btn-share-receipt-pdf" onclick="shareDirectReceiptPDFWhatsApp()">
         📤 सीधा WhatsApp PDF भेजें (Direct PDF)
       </button>
 
-      <!-- दानदाता सम्मान पत्र खोलें -->
-      <button class="btn btn-purple" onclick="openDonorCertificateScreen()">
+      <button class="btn btn-purple admin-action-btn" onclick="openDonorCertificateScreen()">
         📜 दानदाता सम्मान पत्र देखें व भेजें
       </button>
 
-      <button class="btn" style="background: #b71c1c;" onclick="downloadReceiptPDF()">
-        📥 Save PDF (रंगीन रसीद डाउनलोड करें)
-      </button>
-
-      <button class="btn btn-blue" onclick="shareWhatsApp()">💬 WhatsApp लिंक व विवरण भेजें</button>
+      <button class="btn btn-blue admin-action-btn" onclick="shareWhatsApp()">💬 WhatsApp लिंक व विवरण भेजें</button>
       
-      <!-- Admin Only Cancel Action -->
-      <button class="btn" style="background: #c62828;" id="btn-admin-cancel-rec" onclick="adminCancelCurrentReceipt()">
+      <button class="btn admin-action-btn" style="background: #c62828;" id="btn-admin-cancel-rec" onclick="adminCancelCurrentReceipt()">
         🚫 यह रसीद रद्द करें (Cancel Receipt)
       </button>
 
-      <button class="btn btn-grey" onclick="window.print()">🖨️ प्रिंट करें</button>
-      <button class="btn" onclick="backToHome()">🏠 होम पर जाएं</button>
+      <button class="btn btn-grey admin-action-btn" onclick="window.print()">🖨️ प्रिंट करें</button>
+      <button class="btn admin-action-btn nav-home-btn" onclick="backToHome()">🏠 होम पर जाएं</button>
     </div>
   </div>
 
@@ -952,10 +992,12 @@
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px; border-top: 1px dashed #ffcc80; padding-top: 8px;">
             <div style="text-align: left;">
               <div class="seal-wrap" style="width: 52px; height: 52px; margin: 0 0 2px 0;">
-                <svg viewBox="0 0 160 160">
-                  <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
-                  <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
-                  <text x="80" y="84" font-size="13" font-weight="900" fill="#b71c1c" text-anchor="middle">★ NYDPS ★</text>
+                <svg viewBox="0 0 200 200">
+                  <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
+                  <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
+                  <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
+                  <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
+                  <text x="100" y="106" font-size="18" font-weight="900" fill="#b71c1c" text-anchor="middle">★ NYDPS ★</text>
                 </svg>
               </div>
               <span style="font-size: 10px; color: #666;">दिनांक: <strong id="cert-date">-</strong></span>
@@ -1261,7 +1303,7 @@
       var img = new Image();
       img.onload = function() {
         var canvas = document.createElement('canvas');
-        var maxDim = 800; // Optimal size for bills: clear text, low memory
+        var maxDim = 800;
         var scale = Math.min(maxDim / img.width, maxDim / img.height, 1);
         canvas.width = img.width * scale;
         canvas.height = img.height * scale;
@@ -1516,8 +1558,11 @@
     } catch(e) {}
   }
 
-  function fetchFromFirebase() {
-    if (!FIREBASE_DB_URL || !navigator.onLine) return;
+  function fetchFromFirebase(callback) {
+    if (!FIREBASE_DB_URL || !navigator.onLine) {
+      if (callback) callback();
+      return;
+    }
     fetch(FIREBASE_DB_URL.replace(/\/$/, "") + "/.json")
       .then(function(res) { return res.json(); })
       .then(function(data) {
@@ -1541,7 +1586,10 @@
           }
           updateAdminSummary();
         }
-      }).catch(function() {});
+        if (callback) callback();
+      }).catch(function() {
+        if (callback) callback();
+      });
   }
   setInterval(fetchFromFirebase, 5000);
 
@@ -1646,32 +1694,51 @@
       document.getElementById('pv-words').innerText = numberToHindiWords(r.amt);
     }
 
-    // Dynamic Verification QR URL
     var verifyUrl = window.location.origin + window.location.pathname + "?verify=" + r.no + "&hash=" + (r.hash || generateReceiptHash(r));
     document.getElementById('pv-verify-qr').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(verifyUrl);
 
-    // Cancel Button visibility (Only Admin)
     var btnCancel = document.getElementById('btn-admin-cancel-rec');
     if (btnCancel) btnCancel.style.display = (currentUser === null && !r.isCancelled) ? 'block' : 'none';
 
     showScreen('screen-preview');
   }
 
+  // हल: दानदाता के मोबाइल पर पहली बार में रसीद सुरक्षित लोड होना
   function checkUrlVerification() {
     var params = new URLSearchParams(window.location.search);
-    var vNo = params.get('verify');
-    if (vNo) {
-      var found = receipts.find(function(x) { return x.no === vNo; });
-      if (found) {
-        showPreview(found);
-      } else {
-        alert("सत्यापन सूचना: यह रसीद सर्वर पर नहीं मिली!");
-      }
+    var vNo = params.get('verify') || params.get('id');
+    if (!vNo) return;
+
+    // यदि लोकल में उपलब्ध है
+    var found = receipts.find(function(x) { return x.no === vNo; });
+    if (found) {
+      showPreview(found);
+      return;
     }
+
+    // पहली बार लिंक खोलने पर सीधे Firebase से फेच करना
+    fetch(FIREBASE_DB_URL.replace(/\/$/, "") + "/receipts.json")
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data) {
+          var cloudRecs = Array.isArray(data) ? data : Object.values(data);
+          var matched = cloudRecs.find(function(x) { return x.no === vNo; });
+          if (matched) {
+            receipts = cloudRecs;
+            localStorage.setItem('durga_receipts', JSON.stringify(receipts));
+            showPreview(matched);
+            return;
+          }
+        }
+        alert("सत्यापन सूचना: यह रसीद सर्वर पर नहीं मिली!");
+      })
+      .catch(function() {
+        alert("रसीद लोड करने में समस्या आई, कृपया इंटरनेट कनेक्शन जांचें।");
+      });
   }
 
   // =========================================================================
-  // NEW FEATURE 1: DONOR CERTIFICATE SCREEN & GENERATION (दानदाता सम्मान पत्र)
+  // DONOR CERTIFICATE SCREEN & GENERATION (दानदाता सम्मान पत्र)
   // =========================================================================
   function openDonorCertificateScreen() {
     if (!currentReceipt) return;
@@ -1699,7 +1766,7 @@
   }
 
   // =========================================================================
-  // NEW FEATURE 2: DIRECT WHATSAPP PDF SHARE (Web Share API)
+  // DIRECT WHATSAPP PDF SHARE (Web Share API)
   // =========================================================================
   async function shareDirectReceiptPDFWhatsApp() {
     if (!currentReceipt) return;
@@ -1720,7 +1787,6 @@
       var fileName = 'रसीद_' + currentReceipt.no + '_' + currentReceipt.name + '.pdf';
       var pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
 
-      // Native Web Share API (Supported on Android Chrome & iOS Safari)
       if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
         await navigator.share({
           files: [pdfFile],
@@ -1728,9 +1794,8 @@
           text: '🚩 जय माता दी! नवयुवा दुर्गा पूजा समिति, मारकुंडी की ओर से आपकी चंदा रसीद संलग्न है। सहयोग हेतु धन्यवाद। 🙏'
         });
       } else {
-        // Fallback: If device doesn't support file sharing via browser
         pdf.save(fileName);
-        alert("📲 आपके डिवाइस पर डायरेक्ट PDF शेयर समर्थित नहीं है। PDF डाउनलोड हो गई है, अब इसे WhatsApp पर सीधे भेजें!");
+        alert("📲 PDF डाउनलोड हो गई है! अब इसे WhatsApp पर सीधे भेजें।");
         shareWhatsApp();
       }
     } catch (error) {
@@ -2340,7 +2405,6 @@
     openUsersList();
   }
 
-  // 26 से अधिक यूज़र्स के लिए यूनीक कोड जेनेरेटर (A, B... Z, AA, AB...)
   function generateUserCode(index) {
     var code = '';
     while (index >= 0) {
@@ -2389,7 +2453,7 @@
   function shareWhatsApp() {
     if (!currentReceipt) return;
     var verifyUrl = window.location.origin + window.location.pathname + "?verify=" + currentReceipt.no + "&hash=" + (currentReceipt.hash || generateReceiptHash(currentReceipt));
-    var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n\nप्रिय *" + currentReceipt.name + "* जी,\nसहयोग राशि: *रु. " + currentReceipt.amt + "/-*\nरसीद संख्या: *" + currentReceipt.no + "*\n\n🔗 *डिजिटल रसीद सत्यापन लिंक:*\n" + verifyUrl + "\n\nजय माता दी! 🙏";
+    var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n\nप्रिय *" + currentReceipt.name + "* जी,\nसहयोग राशि: *रु. " + currentReceipt.amt + "/-*\nरसीद संख्या: *" + currentReceipt.no + "*\n\n🔗 *डिजिटल रसीद लिंक:*\n" + verifyUrl + "\n\nजय माता दी! 🙏";
     window.open("https://api.whatsapp.com/send?phone=91" + currentReceipt.phone + "&text=" + encodeURIComponent(text), "_blank");
   }
 
@@ -2427,8 +2491,10 @@
     renderNoticeBoard();
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
-    fetchFromFirebase();
+    
+    // पहले URL वेरिफिकेशन चेक होगा ताकि दानदाता को पहली बार में ही रसीद मिले
     checkUrlVerification();
+    fetchFromFirebase();
   });
 </script>
 
