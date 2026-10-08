@@ -15,7 +15,8 @@
   <script>
     (function() {
       var params = new URLSearchParams(window.location.search);
-      if (params.get('id') || params.get('verify')) {
+      var hash = window.location.hash;
+      if (params.get('id') || params.get('verify') || (hash && hash.length > 2)) {
         document.documentElement.classList.add('donor-direct-view');
       }
     })();
@@ -918,11 +919,11 @@
                   </defs>
 
                   <text fill="#b71c1c" font-size="14.5" font-weight="900" letter-spacing="1">
-                    navyuva durga puja samiti
+                    नवयुवा दुर्गा पूजा समिति
                   </text>
 
                   <text fill="#b71c1c" font-size="13" font-weight="900" letter-spacing="0.8">
-                    railway gate markundi
+                    रेलवे गेट, मारकुंडी
                   </text>
 
                   <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
@@ -1223,7 +1224,8 @@
   var tempExpenseBillPhoto = "";
 
   var urlParams = new URLSearchParams(window.location.search);
-  var isDonorLinkView = (urlParams.get('id') || urlParams.get('verify')) ? true : false;
+  var currentHash = window.location.hash;
+  var isDonorLinkView = (urlParams.get('id') || urlParams.get('verify') || (currentHash && currentHash.length > 2)) ? true : false;
   var isStaffAccessRequested = (urlParams.get('login') === SECRET_ACCESS_KEY || urlParams.get('portal') === 'staff');
 
   var logoTapCounter = 0;
@@ -1271,17 +1273,17 @@
     return str.trim() + ' रुपये मात्र';
   }
 
-  // SHORT & COMPACT HMAC SIGNATURE (12 Hex characters prefix)
+  // ULTRA SHORT 8-CHAR SIGNATURE
   function generateSecureReceiptSignature(r) {
     var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.code || '');
-    return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 12);
+    return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
   }
 
-  // COMPACT & CLEAN SHORT URL GENERATION
+  // ULTRA COMPACT HASH LINK (e.g. domain.com/#A001_8a1f2c9e)
   function getSecureVerificationLink(r) {
     var sig = generateSecureReceiptSignature(r);
-    var base = window.location.origin + window.location.pathname;
-    return base + "?id=" + encodeURIComponent(r.no) + "&s=" + sig;
+    var cleanBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '');
+    return cleanBase + "/#" + encodeURIComponent(r.no) + "_" + sig;
   }
 
   // Triple Tap Unlocker
@@ -1746,11 +1748,23 @@
     showScreen('screen-preview');
   }
 
-  // SHORT SECURE VERIFICATION PARSER
+  // ULTRA SHORT & TAMPER-PROOF VERIFICATION ROUTER
   function checkUrlVerification() {
-    var params = new URLSearchParams(window.location.search);
-    var vNo = params.get('id') || params.get('verify');
-    var sig = params.get('s') || params.get('sig');
+    var vNo = "";
+    var sig = "";
+
+    // 1. Check Hash format (#A001_8a1f2c9e)
+    var h = window.location.hash.replace(/^#/, '');
+    if (h && h.indexOf('_') !== -1) {
+      var parts = h.split('_');
+      vNo = decodeURIComponent(parts[0]);
+      sig = parts[1];
+    } else {
+      // Fallback query parameters support
+      var params = new URLSearchParams(window.location.search);
+      vNo = params.get('id') || params.get('verify') || "";
+      sig = params.get('s') || params.get('sig') || "";
+    }
     
     if (!vNo) return;
 
@@ -2505,7 +2519,7 @@
     }
   }
 
-  // SHORT & CLEAN WHATSAPP SHARE
+  // ULTRA SHORT & CLEAN WHATSAPP SHARE
   function shareWhatsApp() {
     if (!currentReceipt) return;
     var verifyUrl = getSecureVerificationLink(currentReceipt);
@@ -2513,7 +2527,7 @@
                "प्रिय *" + currentReceipt.name + "* जी,\n" +
                "सहयोग राशि: *रु. " + currentReceipt.amt + "/-*\n" +
                "रसीद संख्या: *" + currentReceipt.no + "*\n\n" +
-               "🔗 *डिजिटल रसीद लिंक:*\n" + verifyUrl + "\n\n" +
+               "🔗 *डिजिटल रसीद:*\n" + verifyUrl + "\n\n" +
                "(यह रसीद डिजिटल रूप से प्रमाणित है) 🙏";
     window.open("https://api.whatsapp.com/send?phone=91" + currentReceipt.phone + "&text=" + encodeURIComponent(text), "_blank");
   }
@@ -2556,14 +2570,14 @@
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
-    // 1. Direct Donor View (Short Link Supported)
+    // 1. Direct Donor View (Supports clean Hash fragment: #A001_s8Hex)
     if (isDonorLinkView) {
       checkUrlVerification();
       fetchFromFirebase();
       return;
     }
 
-    // 2. Logged In Sessions
+    // 2. Active Session Restoration
     var savedRole = localStorage.getItem('durga_current_logged_role');
     var savedUid = localStorage.getItem('durga_current_logged_user_id');
 
@@ -2595,7 +2609,7 @@
       return;
     }
 
-    // 4. Default Screen (First time visit only)
+    // 4. Default: First Time Public Portal
     showScreen('screen-public-card');
     fetchFromFirebase();
   });
