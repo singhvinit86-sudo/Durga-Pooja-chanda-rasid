@@ -552,7 +552,7 @@
 
             <div class="id-modern-info-grid">
               <div class="id-info-item tile-role">
-                <span class="id-info-label">🎖️ दायित्व</span>
+                <span class="id-info-label">🎖️ दायित्व (पदनाम)</span>
                 <span class="id-info-val" id="idc-role-text">व्यवस्था सहयोगी</span>
               </div>
               <div class="id-info-item tile-phone">
@@ -1070,7 +1070,7 @@
     </div>
   </div>
 
-  <!-- 6.1 DONOR CERTIFICATE SCREEN (SAME OFFICIAL CIRCULAR STAMP) -->
+  <!-- 6.1 DONOR CERTIFICATE SCREEN -->
   <div id="screen-certificate" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-preview')">⬅</button> दानदाता सम्मान पत्र</h2>
@@ -1251,7 +1251,7 @@
     <div id="users-list-box" style="padding: 14px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 10. CREATE USER -->
+  <!-- 10. CREATE USER (WITH DESIGNATION / PアドNAM OPTION) -->
   <div id="screen-create-user" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> नया कार्यकर्ता</h2>
@@ -1262,12 +1262,12 @@
         <input type="text" id="nu-name" class="form-input" placeholder="नाम लिखें" />
       </div>
       <div class="form-group">
-        <label>समिति पद (Designation) *</label>
-        <input type="text" id="nu-role" class="form-input" value="व्यवस्था सहयोगी" />
+        <label>समिति पदनाम (Designation) *</label>
+        <input type="text" id="nu-role" class="form-input" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष, व्यवस्थापक" value="व्यवस्था सहयोगी" />
       </div>
       <div class="form-group">
         <label>मोबाइल नंबर *</label>
-        <input type="tel" id="nu-phone" class="form-input" maxlength="10" />
+        <input type="tel" id="nu-phone" class="form-input" maxlength="10" placeholder="10 अंकों का मोबाइल" />
       </div>
       <div class="form-group">
         <label>लॉगिन पासवर्ड *</label>
@@ -1833,7 +1833,7 @@
     var cancelCard = document.getElementById('pv-cancelled-card');
     var activeActionsBox = document.getElementById('receipt-active-actions-box');
 
-    // CANCELLED RECEIPT LOGIC: Agar radd ho chuki hai to saare actions chupao
+    // CANCELLED RECEIPT LOGIC
     if (r.isCancelled) {
       cancelCard.style.display = 'block';
       document.getElementById('pv-cancel-reason').innerText = "कारण: " + (r.cancelReason || 'समिति द्वारा निरस्त');
@@ -2627,6 +2627,7 @@
     return code;
   }
 
+  // SAVE NEW USER (STORES CUSTOM DESIGNATION / PADNAMA)
   function saveNewUser() {
     var n = document.getElementById('nu-name').value.trim();
     var r = document.getElementById('nu-role').value.trim() || 'व्यवस्था सहयोगी';
@@ -2641,10 +2642,23 @@
 
     var code = generateUserCode(users.length);
 
-    users.push({ id: Date.now(), name: n, mobile: p, pass: pass, role: r, photo: '', code: code, addr: addr, deposited: 0, isActive: true, activeToken: '' });
+    users.push({ 
+      id: Date.now(), 
+      name: n, 
+      mobile: p, 
+      pass: pass, 
+      role: r, 
+      photo: '', 
+      code: code, 
+      addr: addr, 
+      deposited: 0, 
+      isActive: true, 
+      activeToken: '' 
+    });
+    
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
-    alert("कार्यकर्ता जुड़ गया! कोड: " + code);
+    alert("कार्यकर्ता जुड़ गया! पद: " + r + " | कोड: " + code);
     showScreen('screen-admin');
   }
 
@@ -2714,7 +2728,7 @@
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
-    // 1. Direct Donor View (Supports clean Hash fragment: #A001_s8Hex)
+    // 1. Direct Donor View
     if (isDonorLinkView) {
       checkUrlVerification();
       fetchFromFirebase();
