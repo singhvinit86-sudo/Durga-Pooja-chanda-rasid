@@ -104,6 +104,15 @@
     .seal-wrap { width: 75px; height: 75px; flex-shrink: 0; transform: rotate(-5deg); }
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.2)); }
 
+    /* Certificate Box & Layout */
+    .cert-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
+    .cert-border { width: 100%; background: #fffdf2; border: 4px double #b71c1c; border-radius: 12px; padding: 12px; position: relative; }
+    .cert-inner { border: 2px dashed #d97706; padding: 18px 14px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; }
+    .cert-header-photo { width: 70px; height: 70px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ffb300; }
+    .cert-badge { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #ffeb3b; padding: 4px 16px; border-radius: 20px; display: inline-block; font-size: 13px; font-weight: 900; margin: 8px 0 12px 0; }
+    .cert-donor-name { font-size: 20px; font-weight: 900; color: #b71c1c; margin: 8px 0; border-bottom: 2px dashed #ffcc80; padding-bottom: 4px; }
+    .cert-body-p { font-size: 13px; line-height: 1.6; color: #37474f; font-weight: 600; margin-bottom: 14px; }
+
     /* Dynamic UPI Payment Card */
     .upi-pay-card { background: #e0f2fe; border: 2px dashed #0284c7; border-radius: 8px; padding: 12px; text-align: center; margin-top: 10px; display: none; }
     .upi-qr-box { width: 160px; height: 160px; margin: 8px auto; background: white; padding: 6px; border-radius: 8px; border: 1.5px solid #bae6fd; }
@@ -168,8 +177,8 @@
 
     @media print {
       body * { visibility: hidden; }
-      #print-area, #print-area *, #id-card-capture-target, #id-card-capture-target *, #audit-capture-target, #audit-capture-target *, #handover-capture-target, #handover-capture-target * { visibility: visible; }
-      #print-area, #id-card-capture-target, #audit-capture-target, #handover-capture-target { position: absolute; left: 0; top: 0; width: 100%; }
+      #print-area, #print-area *, #id-card-capture-target, #id-card-capture-target *, #audit-capture-target, #audit-capture-target *, #handover-capture-target, #handover-capture-target *, #cert-capture-target, #cert-capture-target * { visibility: visible; }
+      #print-area, #id-card-capture-target, #audit-capture-target, #handover-capture-target, #cert-capture-target { position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
@@ -874,10 +883,21 @@
     </div>
 
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+      <!-- सीधा WhatsApp PDF शेयर बटन (Web Share API) -->
+      <button class="btn btn-green" id="btn-share-receipt-pdf" onclick="shareDirectReceiptPDFWhatsApp()">
+        📤 सीधा WhatsApp PDF भेजें (Direct PDF)
+      </button>
+
+      <!-- दानदाता सम्मान पत्र खोलें -->
+      <button class="btn btn-purple" onclick="openDonorCertificateScreen()">
+        📜 दानदाता सम्मान पत्र देखें व भेजें
+      </button>
+
       <button class="btn" style="background: #b71c1c;" onclick="downloadReceiptPDF()">
         📥 Save PDF (रंगीन रसीद डाउनलोड करें)
       </button>
-      <button class="btn btn-green" onclick="shareWhatsApp()">💬 WhatsApp पर भेजें</button>
+
+      <button class="btn btn-blue" onclick="shareWhatsApp()">💬 WhatsApp लिंक व विवरण भेजें</button>
       
       <!-- Admin Only Cancel Action -->
       <button class="btn" style="background: #c62828;" id="btn-admin-cancel-rec" onclick="adminCancelCurrentReceipt()">
@@ -886,6 +906,78 @@
 
       <button class="btn btn-grey" onclick="window.print()">🖨️ प्रिंट करें</button>
       <button class="btn" onclick="backToHome()">🏠 होम पर जाएं</button>
+    </div>
+  </div>
+
+  <!-- 6.1 DONOR CERTIFICATE SCREEN (दानदाता सम्मान पत्र) -->
+  <div id="screen-certificate" class="screen">
+    <div class="top-bar">
+      <h2><button class="icon-btn" onclick="showScreen('screen-preview')">⬅</button> दानदाता सम्मान पत्र</h2>
+    </div>
+
+    <div class="cert-box">
+      <div class="cert-border" id="cert-capture-target">
+        <div class="cert-inner">
+          <span class="corner-swastik corner-tl">卐</span>
+          <span class="corner-swastik corner-tr">卐</span>
+          <span class="corner-swastik corner-bl">卐</span>
+          <span class="corner-swastik corner-br">卐</span>
+
+          <div style="font-size: 11px; font-weight: bold; color: #b71c1c; margin-bottom: 2px;">
+            || श्री गणेशाय नमः || जय माता दी ||
+          </div>
+
+          <div class="cert-header-photo">
+            <img id="cert-durga-img" alt="माँ दुर्गा" />
+          </div>
+
+          <h2 style="color: #b71c1c; font-size: 20px; line-height: 1.2;">नवयुवा दुर्गा पूजा समिति</h2>
+          <p style="font-size: 11px; color: #4a148c; font-weight: bold;">रेलवे गेट, मारकुंडी, सोनभद्र (सत्र 2026)</p>
+
+          <div class="cert-badge">✨ सम्मान व आभार पत्र ✨</div>
+
+          <p style="font-size: 12px; color: #666; font-weight: bold;">समिति अत्यंत आदरपूर्वक सम्मानित करती है:</p>
+
+          <div class="cert-donor-name" id="cert-donor-name">श्री / श्रीमती ...</div>
+          <div style="font-size: 11.5px; color: #555; margin-bottom: 10px;">ग्राम/पता: <strong id="cert-donor-addr">-</strong></div>
+
+          <div class="cert-body-p">
+            माँ दुर्गा पूजा महोत्सव 2026 के पावन अवसर पर आपके द्वारा प्रदान किए गए अमूल्य चंदा सहयोग 
+            <strong style="color: #b71c1c; font-size: 15px;" id="cert-donor-amt">₹0/-</strong> 
+            हेतु समिति आपकी अत्यंत आभारी व कृतज्ञ है।
+            <br><br>
+            हम माँ जगदम्बा भवानी से प्रार्थना करते हैं कि आपके जीवन में सुख, शांति, समृद्धि और उत्तम स्वास्थ्य की सदैव वृद्धि हो।
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px; border-top: 1px dashed #ffcc80; padding-top: 8px;">
+            <div style="text-align: left;">
+              <div class="seal-wrap" style="width: 52px; height: 52px; margin: 0 0 2px 0;">
+                <svg viewBox="0 0 160 160">
+                  <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
+                  <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
+                  <text x="80" y="84" font-size="13" font-weight="900" fill="#b71c1c" text-anchor="middle">★ NYDPS ★</text>
+                </svg>
+              </div>
+              <span style="font-size: 10px; color: #666;">दिनांक: <strong id="cert-date">-</strong></span>
+            </div>
+
+            <div style="text-align: right;">
+              <span style="font-size: 10px; color: #666;">समिति पदाधिकारी गण</span><br>
+              <strong style="color: #b71c1c; font-size: 13px;">नवयुवा दुर्गा पूजा समिति</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+      <button class="btn btn-green" id="btn-share-cert-pdf" onclick="shareDirectCertificatePDFWhatsApp()">
+        📤 सीधा WhatsApp PDF भेजें (Certificate)
+      </button>
+      <button class="btn btn-purple" onclick="downloadCertificatePDF()">
+        📥 Save Certificate PDF (डाउनलोड करें)
+      </button>
+      <button class="btn btn-blue" onclick="showScreen('screen-preview')">⬅ रसीद पर वापस लौटें</button>
     </div>
   </div>
 
@@ -1229,7 +1321,6 @@
     localStorage.setItem('durga_expenses', JSON.stringify(expenses));
     syncToFirebase("expenses", expenses);
 
-    // Reset input fields
     document.getElementById('exp-title').value = '';
     document.getElementById('exp-amt').value = '';
     removeTempBillPhoto();
@@ -1576,6 +1667,119 @@
       } else {
         alert("सत्यापन सूचना: यह रसीद सर्वर पर नहीं मिली!");
       }
+    }
+  }
+
+  // =========================================================================
+  // NEW FEATURE 1: DONOR CERTIFICATE SCREEN & GENERATION (दानदाता सम्मान पत्र)
+  // =========================================================================
+  function openDonorCertificateScreen() {
+    if (!currentReceipt) return;
+    document.getElementById('cert-donor-name').innerText = currentReceipt.name;
+    document.getElementById('cert-donor-addr').innerText = currentReceipt.addr || 'मारकुंडी';
+    document.getElementById('cert-donor-amt').innerText = (currentReceipt.type === 'ITEM') ? currentReceipt.itemDesc : ('₹' + currentReceipt.amt + '/-');
+    document.getElementById('cert-date').innerText = currentReceipt.date;
+    document.getElementById('cert-durga-img').src = currentDurgaImg || DEFAULT_DURGA;
+
+    showScreen('screen-certificate');
+  }
+
+  async function downloadCertificatePDF() {
+    var target = document.getElementById('cert-capture-target');
+    try {
+      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fffdf2' });
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a5' });
+      pdf.addImage(imgData, 'PNG', 8, 8, 132, (canvas.height * 132) / canvas.width);
+      pdf.save('सम्मान_पत्र_' + currentReceipt.name + '.pdf');
+    } catch(err) {
+      window.print();
+    }
+  }
+
+  // =========================================================================
+  // NEW FEATURE 2: DIRECT WHATSAPP PDF SHARE (Web Share API)
+  // =========================================================================
+  async function shareDirectReceiptPDFWhatsApp() {
+    if (!currentReceipt) return;
+    var btn = document.getElementById('btn-share-receipt-pdf');
+    var oldText = btn.innerText;
+    btn.innerText = "⏳ PDF तैयार हो रही है...";
+    btn.disabled = true;
+
+    try {
+      var target = document.getElementById('receipt-capture-target');
+      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fffdf2' });
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a5' });
+      pdf.addImage(imgData, 'PNG', 8, 8, 132, (canvas.height * 132) / canvas.width);
+
+      var pdfBlob = pdf.output('blob');
+      var fileName = 'रसीद_' + currentReceipt.no + '_' + currentReceipt.name + '.pdf';
+      var pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+      // Native Web Share API (Supported on Android Chrome & iOS Safari)
+      if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        await navigator.share({
+          files: [pdfFile],
+          title: 'चंदा रसीद - नवयुवा दुर्गा पूजा समिति',
+          text: '🚩 जय माता दी! नवयुवा दुर्गा पूजा समिति, मारकुंडी की ओर से आपकी चंदा रसीद संलग्न है। सहयोग हेतु धन्यवाद। 🙏'
+        });
+      } else {
+        // Fallback: If device doesn't support file sharing via browser
+        pdf.save(fileName);
+        alert("📲 आपके डिवाइस पर डायरेक्ट PDF शेयर समर्थित नहीं है। PDF डाउनलोड हो गई है, अब इसे WhatsApp पर सीधे भेजें!");
+        shareWhatsApp();
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        alert("शेयर करने में त्रुटि आई। साधारण WhatsApp लिंक का उपयोग करें।");
+        shareWhatsApp();
+      }
+    } finally {
+      btn.innerText = oldText;
+      btn.disabled = false;
+    }
+  }
+
+  async function shareDirectCertificatePDFWhatsApp() {
+    if (!currentReceipt) return;
+    var btn = document.getElementById('btn-share-cert-pdf');
+    var oldText = btn.innerText;
+    btn.innerText = "⏳ सम्मान पत्र PDF बन रही है...";
+    btn.disabled = true;
+
+    try {
+      var target = document.getElementById('cert-capture-target');
+      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fffdf2' });
+      var imgData = canvas.toDataURL('image/png');
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a5' });
+      pdf.addImage(imgData, 'PNG', 8, 8, 132, (canvas.height * 132) / canvas.width);
+
+      var pdfBlob = pdf.output('blob');
+      var fileName = 'सम्मान_पत्र_' + currentReceipt.name + '.pdf';
+      var pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+      if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+        await navigator.share({
+          files: [pdfFile],
+          title: 'दानदाता सम्मान पत्र - नवयुवा दुर्गा पूजा समिति',
+          text: '🚩 जय माता दी! नवयुवा दुर्गा पूजा समिति, मारकुंडी की ओर से आपका आधिकारिक सम्मान व आभार पत्र संलग्न है। माँ भगवती की कृपा आप पर सदैव बनी रहे। 🙏'
+        });
+      } else {
+        pdf.save(fileName);
+        alert("सम्मान पत्र PDF डाउनलोड हो गई है! अब इसे दानदाता के WhatsApp पर अटैच करके भेजें।");
+      }
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        alert("शेयर करने में समस्या आई।");
+      }
+    } finally {
+      btn.innerText = oldText;
+      btn.disabled = false;
     }
   }
 
@@ -2136,6 +2340,16 @@
     openUsersList();
   }
 
+  // 26 से अधिक यूज़र्स के लिए यूनीक कोड जेनेरेटर (A, B... Z, AA, AB...)
+  function generateUserCode(index) {
+    var code = '';
+    while (index >= 0) {
+      code = String.fromCharCode((index % 26) + 65) + code;
+      index = Math.floor(index / 26) - 1;
+    }
+    return code;
+  }
+
   function saveNewUser() {
     var n = document.getElementById('nu-name').value.trim();
     var r = document.getElementById('nu-role').value.trim() || 'व्यवस्था सहयोगी';
@@ -2147,7 +2361,9 @@
       alert("विवरण सही भरें!");
       return;
     }
-    var code = String.fromCharCode(65 + (users.length % 26));
+
+    var code = generateUserCode(users.length);
+
     users.push({ id: Date.now(), name: n, mobile: p, pass: pass, role: r, photo: '', code: code, addr: addr, deposited: 0, isActive: true, activeToken: '' });
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
@@ -2199,7 +2415,7 @@
   }
 
   function updateImages() {
-    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'id-top-durga-img', 'handover-durga-img'];
+    var ids = ['splash-img', 'login-img', 'receipt-preview-img', 'id-top-durga-img', 'handover-durga-img', 'cert-durga-img'];
     ids.forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.src = currentDurgaImg;
