@@ -6,9 +6,10 @@
   <title>नवयुवा दुर्गा पूजा समिति - चंदा, नोटिस व हैंडओवर ऐप</title>
   <meta name="theme-color" content="#b71c1c" />
 
-  <!-- PDF & Canvas Libraries -->
+  <!-- PDF, Canvas & Cryptography Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <!-- Prevent Splash Flash on Direct Donor Verification Link -->
   <script>
@@ -1194,6 +1195,9 @@
   var DEFAULT_USER_IMG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b71c1c'><circle cx='50' cy='35' r='25'/><path d='M10,90 Q50,55 90,90 Z'/></svg>";
   var currentNotice = localStorage.getItem('durga_notice_text') || "समिति के सभी सदस्य समय पर अपनी चंदा रसीदें व नकद संग्रह एडमिन कार्यालय में जमा करें। जय माता दी!";
 
+  // क्रिप्टोग्राफिक गुप्त सुरक्षा कुंजी (Secret Signing Key)
+  var SECRET_SIGNING_KEY = "NYDPS_MARG_SONBHADRA_SECURE_KEY_2026";
+
   var currentRole = 'admin';
   var currentUser = null;
   var currentReceipt = null;
@@ -1202,7 +1206,7 @@
   var adminPass = localStorage.getItem('durga_admin_pass') || '7905106011';
   var tempExpenseBillPhoto = "";
 
-  // डोनर लिंक व्यू का स्थायी फ्लैग
+  // डोनर लिंक व्यू का स्थायी स्टेट
   var urlParams = new URLSearchParams(window.location.search);
   var isDonorLinkView = (urlParams.get('id') || urlParams.get('verify')) ? true : false;
 
@@ -1248,14 +1252,21 @@
     return str.trim() + ' रुपये मात्र';
   }
 
-  function generateReceiptHash(r) {
-    var raw = (r.no || '') + '|' + (r.amt || 0) + '|' + (r.phone || '') + '|' + (r.name || '') + '|nydps2026';
-    var hash = 0;
-    for (var i = 0; i < raw.length; i++) {
-      hash = ((hash << 5) - hash) + raw.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash).toString(36);
+  // HMAC-SHA256 क्रिप्टोग्राफिक डिजिटल सिग्नेचर
+  function generateSecureReceiptSignature(r) {
+    var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.name || '') + "_" + (r.code || '');
+    return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex);
+  }
+
+  // सुरक्षित डिजिटल सत्यापन लिंक
+  function getSecureVerificationLink(r) {
+    var sig = generateSecureReceiptSignature(r);
+    var base = window.location.origin + window.location.pathname;
+    return base + "?verify=" + encodeURIComponent(r.no) + 
+           "&name=" + encodeURIComponent(r.name) + 
+           "&amt=" + encodeURIComponent(r.amt) + 
+           "&phone=" + encodeURIComponent(r.phone) + 
+           "&sig=" + sig;
   }
 
   // =========================================================================
@@ -1652,7 +1663,7 @@
       isCancelled: false,
       hash: ''
     };
-    newRec.hash = generateReceiptHash(newRec);
+    newRec.hash = generateSecureReceiptSignature(newRec);
 
     if (!navigator.onLine) {
       offlineQueue.unshift(newRec);
@@ -1703,7 +1714,7 @@
       document.getElementById('pv-words').innerText = numberToHindiWords(r.amt);
     }
 
-    var verifyUrl = window.location.origin + window.location.pathname + "?verify=" + r.no + "&hash=" + (r.hash || generateReceiptHash(r));
+    var verifyUrl = getSecureVerificationLink(r);
     document.getElementById('pv-verify-qr').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(verifyUrl);
 
     // यदि डोनर लिंक व्यू है तो सभी स्टाफ ऐक्शन बटन हटा दें
@@ -1719,35 +1730,65 @@
     showScreen('screen-preview');
   }
 
-  // दानदाता के मोबाइल पर सीधे रसीद खोलना
+  // दानदाता के मोबाइल पर लिंक सत्यापन एवं एंटी-टैम्पर गार्ड (Tamper Proof)
   function checkUrlVerification() {
     var params = new URLSearchParams(window.location.search);
     var vNo = params.get('verify') || params.get('id');
+    var sig = params.get('sig');
+    
     if (!vNo) return;
 
     isDonorLinkView = true;
     document.documentElement.classList.add('donor-direct-view');
 
-    var found = receipts.find(function(x) { return x.no === vNo; });
-    if (found) {
-      showPreview(found);
+    // 1. अगर URL में सुरक्षा सिग्नेचर नहीं है
+    if (!sig) {
+      document.body.innerHTML = `
+        <div style="text-align:center; padding:50px 20px; font-family:sans-serif; background:#fff; min-height:100vh;">
+          <div style="font-size:55px; color:#c62828;">🚫</div>
+          <h2 style="color:#c62828; margin-top:10px;">अवैध रसीद लिंक</h2>
+          <p style="color:#555; margin-top:8px;">इस लिंक में सुरक्षा हस्ताक्षर (Security Signature) गायब है।</p>
+        </div>
+      `;
       return;
     }
 
+    // 2. Firebase से आधिकारिक रसीद फेच करके सिग्नेचर का मिलान
     fetch(FIREBASE_DB_URL.replace(/\/$/, "") + "/receipts.json")
       .then(function(res) { return res.json(); })
       .then(function(data) {
         if (data) {
           var cloudRecs = Array.isArray(data) ? data : Object.values(data);
           var matched = cloudRecs.find(function(x) { return x.no === vNo; });
+
           if (matched) {
+            var legitimateSignature = generateSecureReceiptSignature(matched);
+
+            // अगर लिंक में 1 अक्षर या राशि में बदलाव हुआ है
+            if (sig !== legitimateSignature) {
+              document.body.innerHTML = `
+                <div style="text-align:center; padding:40px 20px; font-family:sans-serif; background:#fff; min-height:100vh;">
+                  <div style="font-size:60px; color:#c62828;">⚠️</div>
+                  <h2 style="color:#c62828; margin-top:10px;">सुरक्षा उल्लंघन (Tampering Detected)</h2>
+                  <p style="color:#555; font-size:14px; margin-top:10px; line-height:1.5;">
+                    इस रसीद लिंक में <strong>अनाधिकृत बदलाव (छेड़छाड़)</strong> की गई है। सुरक्षा कारणों से यह रसीद नहीं खोली जा सकती।
+                  </p>
+                  <div style="margin-top:20px; border:1.5px dashed #c62828; padding:12px; border-radius:8px; background:#ffebee; font-size:12.5px; color:#b71c1c; font-weight:bold;">
+                    सत्यापित रसीद देखने हेतु समिति द्वारा WhatsApp पर भेजे गए मूल लिंक का उपयोग करें।
+                  </div>
+                </div>
+              `;
+              return;
+            }
+
+            // सब कुछ वैध होने पर रसीद दिखाएं
             receipts = cloudRecs;
             localStorage.setItem('durga_receipts', JSON.stringify(receipts));
             showPreview(matched);
             return;
           }
         }
-        alert("सत्यापन सूचना: यह रसीद सर्वर पर नहीं मिली!");
+        document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h2 style='color:#c62828;'>❌ रसीद सर्वर पर नहीं मिली!</h2></div>";
       })
       .catch(function() {
         alert("रसीद लोड करने में समस्या आई, कृपया इंटरनेट कनेक्शन जांचें।");
@@ -2186,7 +2227,6 @@
   // NAVIGATION & UI HELPERS
   // =========================================================================
   function showScreen(id) {
-    // अगर कोई दानदाता लिंक से आया है तो डोनर मोड हटने न दें
     if (!isDonorLinkView) {
       document.documentElement.classList.remove('donor-direct-view');
     }
@@ -2472,8 +2512,8 @@
 
   function shareWhatsApp() {
     if (!currentReceipt) return;
-    var verifyUrl = window.location.origin + window.location.pathname + "?verify=" + currentReceipt.no + "&hash=" + (currentReceipt.hash || generateReceiptHash(currentReceipt));
-    var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n\nप्रिय *" + currentReceipt.name + "* जी,\nसहयोग राशि: *रु. " + currentReceipt.amt + "/-*\nरसीद संख्या: *" + currentReceipt.no + "*\n\n🔗 *डिजिटल रसीद लिंक:*\n" + verifyUrl + "\n\nजय माता दी! 🙏";
+    var verifyUrl = getSecureVerificationLink(currentReceipt);
+    var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n\nप्रिय *" + currentReceipt.name + "* जी,\nसहयोग राशि: *रु. " + currentReceipt.amt + "/-*\nरसीद संख्या: *" + currentReceipt.no + "*\n\n🔗 *डिजिटल प्रमाणित रसीद लिंक:*\n" + verifyUrl + "\n\n(यह लिंक डिजिटल रूप से सुरक्षित एवं प्रमाणित है) 🙏";
     window.open("https://api.whatsapp.com/send?phone=91" + currentReceipt.phone + "&text=" + encodeURIComponent(text), "_blank");
   }
 
@@ -2512,7 +2552,7 @@
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
-    // डोनर वेरिफिकेशन
+    // सुरक्षित डोनर वेरिफिकेशन
     checkUrlVerification();
     fetchFromFirebase();
   });
