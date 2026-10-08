@@ -28,6 +28,7 @@
     .screen { display: none; flex-direction: column; flex: 1; }
     .screen.active { display: flex !important; }
 
+    /* Bypass splash immediately if direct link */
     html.donor-direct-view #screen-splash { display: none !important; }
     html.donor-direct-view #screen-preview { display: flex !important; }
 
@@ -48,39 +49,47 @@
     .form-input { width: 100%; padding: 10px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 14px; outline: none; }
     .form-input:focus { border-color: #d32f2f; }
 
+    /* Quick Amount Badges */
     .quick-amt-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .quick-amt-chip { background: #fff3e0; border: 1px solid #ffb74d; color: #b71c1c; padding: 5px 10px; border-radius: 16px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
     .quick-amt-chip:active { background: #b71c1c; color: white; }
 
+    /* Type selector tabs */
     .type-pill-wrap { display: flex; gap: 6px; margin-bottom: 14px; }
     .type-pill { flex: 1; text-align: center; padding: 9px 4px; border: 1.5px solid #dcdde1; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; background: #fff; color: #555; }
     .type-pill.active { border-color: #b71c1c; background: #ffebee; color: #b71c1c; }
 
+    /* Splash Screen */
     #screen-splash { background: linear-gradient(180deg, #4a0000 0%, #800000 40%, #b71c1c 100%); color: white; text-align: center; padding: 30px 20px; justify-content: space-between; align-items: center; }
     .durga-circle { width: 180px; height: 180px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 5px solid #ffcc00; box-shadow: 0 0 20px rgba(255, 204, 0, 0.7); background: #ffffff; }
     .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img, .id-top-durga img, .id-user-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
+    /* Login Screen */
     .tab-wrap { display: flex; background: #f1f2f6; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
     .tab-btn { flex: 1; padding: 9px; border: none; background: transparent; font-weight: bold; border-radius: 6px; cursor: pointer; color: #555; }
     .tab-btn.active { background: #d32f2f; color: white; }
 
     .login-durga-logo { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #ff9800; margin: 0 auto 10px auto; overflow: hidden; background: #fff; }
 
+    /* Admin Summary Card */
     .summary-card { background: linear-gradient(135deg, #fff3e0, #ffebee); border: 1.5px solid #ffcc80; border-radius: 10px; padding: 12px; margin-bottom: 12px; }
     .summary-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; margin-top: 8px; }
     .sum-box { background: white; padding: 8px 4px; border-radius: 6px; border: 1px solid #ffd54f; }
     .sum-val { font-size: 15px; font-weight: 900; }
     .sum-lbl { font-size: 10px; color: #666; font-weight: bold; margin-top: 2px; }
 
+    /* Admin Menu */
     .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 16px; }
     .menu-box { border-radius: 10px; padding: 16px 8px; text-align: center; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.1); font-size: 13.5px; }
 
+    /* Passbook */
     .collector-passbook { background: #fffdf5; border: 1.5px solid #ffe082; border-radius: 10px; padding: 12px 14px; margin: 12px 16px; }
     .passbook-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; text-align: center; gap: 6px; margin-top: 8px; }
     .passbook-item { padding: 6px 4px; border-radius: 6px; background: #ffffff; border: 1px solid #f1f2f6; }
     .passbook-item .val { font-size: 14px; font-weight: 800; }
     .passbook-item .lbl { font-size: 10px; color: #666; font-weight: 700; margin-top: 2px; }
 
+    /* Receipt Card */
     .receipt-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
     .receipt-border { width: 100%; background: #fffdf2; border: 3px solid #b71c1c; border-radius: 10px; padding: 10px; position: relative; }
     .receipt-inner { border: 2px dashed #d97706; padding: 16px 14px 18px 14px; background: #ffffff; border-radius: 6px; position: relative; }
@@ -98,19 +107,39 @@
     .seal-wrap { width: 88px; height: 88px; flex-shrink: 0; transform: rotate(-6deg); }
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.2)); }
 
+    /* Certificate Card Styling */
     .cert-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
     .cert-border { width: 100%; background: #fffdf5; border: 4px double #b71c1c; border-radius: 12px; padding: 14px; position: relative; }
     .cert-inner { border: 2px solid #ffb300; padding: 20px 14px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; }
     .cert-header-photo { width: 85px; height: 85px; margin: 0 auto 8px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ff9800; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
 
-    /* Volunteer ID Card Styling */
-    .id-card-wrap { padding: 16px; background: #f0f2f5; display: flex; justify-content: center; }
-    .id-card-border { width: 100%; max-width: 350px; background: #fffdf5; border: 3px solid #b71c1c; border-radius: 12px; padding: 10px; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-    .id-card-inner { border: 2px dashed #d97706; padding: 14px 12px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; }
-    .id-top-durga { width: 65px; height: 65px; margin: 0 auto 4px auto; border-radius: 50%; overflow: hidden; border: 2.5px solid #ff9800; background: #fff; }
-    .id-user-photo { width: 85px; height: 95px; margin: 6px auto; border-radius: 6px; overflow: hidden; border: 2px solid #b71c1c; background: #eee; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
-    .id-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 12.5px; text-align: left; }
-    .id-table td { padding: 4px 3px; border-bottom: 1px dashed #ffe082; }
+    /* ================= PREMIUM EVENT BADGE ID CARD ================= */
+    .id-card-wrap { padding: 16px; background: #e2e8f0; display: flex; justify-content: center; }
+    .id-card-border { width: 100%; max-width: 320px; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.18); position: relative; border: 1px solid #cbd5e1; }
+    .id-lanyard-hole { width: 48px; height: 8px; background: #e2e8f0; border-radius: 6px; margin: 8px auto 4px auto; border: 1px solid #cbd5e1; }
+    .id-card-top-banner { background: linear-gradient(135deg, #7f0000 0%, #b71c1c 50%, #d32f2f 100%); color: #ffffff; text-align: center; padding: 10px 12px 14px 12px; position: relative; }
+    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px; }
+    .id-top-durga { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #ffd54f; overflow: hidden; background: #ffffff; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.25); }
+    .id-top-durga img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .id-card-top-banner h3 { font-size: 15px; font-weight: 900; letter-spacing: 0.3px; color: #fff9c4; line-height: 1.2; }
+    .id-card-top-banner p { font-size: 10px; opacity: 0.9; color: #ffffff; }
+
+    .id-card-body-content { padding: 12px 14px 8px 14px; text-align: center; background: radial-gradient(circle at 50% 20%, #fffdf7 0%, #ffffff 80%); }
+    .id-user-photo-box { position: relative; width: 95px; margin: 0 auto 10px auto; }
+    .id-user-photo { width: 95px; height: 105px; border-radius: 10px; overflow: hidden; border: 3px solid #b71c1c; background: #f1f5f9; box-shadow: 0 4px 10px rgba(0,0,0,0.15); margin: 0 auto; }
+    .id-user-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .id-role-ribbon { background: linear-gradient(180deg, #ffd54f 0%, #ffb300 100%); color: #5d0000; font-size: 10.5px; font-weight: 900; padding: 3px 10px; border-radius: 12px; border: 1px solid #ff8f00; box-shadow: 0 2px 4px rgba(0,0,0,0.12); display: inline-block; margin-top: -10px; position: relative; z-index: 2; }
+    .id-name-display { font-size: 17px; font-weight: 900; color: #b71c1c; margin: 4px 0 2px 0; }
+    .id-badge-code-tag { display: inline-block; background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px; margin-bottom: 8px; }
+
+    .id-modern-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: left; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; margin-top: 4px; }
+    .id-info-item { display: flex; flex-direction: column; }
+    .id-info-label { font-size: 9.5px; color: #64748b; font-weight: 700; text-transform: uppercase; }
+    .id-info-val { font-size: 11.5px; color: #1e293b; font-weight: 800; }
+
+    .id-card-footer-modern { border-top: 1px dashed #cbd5e1; padding: 8px 12px 10px 12px; display: flex; justify-content: space-between; align-items: center; background: #ffffff; }
+    .id-barcode-strip { font-family: monospace; font-size: 9px; letter-spacing: 2px; color: #475569; text-align: left; }
+    .id-barcode-lines { height: 18px; width: 100px; background: repeating-linear-gradient(90deg, #333 0, #333 2px, transparent 2px, transparent 4px, #333 4px, #333 7px, transparent 7px, transparent 9px); margin-bottom: 2px; }
 
     /* Audit Report Styling */
     .audit-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
@@ -357,7 +386,7 @@
     </div>
   </div>
 
-  <!-- 4.1 VOLUNTEER ID CARD SCREEN -->
+  <!-- 4.1 VOLUNTEER ID CARD SCREEN (PREMIUM DESIGN) -->
   <div id="screen-id-card" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> कार्यकर्ता पहचान पत्र</h2>
@@ -365,97 +394,88 @@
 
     <div class="id-card-wrap">
       <div class="id-card-border" id="id-card-capture-target">
-        <div class="id-card-inner">
-          <span class="corner-swastik corner-tl">卐</span>
-          <span class="corner-swastik corner-tr">卐</span>
-          <span class="corner-swastik corner-bl">卐</span>
-          <span class="corner-swastik corner-br">卐</span>
+        
+        <!-- डोरी स्लॉट -->
+        <div class="id-lanyard-hole"></div>
 
-          <div style="color: #b71c1c; font-size: 11px; font-weight: bold; margin-bottom: 2px;">
-            🚩 || जय माता दी || 🚩
-          </div>
-
-          <!-- Top Durga Logo -->
-          <div class="id-top-durga">
-            <img id="id-top-durga-img" alt="माँ दुर्गा" />
-          </div>
-
-          <h3 style="color: #b71c1c; font-size: 15px; font-weight: 900; line-height: 1.2;">नवयुवा दुर्गा पूजा समिति</h3>
-          <p style="font-size: 10.5px; color: #4a148c; font-weight: bold; margin-bottom: 4px;">रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.)</p>
-
-          <span style="background: linear-gradient(135deg, #b71c1c, #d32f2f); color: #ffea00; font-size: 11px; font-weight: 900; padding: 3px 12px; border-radius: 14px; display: inline-block; margin-bottom: 4px;">
-            ★ अधिकृत कार्यकर्ता पहचान पत्र ★
-          </span>
-
-          <!-- User Personal Photo -->
-          <div class="id-user-photo">
-            <img id="id-card-user-img" alt="कार्यकर्ता फोटो" />
-          </div>
-
-          <table class="id-table">
-            <tr>
-              <td style="width: 95px; font-weight: bold; color: #880e4f;">कार्यकर्ता नाम</td>
-              <td style="width: 6px; font-weight: bold; color: #b71c1c;">:</td>
-              <td id="idc-name" style="font-weight: 900; color: #b71c1c; font-size: 13.5px;">-</td>
-            </tr>
-            <tr>
-              <td style="font-weight: bold; color: #880e4f;">रसीद कोड (ID)</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td id="idc-code" style="font-weight: 900; color: #1976d2; font-size: 14px;">-</td>
-            </tr>
-            <tr>
-              <td style="font-weight: bold; color: #880e4f;">मोबाइल नंबर</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td id="idc-phone" style="font-weight: bold;">-</td>
-            </tr>
-            <tr>
-              <td style="font-weight: bold; color: #880e4f;">पहचान प्रमाण (आधार)</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td id="idc-aadhar" style="font-weight: bold; color: #333;">-</td>
-            </tr>
-            <tr>
-              <td style="font-weight: bold; color: #880e4f;">दायित्व / पद</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td style="font-weight: bold; color: #2e7d32;">चंदा व व्यवस्था सहयोगी</td>
-            </tr>
-            <tr>
-              <td style="font-weight: bold; color: #880e4f;">निवास / क्षेत्र</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td id="idc-addr">-</td>
-            </tr>
-            <tr>
-              <td style="font-weight: bold; color: #880e4f;">वैधता सत्र</td>
-              <td style="font-weight: bold; color: #b71c1c;">:</td>
-              <td style="font-weight: bold;">दुर्गा पूजा महोत्सव 2026</td>
-            </tr>
-          </table>
-
-          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 4px;">
-            <div class="seal-wrap" style="width: 62px; height: 62px;">
-              <svg viewBox="0 0 160 160">
-                <defs>
-                  <path id="idc-upper-arc" d="M 22,80 A 58,58 0 1,1 138,80" fill="none" />
-                  <path id="idc-lower-arc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
-                </defs>
-                <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
-                <circle cx="80" cy="80" r="70" fill="none" stroke="#b71c1c" stroke-width="1.5" stroke-dasharray="3,2" />
-                <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
-                <text font-size="11" font-weight="900" fill="#b71c1c">
-                  <textPath href="#idc-upper-arc" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
-                </text>
-                <text font-size="10" font-weight="900" fill="#b71c1c">
-                  <textPath href="#idc-lower-arc" startOffset="50%" text-anchor="middle">★ मारकुंडी सोनभद्र ★</textPath>
-                </text>
-                <rect x="42" y="70" width="76" height="20" rx="3" fill="#fff3f3" stroke="#b71c1c" stroke-width="1" />
-                <text x="80" y="84" font-size="12" font-weight="900" fill="#b71c1c" text-anchor="middle">★ अधिकृत ★</text>
-              </svg>
+        <!-- शीर्ष बैनर -->
+        <div class="id-card-top-banner">
+          <div class="id-header-logo-row">
+            <div class="id-top-durga">
+              <img id="id-top-durga-img" alt="माँ दुर्गा" />
             </div>
-            <div style="text-align: right;">
-              <span style="font-size: 10px; color: #666;">अधिकृत हस्ताक्षर</span><br />
-              <strong style="color: #b71c1c; font-size: 13px;">अध्यक्ष / सचिव</strong>
+            <div>
+              <h3>नवयुवा दुर्गा पूजा समिति</h3>
+              <p>रेलवे गेट, मारकुंडी, सोनभद्र (उ.प्र.)</p>
             </div>
           </div>
         </div>
+
+        <!-- बॉडी भाग -->
+        <div class="id-card-body-content">
+          <div class="id-user-photo-box">
+            <div class="id-user-photo">
+              <img id="id-card-user-img" alt="कार्यकर्ता फोटो" />
+            </div>
+            <div class="id-role-ribbon">अधिकृत कार्यकर्ता</div>
+          </div>
+
+          <div class="id-name-display" id="idc-name">-</div>
+          <div class="id-badge-code-tag">रसीद कोड: <span id="idc-code">-</span></div>
+
+          <div class="id-modern-info-grid">
+            <div class="id-info-item">
+              <span class="id-info-label">📞 संपर्क नंबर</span>
+              <span class="id-info-val" id="idc-phone">-</span>
+            </div>
+            <div class="id-info-item">
+              <span class="id-info-label">🪪 पहचान (आधार)</span>
+              <span class="id-info-val" id="idc-aadhar">-</span>
+            </div>
+            <div class="id-info-item">
+              <span class="id-info-label">📍 क्षेत्र / पता</span>
+              <span class="id-info-val" id="idc-addr">मारकुंडी</span>
+            </div>
+            <div class="id-info-item">
+              <span class="id-info-label">🗓️ सत्र</span>
+              <span class="id-info-val" style="color: #b71c1c;">2026</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- फुटर और मुहर -->
+        <div class="id-card-footer-modern">
+          <div>
+            <div class="id-barcode-lines"></div>
+            <div class="id-barcode-strip">NYDPS-2026-VOL</div>
+          </div>
+
+          <div class="seal-wrap" style="width: 58px; height: 58px;">
+            <svg viewBox="0 0 160 160">
+              <defs>
+                <path id="idc-upper-arc" d="M 22,80 A 58,58 0 1,1 138,80" fill="none" />
+                <path id="idc-lower-arc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
+              </defs>
+              <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
+              <circle cx="80" cy="80" r="70" fill="none" stroke="#b71c1c" stroke-width="1.5" stroke-dasharray="3,2" />
+              <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
+              <text font-size="11" font-weight="900" fill="#b71c1c">
+                <textPath href="#idc-upper-arc" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा</textPath>
+              </text>
+              <text font-size="10" font-weight="900" fill="#b71c1c">
+                <textPath href="#idc-lower-arc" startOffset="50%" text-anchor="middle">★ मारकुंडी ★</textPath>
+              </text>
+              <rect x="42" y="70" width="76" height="20" rx="3" fill="#fff3f3" stroke="#b71c1c" stroke-width="1" />
+              <text x="80" y="84" font-size="11" font-weight="900" fill="#b71c1c" text-anchor="middle">★ प्रमाणित ★</text>
+            </svg>
+          </div>
+
+          <div style="text-align: right;">
+            <span style="font-size: 9px; color: #64748b; font-weight: 700;">अधिकृत हस्ताक्षर</span><br />
+            <strong style="color: #b71c1c; font-size: 11.5px;">अध्यक्ष / सचिव</strong>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -1362,7 +1382,7 @@
         scale: 2,
         useCORS: true,
         allowTaint: true,
-        backgroundColor: '#fffdf5',
+        backgroundColor: '#ffffff',
         logging: false
       });
 
