@@ -28,7 +28,7 @@
     body { display: flex; justify-content: center; }
     #app { width: 100%; max-width: 460px; min-height: 100vh; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
 
-    /* Strict Screen Display Control - No Slide/Overlapping */
+    /* Strict Screen Display Control */
     .screen { display: none !important; flex-direction: column; width: 100%; min-height: 100vh; }
     .screen.active { display: flex !important; }
 
@@ -118,8 +118,8 @@
     .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 13px; }
     .rec-table td { padding: 6px 4px; border-bottom: 1px dashed #ffe082; }
 
-    /* Circular Stamp Layout */
-    .seal-wrap { width: 84px; height: 84px; flex-shrink: 0; transform: rotate(-5deg); }
+    /* Circular Stamp Styling */
+    .seal-wrap { width: 88px; height: 88px; flex-shrink: 0; transform: rotate(-4deg); }
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.25)); }
 
     /* Certificate Box & Layout */
@@ -178,7 +178,7 @@
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 5px; font-weight: bold; border-bottom: 1px solid #c8e6c9; display: flex; justify-content: space-around; }
     .cancelled-badge { background: #ffebee; border: 2px solid #c62828; color: #c62828; padding: 6px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; }
 
-    /* Public Screen Specific */
+    /* Public Screen */
     #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
     .pub-card { background: white; border-radius: 14px; padding: 28px 20px; border-top: 6px solid #b71c1c; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
 
@@ -495,30 +495,34 @@
               NYDPS-2026-VOL
             </div>
 
-            <!-- Receipt wali Circular Seal -->
-            <div class="seal-wrap" style="width: 55px; height: 55px;">
+            <!-- Authentic Circular Stamp for ID Card -->
+            <div class="seal-wrap" style="width: 58px; height: 58px;">
               <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
                 <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
                 <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
                 
                 <defs>
-                  <path id="seal-idc-top" d="M 24,100 A 76,76 0 0,1 176,100" />
-                  <path id="seal-idc-bot" d="M 176,100 A 76,76 0 0,1 24,100" />
+                  <path id="seal-idc-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
+                  <path id="seal-idc-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
                 </defs>
 
-                <text fill="#b71c1c" font-size="14.5" font-weight="900" letter-spacing="1">
-                  नवयुवा दुर्गा पूजा समिति
+                <text fill="#b71c1c" font-size="14" font-weight="900">
+                  <textPath href="#seal-idc-top-curve" startOffset="50%" text-anchor="middle">
+                    नवयुवा दुर्गा पूजा समिति
+                  </textPath>
                 </text>
 
-                <text fill="#b71c1c" font-size="13" font-weight="900" letter-spacing="0.8">
-                  रेलवे गेट, मारकुंडी
+                <text fill="#b71c1c" font-size="12.5" font-weight="900">
+                  <textPath href="#seal-idc-bot-curve" startOffset="50%" text-anchor="middle">
+                    रेलवे गेट, मारकुंडी
+                  </textPath>
                 </text>
 
                 <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
                 <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
 
-                <text x="100" y="106" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
+                <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
                   ★ प्रमाणित ★
                 </text>
 
@@ -907,6 +911,7 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 4px 4px 4px; font-size: 12px;">
             <div>
+              <!-- Authentic Circular Stamp for Receipt -->
               <div class="seal-wrap">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
@@ -914,22 +919,26 @@
                   <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
                   
                   <defs>
-                    <path id="seal-top-curve" d="M 24,100 A 76,76 0 0,1 176,100" />
-                    <path id="seal-bot-curve" d="M 176,100 A 76,76 0 0,1 24,100" />
+                    <path id="seal-rec-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
+                    <path id="seal-rec-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
                   </defs>
 
-                  <text fill="#b71c1c" font-size="14.5" font-weight="900" letter-spacing="1">
-                    नवयुवा दुर्गा पूजा समिति
+                  <text fill="#b71c1c" font-size="14" font-weight="900">
+                    <textPath href="#seal-rec-top-curve" startOffset="50%" text-anchor="middle">
+                      नवयुवा दुर्गा पूजा समिति
+                    </textPath>
                   </text>
 
-                  <text fill="#b71c1c" font-size="13" font-weight="900" letter-spacing="0.8">
-                    रेलवे गेट, मारकुंडी
+                  <text fill="#b71c1c" font-size="12.5" font-weight="900">
+                    <textPath href="#seal-rec-bot-curve" startOffset="50%" text-anchor="middle">
+                      रेलवे गेट, मारकुंडी
+                    </textPath>
                   </text>
 
                   <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
                   <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
 
-                  <text x="100" y="106" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
+                  <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
                     ★ प्रमाणित ★
                   </text>
 
@@ -1162,7 +1171,7 @@
   <!-- 11. SETTINGS SCREEN -->
   <div id="screen-settings" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> सेटिंग्स व बैकअप</h2>
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> setings v backup</h2>
     </div>
     <div style="padding: 20px; overflow-y: auto;">
       <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">💾 डेटा बैकअप व सिंक</h3>
@@ -1753,14 +1762,12 @@
     var vNo = "";
     var sig = "";
 
-    // 1. Check Hash format (#A001_8a1f2c9e)
     var h = window.location.hash.replace(/^#/, '');
     if (h && h.indexOf('_') !== -1) {
       var parts = h.split('_');
       vNo = decodeURIComponent(parts[0]);
       sig = parts[1];
     } else {
-      // Fallback query parameters support
       var params = new URLSearchParams(window.location.search);
       vNo = params.get('id') || params.get('verify') || "";
       sig = params.get('s') || params.get('sig') || "";
