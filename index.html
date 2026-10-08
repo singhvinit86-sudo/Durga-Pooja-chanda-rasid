@@ -29,7 +29,7 @@
     .screen { display: none; flex-direction: column; flex: 1; }
     .screen.active { display: flex !important; }
 
-    /* सख्त डोनर-व्यू स्टाइल: केवल Save PDF दिखेगा */
+    /* Donor Direct View Styling */
     html.donor-direct-view #screen-splash,
     html.donor-direct-view #screen-public-card,
     html.donor-direct-view #sync-bar,
@@ -171,7 +171,7 @@
     .verify-qr-block { display: flex; align-items: center; justify-content: space-between; background: #fdfaf0; border: 1px dashed #e65100; border-radius: 6px; padding: 6px 10px; margin: 10px 0; gap: 8px; }
     .verify-qr-img { width: 62px; height: 62px; flex-shrink: 0; border: 1px solid #ffcc80; padding: 2px; background: #fff; }
 
-    /* Status Bar with Offline Indicator */
+    /* Status Bar */
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 5px; font-weight: bold; border-bottom: 1px solid #c8e6c9; display: flex; justify-content: space-around; }
     .cancelled-badge { background: #ffebee; border: 2px solid #c62828; color: #c62828; padding: 6px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; }
 
@@ -190,7 +190,7 @@
 
 <div id="app">
 
-  <!-- Status Bar with Offline Draft Indicator -->
+  <!-- Status Bar -->
   <div class="sync-status-bar" id="sync-bar">
     <span id="sync-status-text">🟢 ऑनलाइन सिंक सक्रिय (Firebase Live)</span>
     <span id="offline-queue-text" style="color: #b71c1c; display: none;">📦 ड्राफ्ट: 0</span>
@@ -492,7 +492,7 @@
               NYDPS-2026-VOL
             </div>
 
-            <!-- रसीद वाली आधिकारिक वृत्ताकार मुहर -->
+            <!-- Receipt wali Circular Seal -->
             <div class="seal-wrap" style="width: 55px; height: 55px;">
               <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
@@ -954,7 +954,7 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन -->
+    <!-- Button Section -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
       <button class="btn" id="btn-donor-save-pdf" style="background: #b71c1c; font-size: 16px;" onclick="downloadReceiptPDF()">
         📥 Save PDF (रसीद डाउनलोड करें)
@@ -1217,9 +1217,8 @@
   var DEFAULT_USER_IMG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b71c1c'><circle cx='50' cy='35' r='25'/><path d='M10,90 Q50,55 90,90 Z'/></svg>";
   var currentNotice = localStorage.getItem('durga_notice_text') || "समिति के सभी सदस्य समय पर अपनी चंदा रसीदें व नकद संग्रह एडमिन कार्यालय में जमा करें। जय माता दी!";
 
-  // सुरक्षा कुंजियाँ
   var SECRET_SIGNING_KEY = "NYDPS_MARG_SONBHADRA_SECURE_KEY_2026";
-  var SECRET_ACCESS_KEY = "nydps2026"; // कार्यकर्ता/एडमिन अनलॉक कोड
+  var SECRET_ACCESS_KEY = "nydps2026";
 
   var currentRole = 'admin';
   var currentUser = null;
@@ -1278,7 +1277,6 @@
     return str.trim() + ' रुपये मात्र';
   }
 
-  // HMAC-SHA256 डिजिटल सिग्नेचर
   function generateSecureReceiptSignature(r) {
     var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.name || '') + "_" + (r.code || '');
     return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex);
@@ -1294,7 +1292,7 @@
            "&sig=" + sig;
   }
 
-  // गुप्त ट्रिपल-टैप अनलॉक
+  // Logo Triple Tap Handler - Device Permanently Unlocked
   function handleLogoMultiTap() {
     logoTapCounter++;
     clearTimeout(logoTapTimer);
@@ -1307,6 +1305,7 @@
       var inputKey = prompt("🔒 समिति कार्यकर्ता व एडमिन एक्सेस कोड दर्ज करें:");
       if (inputKey === SECRET_ACCESS_KEY || inputKey === adminPass) {
         localStorage.setItem('durga_staff_device_unlocked', 'true');
+        alert("✅ डिवाइस सफलतापूर्वक अनलॉक हो गई!");
         showScreen('screen-login');
       } else if (inputKey) {
         alert("अवैध एक्सेस कोड!");
@@ -1314,9 +1313,7 @@
     }
   }
 
-  // =========================================================================
-  // DYNAMIC UPI PAYMENTS
-  // =========================================================================
+  // Dynamic UPI URL
   function getDynamicUPIUrl(amt, donorName) {
     var note = encodeURIComponent('चंदा ' + (donorName || 'समिति'));
     return "upi://pay?pa=" + SAMITI_UPI_ID + "&pn=NavYuva%20Durga%20Puja%20Samiti&am=" + amt + "&cu=INR&tn=" + note;
@@ -1352,9 +1349,7 @@
     handleAmountChange();
   }
 
-  // =========================================================================
-  // EXPENSE BILL PHOTO UPLOAD
-  // =========================================================================
+  // Expense Bill Upload Logic
   function triggerExpenseBillSelect() {
     document.getElementById('expense-bill-input').click();
   }
@@ -1460,9 +1455,6 @@
     showScreen('screen-expenses');
   }
 
-  // =========================================================================
-  // RECEIPT CANCELLATION
-  // =========================================================================
   function adminCancelCurrentReceipt() {
     if (currentUser) {
       alert("केवल एडमिन ही रसीद रद्द कर सकते हैं!");
@@ -1498,9 +1490,6 @@
     alert("✅ रसीद सफलतापूर्वक रद्द कर दी गई!");
   }
 
-  // =========================================================================
-  // LOGIN LOGIC
-  // =========================================================================
   function generateDeviceToken() {
     return 'DEV-' + Math.random().toString(36).substr(2, 9) + '-' + Date.now();
   }
@@ -1564,18 +1553,15 @@
     }
   }
 
+  // Logout Handler - Device Unlock status intact, goes back to Login Screen
   function doLogout() {
     currentUser = null;
     localStorage.removeItem('my_device_token');
     localStorage.removeItem('durga_current_logged_role');
     localStorage.removeItem('durga_current_logged_user_id');
-    localStorage.removeItem('durga_staff_device_unlocked');
-    showScreen('screen-public-card');
+    showScreen('screen-login');
   }
 
-  // =========================================================================
-  // OFFLINE DRAFT MODE & FIREBASE SYNC
-  // =========================================================================
   function updateOfflineQueueUI() {
     var qEl = document.getElementById('offline-queue-text');
     if (!qEl) return;
@@ -1654,9 +1640,6 @@
   }
   setInterval(fetchFromFirebase, 5000);
 
-  // =========================================================================
-  // RECEIPT CREATION & PREVIEW
-  // =========================================================================
   function saveReceipt() {
     var name = document.getElementById('r-name').value.trim();
     var phone = document.getElementById('r-phone').value.trim();
@@ -1827,9 +1810,6 @@
       });
   }
 
-  // =========================================================================
-  // DONOR CERTIFICATE SCREEN
-  // =========================================================================
   function openDonorCertificateScreen() {
     if (!currentReceipt) return;
     document.getElementById('cert-donor-name').innerText = currentReceipt.name;
@@ -1855,9 +1835,6 @@
     }
   }
 
-  // =========================================================================
-  // DIRECT WHATSAPP PDF SHARE
-  // =========================================================================
   async function shareDirectReceiptPDFWhatsApp() {
     if (!currentReceipt) return;
     var btn = document.getElementById('btn-share-receipt-pdf');
@@ -1938,9 +1915,6 @@
     }
   }
 
-  // =========================================================================
-  // CASH HANDOVER LOGIC
-  // =========================================================================
   function adminSettleCash(code, name, pending) {
     var val = prompt("'" + name + "' से कितने रुपये नकद प्राप्त हुए दर्ज करें:\n(वर्तमान बकाया: रु. " + pending + ")", pending);
     if (!val) return;
@@ -2023,9 +1997,6 @@
     window.open("https://api.whatsapp.com/send?phone=91" + currentHandover.userMobile + "&text=" + encodeURIComponent(text), "_blank");
   }
 
-  // =========================================================================
-  // AUDIT REPORT & BALANCE SHEET
-  // =========================================================================
   function openAuditReportScreen() {
     var now = new Date();
     document.getElementById('audit-gen-date').innerText = 'दिनांक: ' + now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
@@ -2096,9 +2067,6 @@
     }
   }
 
-  // =========================================================================
-  // WHATSAPP REPORTS
-  // =========================================================================
   function sendAdminEveningReport() {
     var today = new Date();
     var todayStr = String(today.getDate()).padStart(2, '0') + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + today.getFullYear();
@@ -2180,9 +2148,6 @@
     window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
   }
 
-  // =========================================================================
-  // ID CARD & USER PHOTO LOGIC
-  // =========================================================================
   function triggerUserPhotoSelect() {
     document.getElementById('user-photo-file-input').click();
   }
@@ -2255,9 +2220,6 @@
     }
   }
 
-  // =========================================================================
-  // NAVIGATION & UI HELPERS
-  // =========================================================================
   function showScreen(id) {
     if (!isDonorLinkView) {
       document.documentElement.classList.remove('donor-direct-view');
@@ -2306,7 +2268,7 @@
       updateAdminSummary();
       showScreen('screen-admin');
     } else {
-      showScreen('screen-public-card');
+      showScreen('screen-login');
     }
   }
 
@@ -2590,12 +2552,14 @@
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
+    // 1. Direct Donor View
     if (isDonorLinkView) {
       checkUrlVerification();
       fetchFromFirebase();
       return;
     }
 
+    // 2. Active Session Restore
     var savedRole = localStorage.getItem('durga_current_logged_role');
     var savedUid = localStorage.getItem('durga_current_logged_user_id');
 
@@ -2619,12 +2583,14 @@
       }
     }
 
+    // 3. Device Unlocked Check: Ek baar unlock hone ke baad seedhe Login screen
     if (isStaffAccessRequested || localStorage.getItem('durga_staff_device_unlocked') === 'true') {
       showScreen('screen-login');
       fetchFromFirebase();
       return;
     }
 
+    // 4. Default: Public Card Screen
     showScreen('screen-public-card');
     fetchFromFirebase();
   });
