@@ -72,7 +72,7 @@
 
     #screen-splash { background: linear-gradient(180deg, #4a0000 0%, #800000 40%, #b71c1c 100%); color: white; text-align: center; padding: 30px 20px; justify-content: space-between; align-items: center; }
     .durga-circle { width: 140px; height: 140px; margin: 15px auto; border-radius: 50%; overflow: hidden; border: 4px solid #ffcc00; box-shadow: 0 0 16px rgba(255, 204, 0, 0.6); background: #ffffff; cursor: pointer; user-select: none; }
-    .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img, .id-top-durga img, .id-user-photo img, .handover-durga-photo img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+    .durga-circle img, .login-durga-logo img, .receipt-header-photo img, .cert-header-photo img, .id-top-durga img, .handover-durga-photo img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
 
     .tab-wrap { display: flex; background: #f1f2f6; border-radius: 8px; padding: 4px; margin-bottom: 20px; }
     .tab-btn { flex: 1; padding: 9px; border: none; background: transparent; font-weight: bold; border-radius: 6px; cursor: pointer; color: #555; }
@@ -118,7 +118,7 @@
     .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 13px; }
     .rec-table td { padding: 6px 4px; border-bottom: 1px dashed #ffe082; }
 
-    /* Circular Stamp Styling */
+    /* Circular Stamp Styling (Universal Seal) */
     .seal-wrap { width: 88px; height: 88px; flex-shrink: 0; transform: rotate(-4deg); }
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.25)); }
 
@@ -131,27 +131,109 @@
     .cert-donor-name { font-size: 20px; font-weight: 900; color: #b71c1c; margin: 8px 0; border-bottom: 2px dashed #ffcc80; padding-bottom: 4px; }
     .cert-body-p { font-size: 13px; line-height: 1.6; color: #37474f; font-weight: 600; margin-bottom: 14px; }
 
-    /* Volunteer ID Card Layout */
+    /* Colourful, VIP & Highly Attractive ID Card Layout */
     .id-card-wrap { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
-    .id-card-border { width: 100%; max-width: 320px; background: linear-gradient(180deg, #b71c1c 0%, #d32f2f 100%); border-radius: 14px; padding: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-    .id-card-inner-frame { background: #ffffff; border-radius: 10px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
-    .id-lanyard-hole { width: 36px; height: 7px; background: #f0f2f5; border-radius: 10px; margin: 8px auto 4px auto; border: 1px solid #dcdde1; }
-    .id-card-top-banner { background: #fffdf5; border-bottom: 2px dashed #ffcc80; padding: 8px 12px; text-align: center; }
-    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
-    .id-top-durga { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 2px solid #ffb300; flex-shrink: 0; }
-    .id-header-logo-row h3 { font-size: 14px; color: #b71c1c; font-weight: 900; line-height: 1.2; }
-    .id-header-logo-row p { font-size: 9.5px; color: #4a148c; font-weight: bold; margin-top: 1px; }
+    .id-card-border { 
+      width: 100%; 
+      max-width: 325px; 
+      background: linear-gradient(145deg, #d32f2f, #ff6f00, #b71c1c); 
+      border-radius: 18px; 
+      padding: 7px; 
+      box-shadow: 0 10px 25px rgba(183, 28, 28, 0.35); 
+      position: relative;
+    }
+    .id-card-inner-frame { 
+      background: linear-gradient(180deg, #ffffff 0%, #fffdfa 100%); 
+      border-radius: 13px; 
+      overflow: hidden; 
+      position: relative; 
+      display: flex; 
+      flex-direction: column; 
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.04);
+    }
+    .id-lanyard-hole { width: 42px; height: 8px; background: #f1f5f9; border-radius: 10px; margin: 8px auto 4px auto; border: 1.5px solid #cbd5e1; }
+    .id-card-top-banner { 
+      background: linear-gradient(135deg, #880e4f 0%, #b71c1c 50%, #e65100 100%); 
+      color: white; 
+      padding: 10px 10px; 
+      text-align: center; 
+      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+    }
+    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 9px; }
+    .id-top-durga { width: 42px; height: 42px; border-radius: 8px; overflow: hidden; border: 2px solid #ffd54f; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.3); background: #fff; }
+    .id-header-logo-row h3 { font-size: 15px; color: #fff; font-weight: 900; line-height: 1.15; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+    .id-header-logo-row p { font-size: 9.5px; color: #ffecb3; font-weight: bold; margin-top: 2px; }
+
     .id-card-body-content { padding: 12px 14px; text-align: center; }
-    .id-user-photo { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; border: 3px solid #b71c1c; margin: 0 auto; background: #fff8e1; }
-    .id-role-ribbon { background: #b71c1c; color: #ffeb3b; font-size: 10px; font-weight: bold; padding: 2px 10px; border-radius: 12px; display: inline-block; margin-top: -10px; position: relative; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
-    .id-name-display { font-size: 17px; font-weight: 900; color: #1e293b; margin: 6px 0 2px 0; }
-    .id-badge-code-tag { font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 10px; }
+    
+    /* Boxed Photo (Square With Smooth Rounded Corners) */
+    .id-user-box-photo-wrap {
+      width: 95px;
+      height: 105px;
+      margin: 0 auto 8px auto;
+      border-radius: 10px;
+      padding: 3px;
+      background: linear-gradient(135deg, #ffd54f, #d32f2f, #ff9800);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+    }
+    .id-user-photo-box {
+      width: 100%;
+      height: 100%;
+      border-radius: 7px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .id-user-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .id-role-ribbon { 
+      background: linear-gradient(90deg, #b71c1c, #e65100); 
+      color: #ffeb3b; 
+      font-size: 10.5px; 
+      font-weight: 900; 
+      padding: 3px 12px; 
+      border-radius: 14px; 
+      display: inline-block; 
+      margin-top: -6px; 
+      position: relative; 
+      z-index: 2; 
+      box-shadow: 0 2px 6px rgba(183,28,28,0.35); 
+      border: 1px solid #ffd54f;
+    }
+    .id-name-display { font-size: 18px; font-weight: 900; color: #1e293b; margin: 6px 0 2px 0; }
+    .id-badge-code-tag { 
+      font-size: 11px; 
+      font-weight: bold; 
+      color: #4338ca; 
+      background: #e0e7ff; 
+      padding: 2px 8px; 
+      border-radius: 6px; 
+      display: inline-block; 
+      margin-bottom: 10px; 
+    }
+    
     .id-modern-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: left; }
-    .id-info-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 8px; }
+    .id-info-item { border-radius: 7px; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.06); }
+    .id-info-item.tile-role { background: #eff6ff; border-left: 3.5px solid #2563eb; }
+    .id-info-item.tile-phone { background: #f0fdf4; border-left: 3.5px solid #16a34a; }
+    .id-info-item.tile-addr { background: #fffbeb; border-left: 3.5px solid #d97706; }
+    .id-info-item.tile-session { background: #fdf2f8; border-left: 3.5px solid #db2777; }
+    .id-info-item.tile-status { background: #faf5ff; border-left: 3.5px solid #9333ea; }
     .id-info-item.full-width { grid-column: span 2; }
-    .id-info-label { font-size: 9px; font-weight: bold; color: #64748b; display: block; margin-bottom: 1px; }
-    .id-info-val { font-size: 11px; font-weight: 800; color: #0f172a; }
-    .id-card-footer-modern { background: #f8fafc; border-top: 1px dashed #cbd5e1; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; }
+    .id-info-label { font-size: 8.5px; font-weight: 800; color: #64748b; display: block; margin-bottom: 1px; }
+    .id-info-val { font-size: 11.5px; font-weight: 900; color: #0f172a; }
+    
+    .id-card-footer-modern { 
+      background: linear-gradient(180deg, #f8fafc, #edf2f7); 
+      border-top: 1px dashed #cbd5e1; 
+      padding: 8px 12px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+    }
 
     /* Handover & Audit Layouts */
     .handover-box, .audit-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
@@ -176,9 +258,9 @@
 
     /* Status Bar */
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 5px; font-weight: bold; border-bottom: 1px solid #c8e6c9; display: flex; justify-content: space-around; }
-    .cancelled-badge { background: #ffebee; border: 2px solid #c62828; color: #c62828; padding: 6px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; }
+    .cancelled-badge { background: #ffebee; border: 2px solid #c62828; color: #c62828; padding: 8px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; font-size: 13px; }
 
-    /* Public Screen */
+    /* Public Screen Specific */
     #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
     .pub-card { background: white; border-radius: 14px; padding: 28px 20px; border-top: 6px solid #b71c1c; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
 
@@ -432,7 +514,7 @@
     </div>
   </div>
 
-  <!-- 4.1 VOLUNTEER ID CARD SCREEN -->
+  <!-- 4.1 VOLUNTEER ID CARD SCREEN (ATTRACTIVE & SQUARE BOX PHOTO) -->
   <div id="screen-id-card" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> पहचान पत्र</h2>
@@ -450,52 +532,54 @@
               </div>
               <div>
                 <h3>नवयुवा दुर्गा पूजा समिति</h3>
-                <p>🚩 रेलवे गेट, मारकुंडी, सोनभद्र 🚩</p>
+                <p>🚩 रेलवे गेट, मारकुंडी, सोनभद्र (सत्र 2026) 🚩</p>
               </div>
             </div>
           </div>
 
           <div class="id-card-body-content">
-            <div style="position: relative; width: 106px; margin: 0 auto 10px auto;">
-              <div class="id-user-photo">
+            <!-- Boxed Photo Container -->
+            <div class="id-user-box-photo-wrap">
+              <div class="id-user-photo-box">
                 <img id="id-card-user-img" alt="कार्यकर्ता फोटो" />
               </div>
-              <div class="id-role-ribbon" id="idc-role-ribbon">अधिकृत कार्यकर्ता</div>
             </div>
+            
+            <div class="id-role-ribbon" id="idc-role-ribbon">अधिकृत कार्यकर्ता</div>
 
             <div class="id-name-display" id="idc-name">-</div>
-            <div class="id-badge-code-tag">रसीद कोड (ID): <span id="idc-code">-</span></div>
+            <div class="id-badge-code-tag">आईडी कोड: <span id="idc-code">-</span></div>
 
             <div class="id-modern-info-grid">
-              <div class="id-info-item">
+              <div class="id-info-item tile-role">
                 <span class="id-info-label">🎖️ दायित्व</span>
                 <span class="id-info-val" id="idc-role-text">व्यवस्था सहयोगी</span>
               </div>
-              <div class="id-info-item">
+              <div class="id-info-item tile-phone">
                 <span class="id-info-label">📞 संपर्क नंबर</span>
                 <span class="id-info-val" id="idc-phone">-</span>
               </div>
-              <div class="id-info-item full-width">
+              <div class="id-info-item full-width tile-addr">
                 <span class="id-info-label">📍 कार्यक्षेत्र</span>
                 <span class="id-info-val" id="idc-addr">मारकुंडी</span>
               </div>
-              <div class="id-info-item">
+              <div class="id-info-item tile-session">
                 <span class="id-info-label">🗓️ सत्र</span>
                 <span class="id-info-val">सत्र 2026</span>
               </div>
-              <div class="id-info-item">
+              <div class="id-info-item tile-status">
                 <span class="id-info-label">🛡️ पहचान स्थिति</span>
-                <span class="id-info-val">सत्यापित पास</span>
+                <span class="id-info-val" style="color: #16a34a;">सत्यापित पास ✓</span>
               </div>
             </div>
           </div>
 
           <div class="id-card-footer-modern">
-            <div style="font-family: monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #475569;">
+            <div style="font-family: monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #475569; font-weight: bold;">
               NYDPS-2026-VOL
             </div>
 
-            <!-- Authentic Circular Stamp for ID Card -->
+            <!-- Standard Universal Circular Stamp -->
             <div class="seal-wrap" style="width: 58px; height: 58px;">
               <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
@@ -911,7 +995,7 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 4px 4px 4px; font-size: 12px;">
             <div>
-              <!-- Authentic Circular Stamp for Receipt -->
+              <!-- Standard Universal Circular Stamp for Receipt -->
               <div class="seal-wrap">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
@@ -958,32 +1042,35 @@
       </div>
     </div>
 
-    <!-- Button Section -->
+    <!-- Button Section (Cancelled rasid par sirf Home dikhega) -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
-      <button class="btn" id="btn-donor-save-pdf" style="background: #b71c1c; font-size: 16px;" onclick="downloadReceiptPDF()">
-        📥 Save PDF (रसीद डाउनलोड करें)
-      </button>
+      <div id="receipt-active-actions-box" style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn" id="btn-donor-save-pdf" style="background: #b71c1c; font-size: 16px;" onclick="downloadReceiptPDF()">
+          📥 Save PDF (रसीद डाउनलोड करें)
+        </button>
 
-      <button class="btn btn-green receipt-staff-btn" id="btn-share-receipt-pdf" onclick="shareDirectReceiptPDFWhatsApp()">
-        📤 सीधा WhatsApp PDF भेजें (Direct PDF)
-      </button>
+        <button class="btn btn-green receipt-staff-btn" id="btn-share-receipt-pdf" onclick="shareDirectReceiptPDFWhatsApp()">
+          📤 सीधा WhatsApp PDF भेजें (Direct PDF)
+        </button>
 
-      <button class="btn btn-purple receipt-staff-btn" onclick="openDonorCertificateScreen()">
-        📜 दानदाता सम्मान पत्र देखें व भेजें
-      </button>
+        <button class="btn btn-purple receipt-staff-btn" id="btn-open-cert" onclick="openDonorCertificateScreen()">
+          📜 दानदाता सम्मान पत्र देखें व भेजें
+        </button>
 
-      <button class="btn btn-blue receipt-staff-btn" onclick="shareWhatsApp()">💬 WhatsApp लिंक व विवरण भेजें</button>
-      
-      <button class="btn receipt-staff-btn" style="background: #c62828;" id="btn-admin-cancel-rec" onclick="adminCancelCurrentReceipt()">
-        🚫 यह रसीद रद्द करें (Cancel Receipt)
-      </button>
+        <button class="btn btn-blue receipt-staff-btn" onclick="shareWhatsApp()">💬 WhatsApp लिंक व विवरण भेजें</button>
+        
+        <button class="btn receipt-staff-btn" style="background: #c62828;" id="btn-admin-cancel-rec" onclick="adminCancelCurrentReceipt()">
+          🚫 यह रसीद रद्द करें (Cancel Receipt)
+        </button>
 
-      <button class="btn btn-grey receipt-staff-btn" onclick="window.print()">🖨️ प्रिंट करें</button>
-      <button class="btn receipt-staff-btn nav-home-btn" onclick="backToHome()">🏠 होम पर जाएं</button>
+        <button class="btn btn-grey receipt-staff-btn" onclick="window.print()">🖨️ प्रिंट करें</button>
+      </div>
+
+      <button class="btn receipt-staff-btn nav-home-btn" style="background: #455a64;" onclick="backToHome()">🏠 होम पर जाएं</button>
     </div>
   </div>
 
-  <!-- 6.1 DONOR CERTIFICATE SCREEN -->
+  <!-- 6.1 DONOR CERTIFICATE SCREEN (SAME OFFICIAL CIRCULAR STAMP) -->
   <div id="screen-certificate" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-preview')">⬅</button> दानदाता सम्मान पत्र</h2>
@@ -1025,13 +1112,39 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px; border-top: 1px dashed #ffcc80; padding-top: 8px;">
             <div style="text-align: left;">
-              <div class="seal-wrap" style="width: 52px; height: 52px; margin: 0 0 2px 0;">
-                <svg viewBox="0 0 200 200">
+              <!-- Standard Official Circular Stamp On Certificate as Well -->
+              <div class="seal-wrap" style="width: 58px; height: 58px; margin: 0 0 2px 0;">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
+                  <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
                   <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
+                  
+                  <defs>
+                    <path id="seal-cert-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
+                    <path id="seal-cert-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
+                  </defs>
+
+                  <text fill="#b71c1c" font-size="14" font-weight="900">
+                    <textPath href="#seal-cert-top-curve" startOffset="50%" text-anchor="middle">
+                      नवयुवा दुर्गा पूजा समिति
+                    </textPath>
+                  </text>
+
+                  <text fill="#b71c1c" font-size="12.5" font-weight="900">
+                    <textPath href="#seal-cert-bot-curve" startOffset="50%" text-anchor="middle">
+                      रेलवे गेट, मारकुंडी
+                    </textPath>
+                  </text>
+
                   <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
                   <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
-                  <text x="100" y="106" font-size="18" font-weight="900" fill="#b71c1c" text-anchor="middle">★ NYDPS ★</text>
+
+                  <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
+                    ★ प्रमाणित ★
+                  </text>
+
+                  <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
+                  <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
                 </svg>
               </div>
               <span style="font-size: 10px; color: #666;">दिनांक: <strong id="cert-date">-</strong></span>
@@ -1171,7 +1284,7 @@
   <!-- 11. SETTINGS SCREEN -->
   <div id="screen-settings" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> setings v backup</h2>
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> सेटिंग्स व बैकअप</h2>
     </div>
     <div style="padding: 20px; overflow-y: auto;">
       <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">💾 डेटा बैकअप व सिंक</h3>
@@ -1218,7 +1331,7 @@
   var SAMITI_UPI_ID = localStorage.getItem('durga_samiti_upi_id') || '7905106011@okbizaxis';
   var DEFAULT_DURGA = "durga.png";
   var currentDurgaImg = localStorage.getItem('durga_app_img') || DEFAULT_DURGA;
-  var DEFAULT_USER_IMG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b71c1c'><circle cx='50' cy='35' r='25'/><path d='M10,90 Q50,55 90,90 Z'/></svg>";
+  var DEFAULT_USER_IMG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='%23b71c1c'><rect width='100' height='100' fill='%23ffebee'/><circle cx='50' cy='38' r='22' fill='%23b71c1c'/><path d='M18,92 Q50,60 82,92 Z' fill='%23b71c1c'/></svg>";
   var currentNotice = localStorage.getItem('durga_notice_text') || "समिति के सभी सदस्य समय पर अपनी चंदा रसीदें व नकद संग्रह एडमिन कार्यालय में जमा करें। जय माता दी!";
 
   var SECRET_SIGNING_KEY = "NYDPS_MARG_SONBHADRA_SECURE_KEY_2026";
@@ -1718,11 +1831,16 @@
     document.getElementById('pv-by').innerText = r.by;
 
     var cancelCard = document.getElementById('pv-cancelled-card');
+    var activeActionsBox = document.getElementById('receipt-active-actions-box');
+
+    // CANCELLED RECEIPT LOGIC: Agar radd ho chuki hai to saare actions chupao
     if (r.isCancelled) {
       cancelCard.style.display = 'block';
       document.getElementById('pv-cancel-reason').innerText = "कारण: " + (r.cancelReason || 'समिति द्वारा निरस्त');
+      if (activeActionsBox) activeActionsBox.style.display = 'none';
     } else {
       cancelCard.style.display = 'none';
+      if (activeActionsBox) activeActionsBox.style.display = 'flex';
     }
 
     var rowAmt = document.getElementById('pv-row-amount');
@@ -1740,6 +1858,17 @@
       rowItem.style.display = 'none';
       document.getElementById('pv-amt').innerText = 'रु. ' + r.amt + '/-';
       document.getElementById('pv-words').innerText = numberToHindiWords(r.amt);
+    }
+
+    // SAMMAN EVAM AABHAR PATRA CONDITION (Only for ₹500 or above)
+    var btnOpenCert = document.getElementById('btn-open-cert');
+    var donationVal = (r.type === 'ITEM') ? (r.itemVal || 0) : (Number(r.amt) || 0);
+    if (btnOpenCert) {
+      if (donationVal >= 500 && !r.isCancelled) {
+        btnOpenCert.style.display = 'block';
+      } else {
+        btnOpenCert.style.display = 'none';
+      }
     }
 
     var verifyUrl = getSecureVerificationLink(r);
@@ -1825,8 +1954,16 @@
       });
   }
 
+  // DONOR CERTIFICATE SCREEN (₹500+ Guard)
   function openDonorCertificateScreen() {
     if (!currentReceipt) return;
+
+    var donationVal = (currentReceipt.type === 'ITEM') ? (currentReceipt.itemVal || 0) : (Number(currentReceipt.amt) || 0);
+    if (donationVal < 500) {
+      alert("⚠️ सम्मान व आभार पत्र केवल ₹500 या उससे अधिक सहयोग राशि वाले दानदाताओं के लिए ही जारी किया जाता है।");
+      return;
+    }
+
     document.getElementById('cert-donor-name').innerText = currentReceipt.name;
     document.getElementById('cert-donor-addr').innerText = currentReceipt.addr || 'मारकुंडी';
     document.getElementById('cert-donor-amt').innerText = (currentReceipt.type === 'ITEM') ? currentReceipt.itemDesc : ('₹' + currentReceipt.amt + '/-');
