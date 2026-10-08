@@ -97,6 +97,9 @@
     .passbook-item .val { font-size: 14px; font-weight: 800; }
     .passbook-item .lbl { font-size: 10px; color: #666; font-weight: 700; margin-top: 2px; }
 
+    .user-circle { width: 36px; height: 36px; border-radius: 50%; background: #b71c1c; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; flex-shrink: 0; }
+    .user-list-item { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+
     /* Receipt Box & Layout */
     .receipt-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
     .receipt-border { width: 100%; background: #fffdf2; border: 3px solid #b71c1c; border-radius: 10px; padding: 10px; position: relative; }
@@ -124,6 +127,40 @@
     .cert-badge { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #ffeb3b; padding: 4px 16px; border-radius: 20px; display: inline-block; font-size: 13px; font-weight: 900; margin: 8px 0 12px 0; }
     .cert-donor-name { font-size: 20px; font-weight: 900; color: #b71c1c; margin: 8px 0; border-bottom: 2px dashed #ffcc80; padding-bottom: 4px; }
     .cert-body-p { font-size: 13px; line-height: 1.6; color: #37474f; font-weight: 600; margin-bottom: 14px; }
+
+    /* Volunteer ID Card Layout */
+    .id-card-wrap { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
+    .id-card-border { width: 100%; max-width: 320px; background: linear-gradient(180deg, #b71c1c 0%, #d32f2f 100%); border-radius: 14px; padding: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
+    .id-card-inner-frame { background: #ffffff; border-radius: 10px; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+    .id-lanyard-hole { width: 36px; height: 7px; background: #f0f2f5; border-radius: 10px; margin: 8px auto 4px auto; border: 1px solid #dcdde1; }
+    .id-card-top-banner { background: #fffdf5; border-bottom: 2px dashed #ffcc80; padding: 8px 12px; text-align: center; }
+    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .id-top-durga { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 2px solid #ffb300; flex-shrink: 0; }
+    .id-header-logo-row h3 { font-size: 14px; color: #b71c1c; font-weight: 900; line-height: 1.2; }
+    .id-header-logo-row p { font-size: 9.5px; color: #4a148c; font-weight: bold; margin-top: 1px; }
+    .id-card-body-content { padding: 12px 14px; text-align: center; }
+    .id-user-photo { width: 88px; height: 88px; border-radius: 50%; overflow: hidden; border: 3px solid #b71c1c; margin: 0 auto; background: #fff8e1; }
+    .id-role-ribbon { background: #b71c1c; color: #ffeb3b; font-size: 10px; font-weight: bold; padding: 2px 10px; border-radius: 12px; display: inline-block; margin-top: -10px; position: relative; z-index: 2; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+    .id-name-display { font-size: 17px; font-weight: 900; color: #1e293b; margin: 6px 0 2px 0; }
+    .id-badge-code-tag { font-size: 11px; font-weight: bold; color: #64748b; margin-bottom: 10px; }
+    .id-modern-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: left; }
+    .id-info-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 5px 8px; }
+    .id-info-item.full-width { grid-column: span 2; }
+    .id-info-label { font-size: 9px; font-weight: bold; color: #64748b; display: block; margin-bottom: 1px; }
+    .id-info-val { font-size: 11px; font-weight: 800; color: #0f172a; }
+    .id-card-footer-modern { background: #f8fafc; border-top: 1px dashed #cbd5e1; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; }
+
+    /* Handover & Audit Layouts */
+    .handover-box, .audit-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
+    .handover-border { width: 100%; background: #fffdf2; border: 3px solid #2e7d32; border-radius: 10px; padding: 10px; position: relative; }
+    .handover-inner { border: 2px dashed #81c784; padding: 14px; background: #ffffff; border-radius: 6px; position: relative; }
+    .handover-durga-photo { width: 65px; height: 65px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 3px solid #81c784; }
+    
+    .audit-border { width: 100%; background: #ffffff; border: 2px solid #b71c1c; border-radius: 10px; padding: 14px; }
+    .audit-header { text-align: center; border-bottom: 2px dashed #ffb74d; padding-bottom: 8px; margin-bottom: 10px; }
+    .audit-tbl { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 12px; }
+    .audit-tbl th { background: #ffebee; color: #b71c1c; padding: 5px; border: 1px solid #ffcdd2; text-align: left; }
+    .audit-tbl td { padding: 5px; border: 1px solid #eeeeee; }
 
     /* Dynamic UPI Payment Card */
     .upi-pay-card { background: #e0f2fe; border: 2px dashed #0284c7; border-radius: 8px; padding: 12px; text-align: center; margin-top: 10px; display: none; }
@@ -162,10 +199,9 @@
   <input type="file" id="user-photo-file-input" accept="image/*" style="display: none;" onchange="handleUserPhotoUpload(event)" />
   <input type="file" id="expense-bill-input" accept="image/*" capture="environment" style="display: none;" onchange="handleExpenseBillUpload(event)" />
 
-  <!-- 0. PUBLIC SCREEN (लिंक एडिट करने या सीधे खोलने पर दिखने वाली स्क्रीन) -->
+  <!-- 0. PUBLIC SCREEN -->
   <div id="screen-public-card" class="screen">
     <div class="pub-card">
-      <!-- लोगो पर 3 बार टैप करने से कार्यकर्ता/एडमिन का गुप्त पिन डायलॉग खुलेगा -->
       <div class="durga-circle" style="width: 105px; height: 105px; margin: 0 auto 12px auto;" onclick="handleLogoMultiTap()">
         <img id="pub-durga-img" alt="माँ दुर्गा" />
       </div>
@@ -179,7 +215,7 @@
     </div>
   </div>
 
-  <!-- 1. SPLASH SCREEN (केवल अधिकृत कार्यकर्ताओं/एडमिन के लिए) -->
+  <!-- 1. SPLASH SCREEN -->
   <div id="screen-splash" class="screen">
     <div style="margin-top: 10px;">
       <div class="durga-circle" onclick="handleLogoMultiTap()">
@@ -324,7 +360,7 @@
     </div>
   </div>
 
-  <!-- 4. USER DASHBOARD (Collector) -->
+  <!-- 4. USER DASHBOARD -->
   <div id="screen-user" class="screen">
     <div class="top-bar">
       <h2>👤 कार्यकर्ता पैनल</h2>
@@ -428,23 +464,23 @@
             <div class="id-badge-code-tag">रसीद कोड (ID): <span id="idc-code">-</span></div>
 
             <div class="id-modern-info-grid">
-              <div class="id-info-item tile-role">
+              <div class="id-info-item">
                 <span class="id-info-label">🎖️ दायित्व</span>
                 <span class="id-info-val" id="idc-role-text">व्यवस्था सहयोगी</span>
               </div>
-              <div class="id-info-item tile-phone">
+              <div class="id-info-item">
                 <span class="id-info-label">📞 संपर्क नंबर</span>
                 <span class="id-info-val" id="idc-phone">-</span>
               </div>
-              <div class="id-info-item full-width tile-addr">
+              <div class="id-info-item full-width">
                 <span class="id-info-label">📍 कार्यक्षेत्र</span>
                 <span class="id-info-val" id="idc-addr">मारकुंडी</span>
               </div>
-              <div class="id-info-item tile-session">
+              <div class="id-info-item">
                 <span class="id-info-label">🗓️ सत्र</span>
                 <span class="id-info-val">सत्र 2026</span>
               </div>
-              <div class="id-info-item tile-role">
+              <div class="id-info-item">
                 <span class="id-info-label">🛡️ पहचान स्थिति</span>
                 <span class="id-info-val">सत्यापित पास</span>
               </div>
@@ -455,13 +491,43 @@
             <div style="font-family: monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #475569;">
               NYDPS-2026-VOL
             </div>
-            <div class="seal-wrap" style="width: 50px; height: 50px;">
-              <svg viewBox="0 0 160 160">
-                <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
-                <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
-                <text x="80" y="86" font-size="14" font-weight="900" fill="#b71c1c" text-anchor="middle">★ प्रमाणित ★</text>
+
+            <!-- रसीद वाली आधिकारिक वृत्ताकार मुहर -->
+            <div class="seal-wrap" style="width: 55px; height: 55px;">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
+                <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
+                <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
+                
+                <defs>
+                  <path id="seal-idc-top" d="M 24,100 A 76,76 0 0,1 176,100" />
+                  <path id="seal-idc-bot" d="M 176,100 A 76,76 0 0,1 24,100" />
+                </defs>
+
+                <text fill="#b71c1c" font-size="14.5" font-weight="900" letter-spacing="1">
+                  <textPath href="#seal-idc-top" startOffset="50%" text-anchor="middle">
+                    नवयुवा दुर्गा पूजा समिति
+                  </textPath>
+                </text>
+
+                <text fill="#b71c1c" font-size="13" font-weight="900" letter-spacing="0.8">
+                  <textPath href="#seal-idc-bot" startOffset="50%" text-anchor="middle">
+                    रेलवे गेट, मारकुंडी
+                  </textPath>
+                </text>
+
+                <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
+                <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
+
+                <text x="100" y="106" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
+                  ★ प्रमाणित ★
+                </text>
+
+                <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
+                <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
               </svg>
             </div>
+
             <div style="text-align: right;">
               <span style="font-size: 9px; color: #475569;">अध्यक्ष/सचिव</span><br />
               <strong style="color: #b71c1c; font-size: 11px;">नवयुवा समिति</strong>
@@ -842,7 +908,6 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 4px 4px 4px; font-size: 12px;">
             <div>
-              <!-- वृत्ताकार मुहर: ऊपर व नीचे गोलाई में नाम और बीच में दो रेखाओं में प्रमाणित -->
               <div class="seal-wrap">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
@@ -889,7 +954,7 @@
       </div>
     </div>
 
-    <!-- बटन सेक्शन: दानदाता के लिंक पर केवल Save PDF का बटन रहेगा -->
+    <!-- बटन सेक्शन -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
       <button class="btn" id="btn-donor-save-pdf" style="background: #b71c1c; font-size: 16px;" onclick="downloadReceiptPDF()">
         📥 Save PDF (रसीद डाउनलोड करें)
@@ -914,7 +979,7 @@
     </div>
   </div>
 
-  <!-- 6.1 DONOR CERTIFICATE SCREEN (दानदाता सम्मान पत्र) -->
+  <!-- 6.1 DONOR CERTIFICATE SCREEN -->
   <div id="screen-certificate" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-preview')">⬅</button> दानदाता सम्मान पत्र</h2>
@@ -1229,7 +1294,7 @@
            "&sig=" + sig;
   }
 
-  // गुप्त ट्रिपल-टैप अनलॉक (कार्यकर्ता/एडमिन के लिए)
+  // गुप्त ट्रिपल-टैप अनलॉक
   function handleLogoMultiTap() {
     logoTapCounter++;
     clearTimeout(logoTapTimer);
@@ -1288,7 +1353,7 @@
   }
 
   // =========================================================================
-  // EXPENSE BILL PHOTO UPLOAD & PREVIEW LOGIC
+  // EXPENSE BILL PHOTO UPLOAD
   // =========================================================================
   function triggerExpenseBillSelect() {
     document.getElementById('expense-bill-input').click();
@@ -1328,16 +1393,6 @@
     tempExpenseBillPhoto = "";
     document.getElementById('expense-bill-input').value = "";
     document.getElementById('exp-bill-preview-box').style.display = 'none';
-  }
-
-  function viewFullBill(photoUrl) {
-    if (!photoUrl) return;
-    document.getElementById('bill-modal-img').src = photoUrl;
-    document.getElementById('bill-modal').classList.add('active');
-  }
-
-  function closeBillModal() {
-    document.getElementById('bill-modal').classList.remove('active');
   }
 
   function saveExpense() {
@@ -1382,7 +1437,7 @@
       div.style.cssText = 'background:#fff; padding:10px; border-radius:6px; margin-bottom:8px; border-left:4px solid #c62828; display:flex; justify-content:space-between; align-items:center;';
       
       var billBtn = e.billPhoto 
-        ? `<button onclick="viewFullBill('${e.billPhoto}')" style="background:#e0f2fe; color:#0284c7; border:1px solid #7dd3fc; border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold; cursor:pointer;">🧾 बिल देखें</button>`
+        ? `<a href="${e.billPhoto}" target="_blank" style="background:#e0f2fe; color:#0284c7; text-decoration:none; border:1px solid #7dd3fc; border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold;">🧾 बिल देखें</a>`
         : `<span style="font-size:10.5px; color:#9e9e9e;">कोई बिल नहीं</span>`;
 
       div.innerHTML = `
@@ -1406,7 +1461,7 @@
   }
 
   // =========================================================================
-  // RECEIPT CANCELLATION & AUDIT LOG (ADMIN)
+  // RECEIPT CANCELLATION
   // =========================================================================
   function adminCancelCurrentReceipt() {
     if (currentUser) {
@@ -1703,7 +1758,6 @@
     var verifyUrl = getSecureVerificationLink(r);
     document.getElementById('pv-verify-qr').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(verifyUrl);
 
-    // यदि डोनर लिंक व्यू है तो सभी स्टाफ ऐक्शन बटन हटा दें
     if (isDonorLinkView) {
       document.querySelectorAll('.receipt-staff-btn').forEach(function(el) { el.style.display = 'none'; });
       var topBack = document.getElementById('btn-top-back');
@@ -1716,7 +1770,6 @@
     showScreen('screen-preview');
   }
 
-  // दानदाता के मोबाइल पर लिंक सत्यापन एवं एंटी-टैम्पर गार्ड (Tamper Proof)
   function checkUrlVerification() {
     var params = new URLSearchParams(window.location.search);
     var vNo = params.get('verify') || params.get('id');
@@ -1727,7 +1780,6 @@
     isDonorLinkView = true;
     document.documentElement.classList.add('donor-direct-view');
 
-    // 1. अगर URL में सुरक्षा सिग्नेचर नहीं है
     if (!sig) {
       document.body.innerHTML = `
         <div style="text-align:center; padding:50px 20px; font-family:sans-serif; background:#fff; min-height:100vh;">
@@ -1739,7 +1791,6 @@
       return;
     }
 
-    // 2. Firebase से आधिकारिक रसीद फेच करके सिग्नेचर का मिलान
     fetch(FIREBASE_DB_URL.replace(/\/$/, "") + "/receipts.json")
       .then(function(res) { return res.json(); })
       .then(function(data) {
@@ -1750,24 +1801,19 @@
           if (matched) {
             var legitimateSignature = generateSecureReceiptSignature(matched);
 
-            // अगर लिंक में 1 अक्षर या राशि में बदलाव हुआ है
             if (sig !== legitimateSignature) {
               document.body.innerHTML = `
                 <div style="text-align:center; padding:40px 20px; font-family:sans-serif; background:#fff; min-height:100vh;">
                   <div style="font-size:60px; color:#c62828;">⚠️</div>
                   <h2 style="color:#c62828; margin-top:10px;">सुरक्षा उल्लंघन (Tampering Detected)</h2>
                   <p style="color:#555; font-size:14px; margin-top:10px; line-height:1.5;">
-                    इस रसीद लिंक में <strong>अनाधिकृत बदलाव (छेड़छाड़)</strong> की गई है। सुरक्षा कारणों से यह रसीद नहीं खोली जा सकती।
+                    इस रसीद लिंक में <strong>अनाधिकृत बदलाव</strong> किया गया है।
                   </p>
-                  <div style="margin-top:20px; border:1.5px dashed #c62828; padding:12px; border-radius:8px; background:#ffebee; font-size:12.5px; color:#b71c1c; font-weight:bold;">
-                    सत्यापित रसीद देखने हेतु समिति द्वारा WhatsApp पर भेजे गए मूल लिंक का उपयोग करें।
-                  </div>
                 </div>
               `;
               return;
             }
 
-            // सब कुछ वैध होने पर रसीद दिखाएं
             receipts = cloudRecs;
             localStorage.setItem('durga_receipts', JSON.stringify(receipts));
             showPreview(matched);
@@ -1782,7 +1828,7 @@
   }
 
   // =========================================================================
-  // DONOR CERTIFICATE SCREEN & GENERATION (दानदाता सम्मान पत्र)
+  // DONOR CERTIFICATE SCREEN
   // =========================================================================
   function openDonorCertificateScreen() {
     if (!currentReceipt) return;
@@ -1810,7 +1856,7 @@
   }
 
   // =========================================================================
-  // DIRECT WHATSAPP PDF SHARE (Web Share API)
+  // DIRECT WHATSAPP PDF SHARE
   // =========================================================================
   async function shareDirectReceiptPDFWhatsApp() {
     if (!currentReceipt) return;
@@ -1880,7 +1926,7 @@
         });
       } else {
         pdf.save(fileName);
-        alert("सम्मान पत्र PDF डाउनलोड हो गई है! अब इसे दानदाता के WhatsApp पर अटैच करके भेजें।");
+        alert("सम्मान पत्र PDF डाउनलोड हो गई है! अब इसे दानदाता के WhatsApp पर भेजें।");
       }
     } catch (error) {
       if (error.name !== 'AbortError') {
@@ -2027,7 +2073,7 @@
     expenses.forEach(function(e) {
       var tr = document.createElement('tr');
       var billLink = e.billPhoto 
-        ? `<button onclick="viewFullBill('${e.billPhoto}')" style="background:#e0f2fe; color:#0284c7; border:none; padding:2px 6px; border-radius:4px; font-size:10px; cursor:pointer;">देखें</button>` 
+        ? `<a href="${e.billPhoto}" target="_blank" style="background:#e0f2fe; color:#0284c7; text-decoration:none; padding:2px 6px; border-radius:4px; font-size:10px;">देखें</a>` 
         : `-`;
       tr.innerHTML = `<td><strong>${e.title}</strong></td><td>${e.by}</td><td>${e.date}</td><td style="text-align:right; color:#c62828;"><strong>₹${e.amt}</strong></td><td style="text-align:center;">${billLink}</td>`;
       expBody.appendChild(tr);
@@ -2380,6 +2426,7 @@
       div.innerHTML = `<div><strong>${r.no} - ${r.name} [${r.code}]</strong> ${r.isCancelled ? '<span style="color:#c62828; font-size:10px; font-weight:bold;">(रद्द)</span>' : ''}<br><small>${r.phone} • रु. ${r.amt}</small></div>`;
       var btn = document.createElement('button');
       btn.innerText = 'देखें';
+      btn.style.cssText = 'padding:4px 10px; border-radius:4px; border:1px solid #ccc; background:#f5f5f5; cursor:pointer; font-weight:bold;';
       btn.onclick = function() { showPreview(r); };
       div.appendChild(btn);
       box.appendChild(div);
@@ -2535,7 +2582,7 @@
   }
 
   // =========================================================================
-  // GATE ROUTING & APP INITIALIZATION (सख्त सुरक्षा रूटिंग)
+  // GATE ROUTING & APP INITIALIZATION
   // =========================================================================
   window.addEventListener('load', function() {
     updateImages();
@@ -2543,14 +2590,12 @@
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
-    // 1. यदि वैध रसीद लिंक खोला गया है
     if (isDonorLinkView) {
       checkUrlVerification();
       fetchFromFirebase();
       return;
     }
 
-    // 2. यदि उपयोगकर्ता पहले से लॉग इन है (सत्र बहाल करें)
     var savedRole = localStorage.getItem('durga_current_logged_role');
     var savedUid = localStorage.getItem('durga_current_logged_user_id');
 
@@ -2574,14 +2619,12 @@
       }
     }
 
-    // 3. यदि कार्यकर्ता ने गुप्त पोर्टल लिंक खोला है या डिवाइस पहले से अनलॉक्ड है
     if (isStaffAccessRequested || localStorage.getItem('durga_staff_device_unlocked') === 'true') {
       showScreen('screen-login');
       fetchFromFirebase();
       return;
     }
 
-    // 4. डिफ़ॉल्ट: बाहरी लोग सीधे URL खोलने या एडिट करने पर केवल पब्लिक कार्ड देखेंगे (लॉगिन पूरी तरह लॉक)
     showScreen('screen-public-card');
     fetchFromFirebase();
   });
