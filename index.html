@@ -211,7 +211,6 @@
     }
     .id-info-item.full-width { grid-column: span 2; }
     
-    /* Individual Tile Colors */
     .tile-role { background: #fdf2f8; border-color: #fbcfe8; }
     .tile-role .id-info-label { color: #9d174d; }
     .tile-role .id-info-val { color: #831843; font-weight: 900; }
@@ -271,6 +270,9 @@
 <div id="app">
 
   <div class="sync-status-bar" id="sync-bar">🟢 ऑनलाइन सिंक सक्रिय (Firebase Live Database)</div>
+
+  <!-- Hidden Photo Upload Input for User -->
+  <input type="file" id="user-photo-file-input" accept="image/*" style="display: none;" onchange="handleUserPhotoUpload(event)" />
 
   <!-- 1. SPLASH SCREEN -->
   <div id="screen-splash" class="screen active">
@@ -412,7 +414,7 @@
     <div style="padding: 20px;">
       <div class="form-group">
         <label>📢 नया आधिकारिक नोटिस लिखें (सभी कार्यकर्ताओं को दिखेगा)</label>
-        <textarea id="inp-notice-text" class="form-input" rows="5" placeholder="उदा. आज शाम 7:30 बजे महाआरती व 8:30 बजे कार्यकर्ता बैठक पंडाल प्रांगण में होगी। सभी समय पर उपस्थित हों।"></textarea>
+        <textarea id="inp-notice-text" class="form-input" rows="5" placeholder="उदा. आज शाम 7:30 बजे महाआरती व 8:30 बजे कार्यकर्ता बैठक होगी।"></textarea>
       </div>
       <button class="btn btn-green" onclick="saveNoticeBoard()">📢 लाइव नोटिस जारी करें</button>
     </div>
@@ -448,8 +450,8 @@
         <button onclick="userSelfChangePass()" style="background: #fff; border: 1.5px solid #2e7d32; color: #2e7d32; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
           🔑 पासवर्ड
         </button>
-        <button onclick="openProfileUpdateModal()" style="background: #fff; border: 1.5px solid #1976d2; color: #1976d2; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
-          📷 प्रोफाइल
+        <button onclick="triggerUserPhotoSelect()" style="background: #fff; border: 1.5px solid #1976d2; color: #1976d2; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+          📷 ID फोटो
         </button>
       </div>
     </div>
@@ -490,47 +492,7 @@
     </div>
   </div>
 
-  <!-- 4.0 USER PROFILE UPDATE SCREEN (WITHOUT BLOOD GROUP) -->
-  <div id="screen-user-profile" class="screen">
-    <div class="top-bar">
-      <h2><button class="icon-btn" onclick="backToHome()">⬅</button> प्रोफ़ाइल विवरण व फोटो</h2>
-    </div>
-    <div style="padding: 20px; flex: 1; overflow-y: auto;">
-      <div style="text-align: center; margin-bottom: 16px;">
-        <div class="id-user-photo" style="margin: 0 auto 10px auto;">
-          <img id="profile-preview-photo" alt="मेरी फोटो" />
-        </div>
-        <input type="file" id="user-photo-file-input" accept="image/*" style="display: none;" onchange="handleUserPhotoUpload(event)" />
-        <button class="btn btn-blue" style="max-width: 200px; margin: 0 auto; padding: 8px;" onclick="document.getElementById('user-photo-file-input').click()">
-          📸 गैलरी से फोटो चुनें
-        </button>
-      </div>
-
-      <div class="form-group">
-        <label>कार्यकर्ता का नाम *</label>
-        <input type="text" id="prof-inp-name" class="form-input" placeholder="नाम लिखें" />
-      </div>
-
-      <div class="form-group">
-        <label>पद / दायित्व (Designation) *</label>
-        <input type="text" id="prof-inp-role" class="form-input" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष, सदस्य" />
-      </div>
-
-      <div class="form-group">
-        <label>मोबाइल नंबर</label>
-        <input type="tel" id="prof-inp-mobile" class="form-input" readonly style="background: #f1f2f6;" />
-      </div>
-
-      <div class="form-group">
-        <label>निवास / ग्राम *</label>
-        <input type="text" id="prof-inp-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
-      </div>
-
-      <button class="btn btn-green" onclick="saveUserProfileDetails()">💾 सुरक्षित करें</button>
-    </div>
-  </div>
-
-  <!-- 4.1 VOLUNTEER ID CARD SCREEN (COLORFUL VIP BADGE - NO BLOOD GROUP) -->
+  <!-- 4.1 VOLUNTEER ID CARD SCREEN (COLORFUL VIP BADGE) -->
   <div id="screen-id-card" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> कार्यकर्ता पहचान पत्र</h2>
@@ -541,7 +503,7 @@
         <div class="id-card-inner-frame">
           <div class="id-lanyard-hole"></div>
 
-          <!-- Top Banner with Durga Photo & Gradient -->
+          <!-- Top Banner with Durga Photo -->
           <div class="id-card-top-banner">
             <div class="id-header-logo-row">
               <div class="id-top-durga">
@@ -566,7 +528,7 @@
             <div class="id-name-display" id="idc-name">-</div>
             <div class="id-badge-code-tag">रसीद कोड (ID): <span id="idc-code">-</span></div>
 
-            <!-- Colorful Multi-Tile Info Grid (Clean, Balanced & No Blood Group) -->
+            <!-- Colorful Multi-Tile Info Grid (No Blood Group) -->
             <div class="id-modern-info-grid">
               <div class="id-info-item tile-role">
                 <span class="id-info-label">🎖️ समिति पद</span>
@@ -591,7 +553,7 @@
             </div>
           </div>
 
-          <!-- Bottom Footer Area with Barcode, Signature & Stamp -->
+          <!-- Bottom Footer Area -->
           <div class="id-card-footer-modern">
             <div>
               <div class="id-barcode-lines"></div>
@@ -617,6 +579,9 @@
     </div>
 
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+      <button class="btn btn-blue" onclick="triggerUserPhotoSelect()">
+        📷 पहचान पत्र के लिए अपनी फोटो बदलें
+      </button>
       <button class="btn btn-green" id="btn-dl-idc" onclick="downloadIdCardPDF()">
         📥 Save ID Card PDF (पहचान पत्र डाउनलोड करें)
       </button>
@@ -974,20 +939,8 @@
             <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
               <div class="seal-wrap">
                 <svg viewBox="0 0 160 160">
-                  <defs>
-                    <path id="upper-arc" d="M 22,80 A 58,58 0 1,1 138,80" fill="none" />
-                    <path id="lower-arc" d="M 138,80 A 58,58 0 0,1 22,80" fill="none" />
-                  </defs>
                   <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
-                  <circle cx="80" cy="80" r="70" fill="none" stroke="#b71c1c" stroke-width="1.5" stroke-dasharray="3,2" />
                   <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
-                  <text font-size="11" font-weight="900" fill="#b71c1c">
-                    <textPath href="#upper-arc" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
-                  </text>
-                  <text font-size="10.5" font-weight="900" fill="#b71c1c">
-                    <textPath href="#lower-arc" startOffset="50%" text-anchor="middle">★ मारकुंडी सोनभद्र ★</textPath>
-                  </text>
-                  <rect x="42" y="70" width="76" height="20" rx="3" fill="#fff3f3" stroke="#b71c1c" stroke-width="1" />
                   <text x="80" y="84" font-size="12" font-weight="900" fill="#b71c1c" text-anchor="middle">★ प्रमाणित ★</text>
                 </svg>
               </div>
@@ -1470,16 +1423,10 @@
     }
   }
 
-  // ================= USER PROFILE (PHOTO & DETAILS MANAGEMENT - NO BLOOD GROUP) =================
-  function openProfileUpdateModal() {
-    if (!currentUser) return;
-    var uRecord = users.find(function(x) { return x.id === currentUser.id; }) || currentUser;
-    document.getElementById('prof-inp-name').value = uRecord.name || '';
-    document.getElementById('prof-inp-role').value = uRecord.role || 'व्यवस्था सहयोगी';
-    document.getElementById('prof-inp-mobile').value = uRecord.mobile || '';
-    document.getElementById('prof-inp-addr').value = uRecord.addr || 'मारकुंडी';
-    document.getElementById('profile-preview-photo').src = uRecord.photo || DEFAULT_USER_IMG;
-    showScreen('screen-user-profile');
+  // ================= DIRECT PHOTO UPLOAD (ONLY FOR ID CARD) =================
+  function triggerUserPhotoSelect() {
+    var fileInp = document.getElementById('user-photo-file-input');
+    if (fileInp) fileInp.click();
   }
 
   function handleUserPhotoUpload(event) {
@@ -1500,7 +1447,6 @@
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         var compressedPhoto = canvas.toDataURL('image/jpeg', 0.88);
-        document.getElementById('profile-preview-photo').src = compressedPhoto;
 
         if (currentUser) {
           currentUser.photo = compressedPhoto;
@@ -1512,7 +1458,12 @@
           }
           localStorage.setItem('durga_users', JSON.stringify(users));
           syncToFirebase("users", users);
-          alert("आपकी फोटो लोड हो गई है! 'सुरक्षित करें' बटन दबाएं।");
+
+          // Update on active ID card if open
+          var idImg = document.getElementById('id-card-user-img');
+          if (idImg) idImg.src = compressedPhoto;
+
+          alert("✅ पहचान पत्र हेतु आपकी फोटो सफलतापूर्वक अपडेट हो गई!");
         }
       };
       img.src = e.target.result;
@@ -1520,39 +1471,7 @@
     reader.readAsDataURL(file);
   }
 
-  function saveUserProfileDetails() {
-    if (!currentUser) return;
-    var nameVal = document.getElementById('prof-inp-name').value.trim();
-    var roleVal = document.getElementById('prof-inp-role').value.trim();
-    var addrVal = document.getElementById('prof-inp-addr').value.trim();
-
-    if (!nameVal || !roleVal) {
-      alert("कृपया नाम और पद अवश्य भरें!");
-      return;
-    }
-
-    currentUser.name = nameVal;
-    currentUser.role = roleVal;
-    currentUser.addr = addrVal || 'मारकुंडी';
-
-    for (var i = 0; i < users.length; i++) {
-      if (users[i].id === currentUser.id) {
-        users[i].name = nameVal;
-        users[i].role = roleVal;
-        users[i].addr = currentUser.addr;
-        break;
-      }
-    }
-
-    localStorage.setItem('durga_users', JSON.stringify(users));
-    syncToFirebase("users", users);
-    
-    document.getElementById('usr-name-show').innerText = nameVal;
-    alert("✅ आपकी प्रोफ़ाइल व फोटो विवरण सुरक्षित हो गया!");
-    backToHome();
-  }
-
-  // ================= VOLUNTEER ID CARD SCREEN (COLORFUL VIP BADGE) =================
+  // ================= VOLUNTEER ID CARD SCREEN =================
   function openUserIdCard() {
     if (!currentUser) return;
     var uRecord = users.find(function(x) { return x.id === currentUser.id; }) || currentUser;
@@ -1660,7 +1579,7 @@
     window.open("https://api.whatsapp.com/send?phone=91" + currentHandover.userMobile + "&text=" + encodeURIComponent(text), "_blank");
   }
 
-  // ================= ADMIN SETTLE CASH (WITH HANDOVER VOUCHER) =================
+  // ================= ADMIN SETTLE CASH =================
   function adminSettleCash(code, name, pending) {
     var val = prompt("'" + name + "' से कितने रुपये नकद प्राप्त हुए दर्ज करें:\n(वर्तमान कुल बकाया: रु. " + pending + ")", pending);
     if (!val) return;
@@ -2410,10 +2329,13 @@
             <div>
               <strong>${u.name} [${u.code}]</strong> 
               <span style="font-size:11px; font-weight:bold; color:${isAct ? '#2e7d32' : '#d32f2f'};">${isAct ? '● Active' : '● Blocked'}</span><br>
-              <small style="color:#666;">पद: <strong>${u.role || 'सहयोगी'}</strong> • ${u.mobile}</small>
+              <small style="color:#666;">पद: <strong>${u.role || 'सहयोगी'}</strong> • ${u.mobile} • निवास: ${u.addr}</small>
             </div>
           </div>
           <div style="display:flex; gap:6px; align-items:center;">
+            <button onclick="adminResetUserPass(${u.id})" style="border:1px solid #1976d2; background:#e3f2fd; color:#1565c0; padding:4px 7px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;" title="पासवर्ड रीसेट करें">
+              🔑 Reset
+            </button>
             <button onclick="toggleUserStatus(${u.id})" style="border:none; background:${isAct ? '#ffebee' : '#e8f5e9'}; color:${isAct ? '#d32f2f' : '#2e7d32'}; padding:5px 8px; border-radius:6px; font-size:11px; font-weight:bold; cursor:pointer;">
               ${isAct ? '🔴 OFF' : '🟢 ON'}
             </button>
