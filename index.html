@@ -23,10 +23,11 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #f1f2f6; display: flex; justify-content: center; min-height: 100vh; }
-    #app { width: 100%; max-width: 460px; min-height: 100vh; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; }
+    body { background-color: #f1f2f6; display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+    #app { width: 100%; max-width: 460px; min-height: 100vh; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
 
-    .screen { display: none; flex-direction: column; flex: 1; }
+    /* सभी स्क्रीन को पूरी तरह छुपा कर रखना जब तक वो सक्रिय न हों */
+    .screen { display: none !important; flex-direction: column; flex: 1; width: 100%; }
     .screen.active { display: flex !important; }
 
     /* Donor Direct View Styling */
@@ -176,7 +177,7 @@
     .cancelled-badge { background: #ffebee; border: 2px solid #c62828; color: #c62828; padding: 6px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; }
 
     /* Public Screen */
-    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; }
+    #screen-public-card { background: #f1f2f6; display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; text-align: center; }
     .pub-card { background: white; border-radius: 14px; padding: 28px 20px; border-top: 6px solid #b71c1c; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
 
     @media print {
@@ -1292,7 +1293,7 @@
            "&sig=" + sig;
   }
 
-  // Logo Triple Tap Handler - Device Permanently Unlocked
+  // Triple Tap Unlocker
   function handleLogoMultiTap() {
     logoTapCounter++;
     clearTimeout(logoTapTimer);
@@ -1305,7 +1306,7 @@
       var inputKey = prompt("🔒 समिति कार्यकर्ता व एडमिन एक्सेस कोड दर्ज करें:");
       if (inputKey === SECRET_ACCESS_KEY || inputKey === adminPass) {
         localStorage.setItem('durga_staff_device_unlocked', 'true');
-        alert("✅ डिवाइस सफलतापूर्वक अनलॉक हो गई!");
+        alert("✅ डिवाइस स्थायी रूप से अनलॉक हो गई है!");
         showScreen('screen-login');
       } else if (inputKey) {
         alert("अवैध एक्सेस कोड!");
@@ -1313,7 +1314,6 @@
     }
   }
 
-  // Dynamic UPI URL
   function getDynamicUPIUrl(amt, donorName) {
     var note = encodeURIComponent('चंदा ' + (donorName || 'समिति'));
     return "upi://pay?pa=" + SAMITI_UPI_ID + "&pn=NavYuva%20Durga%20Puja%20Samiti&am=" + amt + "&cu=INR&tn=" + note;
@@ -1349,7 +1349,6 @@
     handleAmountChange();
   }
 
-  // Expense Bill Upload Logic
   function triggerExpenseBillSelect() {
     document.getElementById('expense-bill-input').click();
   }
@@ -1553,7 +1552,6 @@
     }
   }
 
-  // Logout Handler - Device Unlock status intact, goes back to Login Screen
   function doLogout() {
     currentUser = null;
     localStorage.removeItem('my_device_token');
@@ -2225,7 +2223,9 @@
       document.documentElement.classList.remove('donor-direct-view');
     }
     var screens = document.querySelectorAll('.screen');
-    for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+    for (var i = 0; i < screens.length; i++) {
+      screens[i].classList.remove('active');
+    }
     var target = document.getElementById(id);
     if (target) {
       target.classList.add('active');
@@ -2544,7 +2544,7 @@
   }
 
   // =========================================================================
-  // GATE ROUTING & APP INITIALIZATION
+  // GATE ROUTING & APP INITIALIZATION (FIXED)
   // =========================================================================
   window.addEventListener('load', function() {
     updateImages();
@@ -2552,14 +2552,14 @@
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
-    // 1. Direct Donor View
+    // 1. यदि दानदाता सीधे WhatsApp वाले रसीद लिंक से आया है
     if (isDonorLinkView) {
       checkUrlVerification();
       fetchFromFirebase();
       return;
     }
 
-    // 2. Active Session Restore
+    // 2. यदि उपयोगकर्ता पहले से लॉग इन है
     var savedRole = localStorage.getItem('durga_current_logged_role');
     var savedUid = localStorage.getItem('durga_current_logged_user_id');
 
@@ -2583,14 +2583,14 @@
       }
     }
 
-    // 3. Device Unlocked Check: Ek baar unlock hone ke baad seedhe Login screen
+    // 3. यदि डिवाइस एक बार अनलॉक हो चुकी है, तो सीधे Login स्क्रीन पर भेजें
     if (isStaffAccessRequested || localStorage.getItem('durga_staff_device_unlocked') === 'true') {
       showScreen('screen-login');
       fetchFromFirebase();
       return;
     }
 
-    // 4. Default: Public Card Screen
+    // 4. केवल पहली बार बिना अनलॉक किए खोलने पर ही पब्लिक कार्ड स्क्रीन दिखेगी
     showScreen('screen-public-card');
     fetchFromFirebase();
   });
