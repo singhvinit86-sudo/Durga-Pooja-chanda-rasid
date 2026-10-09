@@ -118,7 +118,7 @@
     .rec-table { width: 100%; margin: 8px 0; border-collapse: collapse; font-size: 13px; }
     .rec-table td { padding: 6px 4px; border-bottom: 1px dashed #ffe082; }
 
-    /* Circular Stamp Styling (Universal Seal) */
+    /* Circular Stamp Styling */
     .seal-wrap { width: 88px; height: 88px; flex-shrink: 0; transform: rotate(-4deg); }
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.25)); }
 
@@ -131,56 +131,105 @@
     .cert-donor-name { font-size: 20px; font-weight: 900; color: #b71c1c; margin: 8px 0; border-bottom: 2px dashed #ffcc80; padding-bottom: 4px; }
     .cert-body-p { font-size: 13px; line-height: 1.6; color: #37474f; font-weight: 600; margin-bottom: 14px; }
 
-    /* Colourful, VIP & Highly Attractive ID Card Layout */
+    /* =========================================================================
+       ULTRA ATTRACTIVE ROYAL KESHARIYA & GOLDEN VIP ID CARD
+       ========================================================================= */
     .id-card-wrap { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
+    
     .id-card-border { 
       width: 100%; 
-      max-width: 325px; 
-      background: linear-gradient(145deg, #d32f2f, #ff6f00, #b71c1c); 
-      border-radius: 18px; 
-      padding: 7px; 
-      box-shadow: 0 10px 25px rgba(183, 28, 28, 0.35); 
+      max-width: 335px; 
+      /* Gold & Imperial Saffron Outer Frame */
+      background: linear-gradient(145deg, #ffd700 0%, #ff8f00 25%, #e65100 50%, #b71c1c 75%, #ffd700 100%); 
+      border-radius: 20px; 
+      padding: 6px; 
+      box-shadow: 0 12px 30px rgba(230, 81, 0, 0.45); 
       position: relative;
     }
+
     .id-card-inner-frame { 
-      background: linear-gradient(180deg, #ffffff 0%, #fffdfa 100%); 
-      border-radius: 13px; 
+      /* Vibrant Kesariya with Sunburst Radial Backdrop */
+      background: radial-gradient(circle at 50% 32%, #fff3e0 0%, #ffe0b2 40%, #ffb74d 75%, #f57c00 100%);
+      border-radius: 15px; 
       overflow: hidden; 
       position: relative; 
       display: flex; 
       flex-direction: column; 
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.04);
+      border: 1.5px solid #ffe082;
+      box-shadow: inset 0 0 15px rgba(183, 28, 28, 0.15);
     }
-    .id-lanyard-hole { width: 42px; height: 8px; background: #f1f5f9; border-radius: 10px; margin: 8px auto 4px auto; border: 1.5px solid #cbd5e1; }
+
+    /* Sacred Mandala Watermark Overlay */
+    .id-card-inner-frame::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 260px;
+      height: 260px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,152,0,0.08) 70%, transparent 100%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .id-lanyard-hole { 
+      width: 44px; 
+      height: 8px; 
+      background: #7f1d1d; 
+      border-radius: 10px; 
+      margin: 8px auto 4px auto; 
+      border: 1.5px solid #fde047; 
+      position: relative; 
+      z-index: 2; 
+    }
+
     .id-card-top-banner { 
-      background: linear-gradient(135deg, #880e4f 0%, #b71c1c 50%, #e65100 100%); 
+      background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 30%, #c2410c 70%, #d97706 100%); 
       color: white; 
       padding: 10px 10px; 
       text-align: center; 
-      box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.22);
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid #fef08a;
+      border-bottom: 2px solid #facc15;
     }
-    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 9px; }
-    .id-top-durga { width: 42px; height: 42px; border-radius: 8px; overflow: hidden; border: 2px solid #ffd54f; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.3); background: #fff; }
-    .id-header-logo-row h3 { font-size: 15px; color: #fff; font-weight: 900; line-height: 1.15; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
-    .id-header-logo-row p { font-size: 9.5px; color: #ffecb3; font-weight: bold; margin-top: 2px; }
 
-    .id-card-body-content { padding: 12px 14px; text-align: center; }
+    .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 9px; }
+    .id-top-durga { 
+      width: 44px; 
+      height: 44px; 
+      border-radius: 50%; 
+      overflow: hidden; 
+      border: 2.5px solid #fde047; 
+      flex-shrink: 0; 
+      box-shadow: 0 0 10px rgba(253, 224, 71, 0.7); 
+      background: #fff; 
+    }
+    .id-header-logo-row h3 { font-size: 15.5px; color: #ffffff; font-weight: 900; line-height: 1.2; text-shadow: 0 1.5px 3px rgba(0,0,0,0.6); }
+    .id-header-logo-row p { font-size: 10px; color: #fef08a; font-weight: 800; margin-top: 2px; letter-spacing: 0.3px; }
+
+    .id-card-body-content { padding: 12px 14px; text-align: center; position: relative; z-index: 2; }
     
+    /* Royal Framed Box Photo */
     .id-user-box-photo-wrap {
-      width: 95px;
-      height: 105px;
-      margin: 0 auto 8px auto;
-      border-radius: 10px;
-      padding: 3px;
-      background: linear-gradient(135deg, #ffd54f, #d32f2f, #ff9800);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+      width: 102px;
+      height: 112px;
+      margin: 2px auto 8px auto;
+      border-radius: 12px;
+      padding: 3.5px;
+      background: linear-gradient(135deg, #fde047 0%, #ea580c 50%, #7f1d1d 100%);
+      box-shadow: 0 6px 15px rgba(154, 52, 18, 0.45);
     }
     .id-user-photo-box {
       width: 100%;
       height: 100%;
-      border-radius: 7px;
+      border-radius: 9px;
       overflow: hidden;
-      background: #fff;
+      background: #ffffff;
+      border: 1px solid #fef08a;
     }
     .id-user-photo-box img {
       width: 100%;
@@ -188,50 +237,65 @@
       object-fit: cover;
       display: block;
     }
+
     .id-role-ribbon { 
-      background: linear-gradient(90deg, #b71c1c, #e65100); 
-      color: #ffeb3b; 
-      font-size: 10.5px; 
+      background: linear-gradient(90deg, #991b1b 0%, #ea580c 50%, #991b1b 100%); 
+      color: #fef08a; 
+      font-size: 11px; 
       font-weight: 900; 
-      padding: 3px 12px; 
-      border-radius: 14px; 
+      padding: 3.5px 16px; 
+      border-radius: 16px; 
       display: inline-block; 
-      margin-top: -6px; 
+      margin-top: -8px; 
       position: relative; 
-      z-index: 2; 
-      box-shadow: 0 2px 6px rgba(183,28,28,0.35); 
-      border: 1px solid #ffd54f;
+      z-index: 3; 
+      box-shadow: 0 3px 8px rgba(127, 29, 29, 0.4); 
+      border: 1.5px solid #fde047;
+      letter-spacing: 0.5px;
     }
-    .id-name-display { font-size: 18px; font-weight: 900; color: #1e293b; margin: 6px 0 2px 0; }
+
+    .id-name-display { font-size: 19px; font-weight: 900; color: #7f1d1d; margin: 7px 0 2px 0; text-shadow: 0 1px 1px rgba(255,255,255,0.8); }
     .id-badge-code-tag { 
       font-size: 11px; 
-      font-weight: bold; 
-      color: #4338ca; 
-      background: #e0e7ff; 
-      padding: 2px 8px; 
-      border-radius: 6px; 
+      font-weight: 900; 
+      color: #9a3412; 
+      background: #ffedd5; 
+      border: 1px solid #fdba74;
+      padding: 2px 10px; 
+      border-radius: 8px; 
       display: inline-block; 
       margin-bottom: 10px; 
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
     }
     
+    /* Modern Kesariya & Cream Grid Tiles */
     .id-modern-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: left; }
-    .id-info-item { border-radius: 7px; padding: 6px 8px; border: 1px solid rgba(0,0,0,0.06); }
-    .id-info-item.tile-role { background: #eff6ff; border-left: 3.5px solid #2563eb; }
-    .id-info-item.tile-phone { background: #f0fdf4; border-left: 3.5px solid #16a34a; }
-    .id-info-item.tile-addr { background: #fffbeb; border-left: 3.5px solid #d97706; }
-    .id-info-item.tile-session { background: #fdf2f8; border-left: 3.5px solid #db2777; }
-    .id-info-item.tile-status { background: #faf5ff; border-left: 3.5px solid #9333ea; }
+    .id-info-item { 
+      border-radius: 8px; 
+      padding: 6px 8px; 
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(245, 158, 11, 0.35); 
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 5px rgba(234, 88, 12, 0.08);
+    }
+    .id-info-item.tile-role { border-left: 4px solid #ea580c; }
+    .id-info-item.tile-phone { border-left: 4px solid #16a34a; }
+    .id-info-item.tile-addr { border-left: 4px solid #d97706; }
+    .id-info-item.tile-session { border-left: 4px solid #b91c1c; }
+    .id-info-item.tile-status { border-left: 4px solid #9333ea; }
     .id-info-item.full-width { grid-column: span 2; }
-    .id-info-label { font-size: 8.5px; font-weight: 800; color: #64748b; display: block; margin-bottom: 1px; }
-    .id-info-val { font-size: 11.5px; font-weight: 900; color: #0f172a; }
+    .id-info-label { font-size: 8.5px; font-weight: 800; color: #78350f; display: block; margin-bottom: 1px; }
+    .id-info-val { font-size: 12px; font-weight: 900; color: #1c1917; }
     
     .id-card-footer-modern { 
-      background: linear-gradient(180deg, #f8fafc, #edf2f7); 
-      border-top: 1px dashed #cbd5e1; 
+      background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); 
+      border-top: 1.5px dashed #f59e0b; 
       padding: 8px 12px; 
       display: flex; 
       align-items: center; 
       justify-content: space-between; 
+      position: relative;
+      z-index: 2;
     }
 
     /* Handover & Audit Layouts */
@@ -515,7 +579,7 @@
     </div>
   </div>
 
-  <!-- 4.1 VOLUNTEER ID CARD SCREEN -->
+  <!-- 4.1 VOLUNTEER ID CARD SCREEN (ROYAL KESHARIYA GOLD THEME) -->
   <div id="screen-id-card" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> पहचान पत्र</h2>
@@ -575,7 +639,7 @@
           </div>
 
           <div class="id-card-footer-modern">
-            <div style="font-family: monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #475569; font-weight: bold;">
+            <div style="font-family: monospace; font-size: 8.5px; letter-spacing: 1.5px; color: #78350f; font-weight: 900;">
               NYDPS-2026-VOL
             </div>
 
@@ -603,7 +667,7 @@
             </div>
 
             <div style="text-align: right;">
-              <span style="font-size: 9px; color: #475569;">अध्यक्ष/सचिव</span><br />
+              <span style="font-size: 9px; color: #78350f; font-weight: bold;">अध्यक्ष/सचिव</span><br />
               <strong style="color: #b71c1c; font-size: 11px;">नवयुवा समिति</strong>
             </div>
           </div>
@@ -860,7 +924,6 @@
         </div>
       </div>
 
-      <!-- Live Dynamic UPI Payment Card -->
       <div class="upi-pay-card" id="box-dynamic-upi">
         <h4 style="color: #0284c7; font-size: 13px;">📲 सटीक राशि का लाइव UPI QR</h4>
         <p style="font-size: 11px; color: #555;">दानदाता से सीधे स्कैन करवाएं (राशि स्वतः भरी रहेगी)</p>
@@ -915,13 +978,11 @@
           <h2 style="color: #b71c1c; text-align: center; font-size: 19px; line-height: 1.2;">नवयुवा दुर्गा पूजा समिति</h2>
           <div style="text-align: center; font-size: 12px; color: #4a148c; font-weight: bold; margin-bottom: 6px;">🚩 रेलवे गेट, मारकुंडी, सोनभद्र 🚩</div>
 
-          <!-- Cancelled Badge -->
           <div id="pv-cancelled-card" style="display: none;" class="cancelled-badge">
             ❌ यह रसीद रद्द (CANCELLED) कर दी गई है ❌
             <div id="pv-cancel-reason" style="font-size: 11px; font-weight: normal; margin-top: 2px;"></div>
           </div>
 
-          <!-- Cancellation Request Pending Badge -->
           <div id="pv-cancel-pending-badge" style="display: none;" class="pending-cancel-badge">
             ⏳ रद्दीकरण अनुरोध एडमिन के पास अनुमोदन (Approval) हेतु लंबित है।
             <div id="pv-cancel-req-info" style="font-size: 11px; font-weight: normal; margin-top: 2px;"></div>
@@ -974,7 +1035,6 @@
             </tr>
           </table>
 
-          <!-- Digital Verification QR Code Block -->
           <div class="verify-qr-block">
             <div style="font-size: 10.5px; color: #444; line-height: 1.4;">
               <strong style="color: #b71c1c;">🛡️ डिजिटल सत्यापन QR कोड</strong><br>
@@ -1023,7 +1083,6 @@
       </div>
     </div>
 
-    <!-- Action Buttons -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
       <div id="receipt-active-actions-box" style="display: flex; flex-direction: column; gap: 8px;">
         <button class="btn" id="btn-donor-save-pdf" style="background: #b71c1c; font-size: 16px;" onclick="downloadReceiptPDF()">
@@ -1040,12 +1099,10 @@
 
         <button class="btn btn-blue receipt-staff-btn" onclick="shareWhatsApp()">💬 WhatsApp लिंक व विवरण भेजें</button>
         
-        <!-- User Cancellation Request Button -->
         <button class="btn receipt-staff-btn btn-orange" id="btn-user-request-cancel" style="display: none;" onclick="requestReceiptCancellation()">
           📩 रसीद रद्द करने का अनुरोध भेजें (Request Cancel)
         </button>
 
-        <!-- Admin Direct / Approval Cancel Button -->
         <button class="btn receipt-staff-btn" style="background: #c62828;" id="btn-admin-cancel-rec" onclick="adminCancelCurrentReceipt()">
           🚫 यह रसीद रद्द करें (Cancel Receipt)
         </button>
@@ -1370,20 +1427,17 @@
     return str.trim() + ' रुपये मात्र';
   }
 
-  // ULTRA SHORT 8-CHAR SIGNATURE
   function generateSecureReceiptSignature(r) {
     var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.code || '');
     return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
   }
 
-  // ULTRA COMPACT HASH LINK
   function getSecureVerificationLink(r) {
     var sig = generateSecureReceiptSignature(r);
     var cleanBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '');
     return cleanBase + "/#" + encodeURIComponent(r.no) + "_" + sig;
   }
 
-  // Triple Tap Unlocker
   function handleLogoMultiTap() {
     logoTapCounter++;
     clearTimeout(logoTapTimer);
@@ -1548,7 +1602,6 @@
     showScreen('screen-expenses');
   }
 
-  // USER REQUEST CANCELLATION
   function requestReceiptCancellation() {
     if (!currentUser) return;
     if (!currentReceipt) return;
@@ -1586,7 +1639,6 @@
     alert("✅ रद्दीकरण का अनुरोध एडमिन को भेज दिया गया है। एडमिन की स्वीकृति के बाद यह रद्द होगी।");
   }
 
-  // ADMIN APPROVE / REJECT / DIRECT CANCEL
   function adminCancelCurrentReceipt() {
     if (currentUser) return;
     if (!currentReceipt) return;
@@ -1596,7 +1648,6 @@
       return;
     }
 
-    // अगर कार्यकर्ता द्वारा अनुरोध लंबित है
     if (currentReceipt.cancelRequested) {
       var action = confirm(
         "कार्यकर्ता: " + currentReceipt.cancelRequestedBy + "\n" +
@@ -1624,7 +1675,6 @@
       return;
     }
 
-    // एडमिन द्वारा सीधे रद्द करना
     var reason = prompt("रसीद संख्या '" + currentReceipt.no + "' रद्द करने का कारण लिखें:");
     if (!reason || !reason.trim()) {
       alert("रद्दीकरण का कारण लिखना अनिवार्य है!");
@@ -1881,7 +1931,6 @@
     var btnAdminCancel = document.getElementById('btn-admin-cancel-rec');
     var btnUserRequest = document.getElementById('btn-user-request-cancel');
 
-    // रद्दीकरण स्थिति हैंडलिंग
     if (r.isCancelled) {
       cancelCard.style.display = 'block';
       pendingBadge.style.display = 'none';
@@ -2432,7 +2481,7 @@
   async function downloadIdCardPDF() {
     var target = document.getElementById('id-card-capture-target');
     try {
-      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
+      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fef3c7' });
       var imgData = canvas.toDataURL('image/png');
       var jsPDF = window.jspdf.jsPDF;
       var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: [100, 160] });
@@ -2823,14 +2872,12 @@
     updateOfflineQueueUI();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
-    // 1. Direct Donor View
     if (isDonorLinkView) {
       checkUrlVerification();
       fetchFromFirebase();
       return;
     }
 
-    // 2. Active Session Restoration
     var savedRole = localStorage.getItem('durga_current_logged_role');
     var savedUid = localStorage.getItem('durga_current_logged_user_id');
 
@@ -2854,7 +2901,6 @@
       }
     }
 
-    // 3. Permanent Staff Unlock Check
     var isUnlocked = (localStorage.getItem('durga_staff_device_unlocked') === 'true');
     if (isStaffAccessRequested || isUnlocked) {
       showScreen('screen-login');
@@ -2862,7 +2908,6 @@
       return;
     }
 
-    // 4. Default: First Time Public Portal
     showScreen('screen-public-card');
     fetchFromFirebase();
   });
