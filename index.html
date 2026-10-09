@@ -131,24 +131,18 @@
     .cert-donor-name { font-size: 20px; font-weight: 900; color: #b71c1c; margin: 8px 0; border-bottom: 2px dashed #ffcc80; padding-bottom: 4px; }
     .cert-body-p { font-size: 13px; line-height: 1.6; color: #37474f; font-weight: 600; margin-bottom: 14px; }
 
-    /* =========================================================================
-       ULTRA ATTRACTIVE ROYAL KESHARIYA & GOLDEN VIP ID CARD
-       ========================================================================= */
+    /* VIP ID Card */
     .id-card-wrap { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
-    
     .id-card-border { 
       width: 100%; 
       max-width: 335px; 
-      /* Gold & Imperial Saffron Outer Frame */
       background: linear-gradient(145deg, #ffd700 0%, #ff8f00 25%, #e65100 50%, #b71c1c 75%, #ffd700 100%); 
       border-radius: 20px; 
       padding: 6px; 
       box-shadow: 0 12px 30px rgba(230, 81, 0, 0.45); 
       position: relative;
     }
-
     .id-card-inner-frame { 
-      /* Vibrant Kesariya with Sunburst Radial Backdrop */
       background: radial-gradient(circle at 50% 32%, #fff3e0 0%, #ffe0b2 40%, #ffb74d 75%, #f57c00 100%);
       border-radius: 15px; 
       overflow: hidden; 
@@ -158,8 +152,6 @@
       border: 1.5px solid #ffe082;
       box-shadow: inset 0 0 15px rgba(183, 28, 28, 0.15);
     }
-
-    /* Sacred Mandala Watermark Overlay */
     .id-card-inner-frame::before {
       content: "";
       position: absolute;
@@ -173,7 +165,6 @@
       pointer-events: none;
       z-index: 1;
     }
-
     .id-lanyard-hole { 
       width: 44px; 
       height: 8px; 
@@ -184,7 +175,6 @@
       position: relative; 
       z-index: 2; 
     }
-
     .id-card-top-banner { 
       background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 30%, #c2410c 70%, #d97706 100%); 
       color: white; 
@@ -196,7 +186,6 @@
       border-top: 1px solid #fef08a;
       border-bottom: 2px solid #facc15;
     }
-
     .id-header-logo-row { display: flex; align-items: center; justify-content: center; gap: 9px; }
     .id-top-durga { 
       width: 44px; 
@@ -212,8 +201,6 @@
     .id-header-logo-row p { font-size: 10px; color: #fef08a; font-weight: 800; margin-top: 2px; letter-spacing: 0.3px; }
 
     .id-card-body-content { padding: 12px 14px; text-align: center; position: relative; z-index: 2; }
-    
-    /* Royal Framed Box Photo */
     .id-user-box-photo-wrap {
       width: 102px;
       height: 112px;
@@ -237,7 +224,6 @@
       object-fit: cover;
       display: block;
     }
-
     .id-role-ribbon { 
       background: linear-gradient(90deg, #991b1b 0%, #ea580c 50%, #991b1b 100%); 
       color: #fef08a; 
@@ -253,7 +239,6 @@
       border: 1.5px solid #fde047;
       letter-spacing: 0.5px;
     }
-
     .id-name-display { font-size: 19px; font-weight: 900; color: #7f1d1d; margin: 7px 0 2px 0; text-shadow: 0 1px 1px rgba(255,255,255,0.8); }
     .id-badge-code-tag { 
       font-size: 11px; 
@@ -268,7 +253,6 @@
       box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
     }
     
-    /* Modern Kesariya & Cream Grid Tiles */
     .id-modern-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: left; }
     .id-info-item { 
       border-radius: 8px; 
@@ -579,7 +563,7 @@
     </div>
   </div>
 
-  <!-- 4.1 VOLUNTEER ID CARD SCREEN (ROYAL KESHARIYA GOLD THEME) -->
+  <!-- 4.1 VOLUNTEER ID CARD SCREEN -->
   <div id="screen-id-card" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> पहचान पत्र</h2>
@@ -789,7 +773,7 @@
     </div>
   </div>
 
-  <!-- 4.3 FULL AUDIT REPORT SCREEN -->
+  <!-- 4.3 FULL AUDIT REPORT SCREEN (UPDATED SEAL APPLIED HERE) -->
   <div id="screen-audit" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅</button> संपूर्ण ऑडिट रिपोर्ट (बैलेंस शीट)</h2>
@@ -855,11 +839,26 @@
 
         <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
           <div style="text-align: center;">
-            <div class="seal-wrap" style="width: 50px; height: 50px; margin: 0 auto 2px auto;">
-              <svg viewBox="0 0 160 160">
-                <circle cx="80" cy="80" r="76" fill="#fffdf9" stroke="#b71c1c" stroke-width="3" />
-                <circle cx="80" cy="80" r="44" fill="none" stroke="#b71c1c" stroke-width="1.5" />
-                <text x="80" y="86" font-size="16" font-weight="900" fill="#b71c1c" text-anchor="middle">लेखा परीक्षित</text>
+            <div class="seal-wrap" style="width: 58px; height: 58px; margin: 0 auto 2px auto;">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
+                <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
+                <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
+                <defs>
+                  <path id="seal-aud-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
+                  <path id="seal-aud-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
+                </defs>
+                <text fill="#b71c1c" font-size="14" font-weight="900">
+                  <textPath href="#seal-aud-top-curve" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
+                </text>
+                <text fill="#b71c1c" font-size="12.5" font-weight="900">
+                  <textPath href="#seal-aud-bot-curve" startOffset="50%" text-anchor="middle">रेलवे गेट, मारकुंडी</textPath>
+                </text>
+                <line x1="40" y1="84" x2="160" y2="84" stroke="#b71c1c" stroke-width="2" />
+                <line x1="40" y1="116" x2="160" y2="116" stroke="#b71c1c" stroke-width="2" />
+                <text x="100" y="105" font-size="14.5" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="0.5">★ लेखा परीक्षित ★</text>
+                <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
+                <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
               </svg>
             </div>
             <span style="font-size: 10px; color: #444; font-weight: bold;">कोषाध्यक्ष</span>
