@@ -166,7 +166,6 @@
 
     .id-card-body-content { padding: 12px 14px; text-align: center; }
     
-    /* Boxed Photo (Square With Smooth Rounded Corners) */
     .id-user-box-photo-wrap {
       width: 95px;
       height: 105px;
@@ -259,6 +258,7 @@
     /* Status Bar */
     .sync-status-bar { font-size: 11px; text-align: center; background: #e8f5e9; color: #2e7d32; padding: 5px; font-weight: bold; border-bottom: 1px solid #c8e6c9; display: flex; justify-content: space-around; }
     .cancelled-badge { background: #ffebee; border: 2px solid #c62828; color: #c62828; padding: 8px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; font-size: 13px; }
+    .pending-cancel-badge { background: #fff3e0; border: 2px solid #ff9800; color: #e65100; padding: 8px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; font-size: 13px; }
 
     /* Public Screen Specific */
     #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
@@ -406,8 +406,9 @@
     </div>
 
     <div class="admin-grid">
-      <div class="menu-box" style="background: #6a1b9a;" onclick="openReceiptsList()">
+      <div class="menu-box" style="background: #6a1b9a; position: relative;" onclick="openReceiptsList()">
         <div style="font-size: 22px;">📄</div>रसीदें व रद्दीकरण
+        <span id="adm-pending-badge" style="display:none; position:absolute; top:6px; right:6px; background:#ffeb3b; color:#b71c1c; font-size:11px; padding:2px 6px; border-radius:10px; font-weight:900;">0</span>
       </div>
       <div class="menu-box" style="background: #c2185b;" onclick="openExpensesScreen()">
         <div style="font-size: 22px;">💸</div>खर्च रजिस्टर व बिल
@@ -514,7 +515,7 @@
     </div>
   </div>
 
-  <!-- 4.1 VOLUNTEER ID CARD SCREEN (ATTRACTIVE & SQUARE BOX PHOTO) -->
+  <!-- 4.1 VOLUNTEER ID CARD SCREEN -->
   <div id="screen-id-card" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅</button> पहचान पत्र</h2>
@@ -538,7 +539,6 @@
           </div>
 
           <div class="id-card-body-content">
-            <!-- Boxed Photo Container -->
             <div class="id-user-box-photo-wrap">
               <div class="id-user-photo-box">
                 <img id="id-card-user-img" alt="कार्यकर्ता फोटो" />
@@ -579,37 +579,24 @@
               NYDPS-2026-VOL
             </div>
 
-            <!-- Standard Universal Circular Stamp -->
             <div class="seal-wrap" style="width: 58px; height: 58px;">
               <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
                 <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
                 <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
-                
                 <defs>
                   <path id="seal-idc-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
                   <path id="seal-idc-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
                 </defs>
-
                 <text fill="#b71c1c" font-size="14" font-weight="900">
-                  <textPath href="#seal-idc-top-curve" startOffset="50%" text-anchor="middle">
-                    नवयुवा दुर्गा पूजा समिति
-                  </textPath>
+                  <textPath href="#seal-idc-top-curve" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
                 </text>
-
                 <text fill="#b71c1c" font-size="12.5" font-weight="900">
-                  <textPath href="#seal-idc-bot-curve" startOffset="50%" text-anchor="middle">
-                    रेलवे गेट, मारकुंडी
-                  </textPath>
+                  <textPath href="#seal-idc-bot-curve" startOffset="50%" text-anchor="middle">रेलवे गेट, मारकुंडी</textPath>
                 </text>
-
                 <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
                 <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
-
-                <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
-                  ★ प्रमाणित ★
-                </text>
-
+                <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">★ प्रमाणित ★</text>
                 <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
                 <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
               </svg>
@@ -928,9 +915,16 @@
           <h2 style="color: #b71c1c; text-align: center; font-size: 19px; line-height: 1.2;">नवयुवा दुर्गा पूजा समिति</h2>
           <div style="text-align: center; font-size: 12px; color: #4a148c; font-weight: bold; margin-bottom: 6px;">🚩 रेलवे गेट, मारकुंडी, सोनभद्र 🚩</div>
 
+          <!-- Cancelled Badge -->
           <div id="pv-cancelled-card" style="display: none;" class="cancelled-badge">
             ❌ यह रसीद रद्द (CANCELLED) कर दी गई है ❌
             <div id="pv-cancel-reason" style="font-size: 11px; font-weight: normal; margin-top: 2px;"></div>
+          </div>
+
+          <!-- Cancellation Request Pending Badge -->
+          <div id="pv-cancel-pending-badge" style="display: none;" class="pending-cancel-badge">
+            ⏳ रद्दीकरण अनुरोध एडमिन के पास अनुमोदन (Approval) हेतु लंबित है।
+            <div id="pv-cancel-req-info" style="font-size: 11px; font-weight: normal; margin-top: 2px;"></div>
           </div>
 
           <div style="text-align: center;" id="pv-badge-container">
@@ -995,37 +989,24 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 4px 4px 4px; font-size: 12px;">
             <div>
-              <!-- Standard Universal Circular Stamp for Receipt -->
               <div class="seal-wrap">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
                   <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
                   <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
-                  
                   <defs>
                     <path id="seal-rec-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
                     <path id="seal-rec-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
                   </defs>
-
                   <text fill="#b71c1c" font-size="14" font-weight="900">
-                    <textPath href="#seal-rec-top-curve" startOffset="50%" text-anchor="middle">
-                      नवयुवा दुर्गा पूजा समिति
-                    </textPath>
+                    <textPath href="#seal-rec-top-curve" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
                   </text>
-
                   <text fill="#b71c1c" font-size="12.5" font-weight="900">
-                    <textPath href="#seal-rec-bot-curve" startOffset="50%" text-anchor="middle">
-                      रेलवे गेट, मारकुंडी
-                    </textPath>
+                    <textPath href="#seal-rec-bot-curve" startOffset="50%" text-anchor="middle">रेलवे गेट, मारकुंडी</textPath>
                   </text>
-
                   <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
                   <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
-
-                  <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
-                    ★ प्रमाणित ★
-                  </text>
-
+                  <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">★ प्रमाणित ★</text>
                   <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
                   <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
                 </svg>
@@ -1042,7 +1023,7 @@
       </div>
     </div>
 
-    <!-- Button Section (Cancelled rasid par sirf Home dikhega) -->
+    <!-- Action Buttons -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
       <div id="receipt-active-actions-box" style="display: flex; flex-direction: column; gap: 8px;">
         <button class="btn" id="btn-donor-save-pdf" style="background: #b71c1c; font-size: 16px;" onclick="downloadReceiptPDF()">
@@ -1059,6 +1040,12 @@
 
         <button class="btn btn-blue receipt-staff-btn" onclick="shareWhatsApp()">💬 WhatsApp लिंक व विवरण भेजें</button>
         
+        <!-- User Cancellation Request Button -->
+        <button class="btn receipt-staff-btn btn-orange" id="btn-user-request-cancel" style="display: none;" onclick="requestReceiptCancellation()">
+          📩 रसीद रद्द करने का अनुरोध भेजें (Request Cancel)
+        </button>
+
+        <!-- Admin Direct / Approval Cancel Button -->
         <button class="btn receipt-staff-btn" style="background: #c62828;" id="btn-admin-cancel-rec" onclick="adminCancelCurrentReceipt()">
           🚫 यह रसीद रद्द करें (Cancel Receipt)
         </button>
@@ -1112,37 +1099,24 @@
 
           <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 16px; border-top: 1px dashed #ffcc80; padding-top: 8px;">
             <div style="text-align: left;">
-              <!-- Standard Official Circular Stamp On Certificate as Well -->
               <div class="seal-wrap" style="width: 58px; height: 58px; margin: 0 0 2px 0;">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
                   <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
                   <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
-                  
                   <defs>
                     <path id="seal-cert-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
                     <path id="seal-cert-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
                   </defs>
-
                   <text fill="#b71c1c" font-size="14" font-weight="900">
-                    <textPath href="#seal-cert-top-curve" startOffset="50%" text-anchor="middle">
-                      नवयुवा दुर्गा पूजा समिति
-                    </textPath>
+                    <textPath href="#seal-cert-top-curve" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
                   </text>
-
                   <text fill="#b71c1c" font-size="12.5" font-weight="900">
-                    <textPath href="#seal-cert-bot-curve" startOffset="50%" text-anchor="middle">
-                      रेलवे गेट, मारकुंडी
-                    </textPath>
+                    <textPath href="#seal-cert-bot-curve" startOffset="50%" text-anchor="middle">रेलवे गेट, मारकुंडी</textPath>
                   </text>
-
                   <line x1="42" y1="84" x2="158" y2="84" stroke="#b71c1c" stroke-width="2" />
                   <line x1="42" y1="116" x2="158" y2="116" stroke="#b71c1c" stroke-width="2" />
-
-                  <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">
-                    ★ प्रमाणित ★
-                  </text>
-
+                  <text x="100" y="105" font-size="17" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="1">★ प्रमाणित ★</text>
                   <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
                   <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
                 </svg>
@@ -1185,6 +1159,7 @@
         <select id="sel-status-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderReceiptsList()">
           <option value="ALL">सभी स्थिति</option>
           <option value="VALID">✅ केवल वैध</option>
+          <option value="PENDING">⏳ कैंसल अनुरोध (Pending)</option>
           <option value="CANCELLED">❌ रद्द रसीदें</option>
         </select>
       </div>
@@ -1251,7 +1226,7 @@
     <div id="users-list-box" style="padding: 14px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 10. CREATE USER (WITH DESIGNATION / PアドNAM OPTION) -->
+  <!-- 10. CREATE USER -->
   <div id="screen-create-user" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> नया कार्यकर्ता</h2>
@@ -1401,7 +1376,7 @@
     return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
   }
 
-  // ULTRA COMPACT HASH LINK (e.g. domain.com/#A001_8a1f2c9e)
+  // ULTRA COMPACT HASH LINK
   function getSecureVerificationLink(r) {
     var sig = generateSecureReceiptSignature(r);
     var cleanBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '');
@@ -1573,11 +1548,47 @@
     showScreen('screen-expenses');
   }
 
-  function adminCancelCurrentReceipt() {
-    if (currentUser) {
-      alert("केवल एडमिन ही रसीद रद्द कर सकते हैं!");
+  // USER REQUEST CANCELLATION
+  function requestReceiptCancellation() {
+    if (!currentUser) return;
+    if (!currentReceipt) return;
+
+    if (currentReceipt.isCancelled) {
+      alert("यह रसीद पहले ही रद्द हो चुकी है!");
       return;
     }
+    if (currentReceipt.cancelRequested) {
+      alert("इस रसीद के रद्दीकरण का अनुरोध पहले ही भेजा जा चुका है!");
+      return;
+    }
+
+    var reason = prompt("रसीद संख्या '" + currentReceipt.no + "' रद्द करने का कारण लिखें:");
+    if (!reason || !reason.trim()) {
+      alert("अनुरोध भेजने के लिए कारण लिखना अनिवार्य है!");
+      return;
+    }
+
+    currentReceipt.cancelRequested = true;
+    currentReceipt.cancelRequestReason = reason.trim();
+    currentReceipt.cancelRequestedBy = currentUser.name;
+    currentReceipt.cancelRequestedAt = new Date().toLocaleString();
+
+    for (var i = 0; i < receipts.length; i++) {
+      if (receipts[i].no === currentReceipt.no) {
+        receipts[i] = currentReceipt;
+        break;
+      }
+    }
+
+    localStorage.setItem('durga_receipts', JSON.stringify(receipts));
+    syncToFirebase("receipts", receipts);
+    showPreview(currentReceipt);
+    alert("✅ रद्दीकरण का अनुरोध एडमिन को भेज दिया गया है। एडमिन की स्वीकृति के बाद यह रद्द होगी।");
+  }
+
+  // ADMIN APPROVE / REJECT / DIRECT CANCEL
+  function adminCancelCurrentReceipt() {
+    if (currentUser) return;
     if (!currentReceipt) return;
 
     if (currentReceipt.isCancelled) {
@@ -1585,6 +1596,35 @@
       return;
     }
 
+    // अगर कार्यकर्ता द्वारा अनुरोध लंबित है
+    if (currentReceipt.cancelRequested) {
+      var action = confirm(
+        "कार्यकर्ता: " + currentReceipt.cancelRequestedBy + "\n" +
+        "कारण: " + currentReceipt.cancelRequestReason + "\n\n" +
+        "[OK] = रद्दीकरण स्वीकार करें (Approve Cancel)\n" +
+        "[Cancel] = अनुरोध अस्वीकार करें या पीछे हटें"
+      );
+
+      if (action) {
+        currentReceipt.isCancelled = true;
+        currentReceipt.cancelRequested = false;
+        currentReceipt.cancelReason = currentReceipt.cancelRequestReason;
+        currentReceipt.cancelledAt = new Date().toLocaleString();
+        finalizeReceiptCancellation("✅ रद्दीकरण अनुरोध स्वीकृत कर दिया गया! रसीद रद्द हो चुकी है।");
+      } else {
+        var reject = confirm("क्या आप इस रद्दीकरण अनुरोध को खारिज (Reject) करना चाहते हैं ताकि रसीद पूर्ववत मान्य रहे?");
+        if (reject) {
+          currentReceipt.cancelRequested = false;
+          delete currentReceipt.cancelRequestReason;
+          delete currentReceipt.cancelRequestedBy;
+          delete currentReceipt.cancelRequestedAt;
+          finalizeReceiptCancellation("रद्दीकरण अनुरोध खारिज कर दिया गया। रसीद मान्य है।");
+        }
+      }
+      return;
+    }
+
+    // एडमिन द्वारा सीधे रद्द करना
     var reason = prompt("रसीद संख्या '" + currentReceipt.no + "' रद्द करने का कारण लिखें:");
     if (!reason || !reason.trim()) {
       alert("रद्दीकरण का कारण लिखना अनिवार्य है!");
@@ -1592,9 +1632,13 @@
     }
 
     currentReceipt.isCancelled = true;
+    currentReceipt.cancelRequested = false;
     currentReceipt.cancelReason = reason.trim();
     currentReceipt.cancelledAt = new Date().toLocaleString();
+    finalizeReceiptCancellation("✅ रसीद सफलतापूर्वक रद्द कर दी गई!");
+  }
 
+  function finalizeReceiptCancellation(msg) {
     for (var i = 0; i < receipts.length; i++) {
       if (receipts[i].no === currentReceipt.no) {
         receipts[i] = currentReceipt;
@@ -1605,7 +1649,7 @@
     syncToFirebase("receipts", receipts);
     updateAdminSummary();
     showPreview(currentReceipt);
-    alert("✅ रसीद सफलतापूर्वक रद्द कर दी गई!");
+    alert(msg);
   }
 
   function generateDeviceToken() {
@@ -1802,6 +1846,7 @@
       code: code,
       isReceived: true,
       isCancelled: false,
+      cancelRequested: false,
       hash: ''
     };
     newRec.hash = generateSecureReceiptSignature(newRec);
@@ -1831,16 +1876,48 @@
     document.getElementById('pv-by').innerText = r.by;
 
     var cancelCard = document.getElementById('pv-cancelled-card');
+    var pendingBadge = document.getElementById('pv-cancel-pending-badge');
     var activeActionsBox = document.getElementById('receipt-active-actions-box');
+    var btnAdminCancel = document.getElementById('btn-admin-cancel-rec');
+    var btnUserRequest = document.getElementById('btn-user-request-cancel');
 
-    // CANCELLED RECEIPT LOGIC
+    // रद्दीकरण स्थिति हैंडलिंग
     if (r.isCancelled) {
       cancelCard.style.display = 'block';
+      pendingBadge.style.display = 'none';
       document.getElementById('pv-cancel-reason').innerText = "कारण: " + (r.cancelReason || 'समिति द्वारा निरस्त');
       if (activeActionsBox) activeActionsBox.style.display = 'none';
+    } else if (r.cancelRequested) {
+      cancelCard.style.display = 'none';
+      pendingBadge.style.display = 'block';
+      document.getElementById('pv-cancel-req-info').innerText = "अनुरोधकर्ता: " + (r.cancelRequestedBy || 'कार्यकर्ता') + " • कारण: " + (r.cancelRequestReason || 'उल्लेखित नहीं');
+      if (activeActionsBox) activeActionsBox.style.display = 'flex';
+
+      if (currentUser) {
+        if (btnUserRequest) btnUserRequest.style.display = 'none';
+        if (btnAdminCancel) btnAdminCancel.style.display = 'none';
+      } else {
+        if (btnAdminCancel) {
+          btnAdminCancel.style.display = 'block';
+          btnAdminCancel.innerText = "⚖️ रद्दीकरण अनुरोध का निपटारा करें (Approve / Reject)";
+        }
+        if (btnUserRequest) btnUserRequest.style.display = 'none';
+      }
     } else {
       cancelCard.style.display = 'none';
+      pendingBadge.style.display = 'none';
       if (activeActionsBox) activeActionsBox.style.display = 'flex';
+
+      if (currentUser) {
+        if (btnUserRequest) btnUserRequest.style.display = 'block';
+        if (btnAdminCancel) btnAdminCancel.style.display = 'none';
+      } else {
+        if (btnAdminCancel) {
+          btnAdminCancel.style.display = 'block';
+          btnAdminCancel.innerText = "🚫 यह रसीद रद्द करें (Cancel Receipt)";
+        }
+        if (btnUserRequest) btnUserRequest.style.display = 'none';
+      }
     }
 
     var rowAmt = document.getElementById('pv-row-amount');
@@ -1860,7 +1937,6 @@
       document.getElementById('pv-words').innerText = numberToHindiWords(r.amt);
     }
 
-    // SAMMAN EVAM AABHAR PATRA CONDITION (Only for ₹500 or above)
     var btnOpenCert = document.getElementById('btn-open-cert');
     var donationVal = (r.type === 'ITEM') ? (r.itemVal || 0) : (Number(r.amt) || 0);
     if (btnOpenCert) {
@@ -1878,15 +1954,11 @@
       document.querySelectorAll('.receipt-staff-btn').forEach(function(el) { el.style.display = 'none'; });
       var topBack = document.getElementById('btn-top-back');
       if (topBack) topBack.style.display = 'none';
-    } else {
-      var btnCancel = document.getElementById('btn-admin-cancel-rec');
-      if (btnCancel) btnCancel.style.display = (currentUser === null && !r.isCancelled) ? 'block' : 'none';
     }
 
     showScreen('screen-preview');
   }
 
-  // ULTRA SHORT & TAMPER-PROOF VERIFICATION ROUTER
   function checkUrlVerification() {
     var vNo = "";
     var sig = "";
@@ -1954,7 +2026,6 @@
       });
   }
 
-  // DONOR CERTIFICATE SCREEN (₹500+ Guard)
   function openDonorCertificateScreen() {
     if (!currentReceipt) return;
 
@@ -2430,9 +2501,13 @@
 
   function updateAdminSummary() {
     var totalIncome = 0;
+    var pendingReqCount = 0;
     for (var i = 0; i < receipts.length; i++) {
       if (!receipts[i].isCancelled && receipts[i].type !== 'ITEM') {
         totalIncome += Number(receipts[i].amt) || 0;
+      }
+      if (!receipts[i].isCancelled && receipts[i].cancelRequested) {
+        pendingReqCount++;
       }
     }
     var totalExpense = 0;
@@ -2442,6 +2517,16 @@
     document.getElementById('adm-sum-income').innerText = '₹' + totalIncome;
     document.getElementById('adm-sum-expense').innerText = '₹' + totalExpense;
     document.getElementById('adm-sum-balance').innerText = '₹' + (totalIncome - totalExpense);
+
+    var pBadge = document.getElementById('adm-pending-badge');
+    if (pBadge) {
+      if (pendingReqCount > 0) {
+        pBadge.innerText = pendingReqCount;
+        pBadge.style.display = 'inline-block';
+      } else {
+        pBadge.style.display = 'none';
+      }
+    }
   }
 
   function updateUserPassbook() {
@@ -2529,6 +2614,7 @@
       if (currentUser && r.code !== currentUser.code) return false;
       if (!currentUser && selectedUser !== 'ALL' && r.code !== selectedUser) return false;
       if (selectedStatus === 'VALID' && r.isCancelled) return false;
+      if (selectedStatus === 'PENDING' && (!r.cancelRequested || r.isCancelled)) return false;
       if (selectedStatus === 'CANCELLED' && !r.isCancelled) return false;
       if (searchText && (r.no + r.name + r.phone).toLowerCase().indexOf(searchText) === -1) return false;
       return true;
@@ -2539,9 +2625,19 @@
       if (!r.isCancelled && r.type !== 'ITEM') tot += Number(r.amt);
       if (!r.isCancelled) count++;
 
+      var borderColor = '#2e7d32';
+      var statusTag = '';
+      if (r.isCancelled) {
+        borderColor = '#c62828';
+        statusTag = '<span style="color:#c62828; font-size:10px; font-weight:bold;"> (रद्द)</span>';
+      } else if (r.cancelRequested) {
+        borderColor = '#ff9800';
+        statusTag = '<span style="color:#e65100; font-size:10px; font-weight:bold;"> (कैंसल अनुरोध लंबित ⏳)</span>';
+      }
+
       var div = document.createElement('div');
-      div.style.cssText = 'background:#fff; padding:10px; border-radius:6px; margin-bottom:8px; border-left:4px solid ' + (r.isCancelled ? '#c62828' : '#2e7d32') + '; display:flex; justify-content:space-between; align-items:center;';
-      div.innerHTML = `<div><strong>${r.no} - ${r.name} [${r.code}]</strong> ${r.isCancelled ? '<span style="color:#c62828; font-size:10px; font-weight:bold;">(रद्द)</span>' : ''}<br><small>${r.phone} • रु. ${r.amt}</small></div>`;
+      div.style.cssText = 'background:#fff; padding:10px; border-radius:6px; margin-bottom:8px; border-left:4px solid ' + borderColor + '; display:flex; justify-content:space-between; align-items:center;';
+      div.innerHTML = `<div><strong>${r.no} - ${r.name} [${r.code}]</strong> ${statusTag}<br><small>${r.phone} • रु. ${r.amt}</small></div>`;
       var btn = document.createElement('button');
       btn.innerText = 'देखें';
       btn.style.cssText = 'padding:4px 10px; border-radius:4px; border:1px solid #ccc; background:#f5f5f5; cursor:pointer; font-weight:bold;';
@@ -2627,7 +2723,6 @@
     return code;
   }
 
-  // SAVE NEW USER (STORES CUSTOM DESIGNATION / PADNAMA)
   function saveNewUser() {
     var n = document.getElementById('nu-name').value.trim();
     var r = document.getElementById('nu-role').value.trim() || 'व्यवस्था सहयोगी';
@@ -2677,7 +2772,6 @@
     }
   }
 
-  // ULTRA SHORT & CLEAN WHATSAPP SHARE
   function shareWhatsApp() {
     if (!currentReceipt) return;
     var verifyUrl = getSecureVerificationLink(currentReceipt);
@@ -2694,7 +2788,8 @@
     if (!receipts.length) return alert("डेटा नहीं है!");
     var csv = "\uFEFFरसीद,दानदाता,मोबाइल,पता,माध्यम,राशि,कार्यकर्ता,कोड,स्थिति\n";
     receipts.forEach(function(r) {
-      csv += `"${r.no}","${r.name}","${r.phone}","${r.addr}","${r.type}",${r.amt},"${r.by}","${r.code}","${r.isCancelled ? 'CANCELLED' : 'VALID'}"\n`;
+      var st = r.isCancelled ? 'CANCELLED' : (r.cancelRequested ? 'CANCEL_REQUESTED' : 'VALID');
+      csv += `"${r.no}","${r.name}","${r.phone}","${r.addr}","${r.type}",${r.amt},"${r.by}","${r.code}","${st}"\n`;
     });
     var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     var a = document.createElement('a');
