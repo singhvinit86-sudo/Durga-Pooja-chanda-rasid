@@ -1235,12 +1235,13 @@
     <div id="receipts-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 8. EXPENSES SCREEN (ADMIN & USER) -->
+  <!-- 8. EXPENSES SCREEN (ADMIN & USER DEDICATED) -->
   <div id="screen-expenses" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> खर्च रजिस्टर व बिल</h2>
     </div>
 
+    <!-- खर्च जोड़ने का फॉर्म -->
     <div style="padding: 14px 16px; background: #fff8e1; border-bottom: 1.5px solid #ffe082;">
       <h3 style="font-size: 14px; color: #b71c1c; margin-bottom: 8px; font-weight: bold;">➕ नया खर्च व बिल दर्ज करें</h3>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -1269,8 +1270,22 @@
       <button class="btn btn-green" style="margin-top: 10px; padding: 10px;" onclick="saveExpense()">💾 खर्च व बिल सुरक्षित करें</button>
     </div>
 
+    <!-- एडमिन के लिए विशेष फ़िल्टर बार (नाम/मद/तारीख से खोजें) -->
+    <div id="admin-exp-filter-box" style="padding: 10px 14px; background: #fdf2e9; border-bottom: 1.5px solid #f0b27a; display: flex; flex-direction: column; gap: 8px;">
+      <div style="font-size: 11.5px; font-weight: bold; color: #b71c1c;">🔍 खर्च फ़िल्टर व खोज (Admin Filter)</div>
+      <div style="display: flex; gap: 8px;">
+        <select id="sel-exp-user-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderExpensesList()">
+          <option value="ALL">👥 सभी के खर्च (All)</option>
+        </select>
+      </div>
+      <div>
+        <input type="text" id="inp-search-exp" class="form-input" style="padding: 7px 10px; font-size: 13px;" placeholder="🔎 मद, तारीख या नाम से खोजें..." onkeyup="renderExpensesList()" />
+      </div>
+    </div>
+
+    <!-- खर्च सारांश पट्टी -->
     <div style="padding: 10px 14px; background: #fbe9e7; display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ffccbc;">
-      <span>कुल प्रविष्टियां: <span id="tot-exp-count">0</span></span>
+      <span id="lbl-exp-count">प्रविष्टियां: <span id="tot-exp-count">0</span></span>
       <span style="color: #c62828;" id="tot-exp-amt">रु. 0</span>
     </div>
 
@@ -1548,19 +1563,35 @@
   }
 
   // =========================================================================
-  // खर्च दर्ज करने व बैलेंस घटाने का लॉजिक (USER & ADMIN)
+  // खर्च दर्ज करने, फ़िल्टर करने व गोपनीयता का लॉजिक
   // =========================================================================
   function openExpensesScreen() {
     document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
     removeTempBillPhoto();
 
     var expByInput = document.getElementById('exp-by');
+    var filterBox = document.getElementById('admin-exp-filter-box');
+    var selFilter = document.getElementById('sel-exp-user-filter');
+
     if (currentUser) {
+      // कार्यकर्ता मोड: केवल अपना नाम दिखेगा और फ़िल्टर छिपा रहेगा
       expByInput.value = currentUser.name + " (" + currentUser.code + ")";
       expByInput.disabled = true;
+      if (filterBox) filterBox.style.display = 'none';
     } else {
+      // एडमिन मोड: फ़िल्टर दिखेगा और ड्रॉपडाउन पॉप्युलेट होगा
       expByInput.value = "एडमिन/समिति";
       expByInput.disabled = false;
+      if (filterBox) {
+        filterBox.style.display = 'flex';
+        selFilter.innerHTML = '<option value="ALL">👥 सभी के खर्च (All)</option><option value="ADM">समिति / एडमिन (ADM)</option>';
+        users.forEach(function(u) {
+          var opt = document.createElement('option');
+          opt.value = u.code;
+          opt.innerText = u.name + ' (' + u.code + ')';
+          selFilter.appendChild(opt);
+        });
+      }
     }
 
     renderExpensesList();
@@ -1632,9 +1663,32 @@
     var box = document.getElementById('expenses-list-box');
     box.innerHTML = '';
     var tot = 0;
+    var count = 0;
+
+    var selectedUser = document.getElementById('sel-exp-user-filter') ? document.getElementById('sel-exp-user-filter').value : 'ALL';
+    var searchText = (document.getElementById('inp-search-exp') ? document.getElementById('inp-search-exp').value : '').toLowerCase().trim();
 
     expenses.forEach(function(e) {
+      // 1. यदि कार्यकर्ता लॉग-इन है, तो केवल उसी का खर्च दिखेगा
+      if (currentUser && e.userCode !== currentUser.code) {
+        return;
+      }
+
+      // 2. यदि एडमिन लॉग-इन है और उसने किसी विशिष्ट कार्यकर्ता का फ़िल्टर चुना है
+      if (!currentUser && selectedUser !== 'ALL') {
+        if (selectedUser === 'ADM' && e.userCode && e.userCode !== 'ADM') return;
+        if (selectedUser !== 'ADM' && e.userCode !== selectedUser) return;
+      }
+
+      // 3. सर्च बार फ़िल्टर (मद, नाम या तारीख से)
+      if (searchText) {
+        var str = (e.title + " " + e.by + " " + e.date + " " + (e.userCode || '')).toLowerCase();
+        if (str.indexOf(searchText) === -1) return;
+      }
+
       tot += Number(e.amt);
+      count++;
+
       var div = document.createElement('div');
       div.style.cssText = 'background:#fff; padding:10px 12px; border-radius:8px; margin-bottom:8px; border-left:4px solid #c2185b; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 3px rgba(0,0,0,0.06);';
 
@@ -1663,7 +1717,11 @@
       box.appendChild(div);
     });
 
-    document.getElementById('tot-exp-count').innerText = expenses.length;
+    if (count === 0) {
+      box.innerHTML = `<div style="text-align:center; padding:20px; color:#888; font-size:13px;">कोई खर्च दर्ज नहीं मिला।</div>`;
+    }
+
+    document.getElementById('tot-exp-count').innerText = count;
     document.getElementById('tot-exp-amt').innerText = 'रु. ' + tot;
   }
 
@@ -2487,7 +2545,7 @@
       "📄 कुल काटी रसीदें: " + count + "\n" +
       "💵 नकद संग्रह: *रु. " + cash + "/-*\n" +
       "📲 ऑनलाइन संग्रह: *रु. " + online + "/-*\n" +
-      "💸 आज का दर्ज खर्च: *रु. " + myExpToday + "/-*\n" +
+      "💸 आज का मेरा खर्च: *रु. " + myExpToday + "/-*\n" +
       "💰 कुल योग: *रु. " + (cash + online) + "/-*\n" +
       "-----------------------------------\n" +
       "जय माता दी! 🙏";
