@@ -123,7 +123,7 @@
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.25)); }
 
     /* Certificate Box & Layout */
-    .cert-box { padding: 12px; background: #f0f2f5; display: center; justify-content: center; }
+    .cert-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
     .cert-border { width: 100%; background: #fffdf2; border: 4px double #b71c1c; border-radius: 12px; padding: 12px; position: relative; }
     .cert-inner { border: 2px dashed #d97706; padding: 18px 14px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; }
     .cert-header-photo { width: 70px; height: 70px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ffb300; }
@@ -538,7 +538,7 @@
         </div>
         <div class="passbook-item">
           <div class="val" style="color: #2e7d32;" id="usr-stat-paid">रु. 0</div>
-          <div class="lbl">एडमिन को जमा</div>
+          <div class="lbl">जमा व खर्च</div>
         </div>
         <div class="passbook-item" style="background: #fff3e0; border-color: #ffcc80;">
           <div class="val" style="color: #d32f2f;" id="usr-stat-pending">रु. 0</div>
@@ -556,6 +556,9 @@
       </button>
       <button class="btn btn-orange" onclick="openReceiptForm()">✏️ नई रसीद बनाएं</button>
       <button class="btn btn-blue" onclick="openReceiptsList()">📋 मेरी रसीदें</button>
+      <button class="btn" style="background: #c2185b;" onclick="openExpensesScreen()">
+        💸 मेरा खर्च व बिल दर्ज करें
+      </button>
     </div>
 
     <div style="padding: 16px; margin-top: auto;">
@@ -1232,10 +1235,10 @@
     <div id="receipts-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 8. EXPENSES SCREEN -->
+  <!-- 8. EXPENSES SCREEN (ADMIN & USER) -->
   <div id="screen-expenses" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> खर्च रजिस्टर</h2>
+      <h2><button class="icon-btn" onclick="backToHome()">⬅️</button> खर्च रजिस्टर व बिल</h2>
     </div>
 
     <div style="padding: 14px 16px; background: #fff8e1; border-bottom: 1.5px solid #ffe082;">
@@ -1428,7 +1431,15 @@
 
   function generateSecureReceiptSignature(r) {
     var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.code || '');
-    return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
+    if (window.CryptoJS && CryptoJS.HmacSHA256) {
+      return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
+    }
+    var hash = 0;
+    for (var i = 0; i < payload.length; i++) {
+      hash = ((hash << 5) - hash) + payload.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash).toString(16).substring(0, 8);
   }
 
   function getSecureVerificationLink(r) {
@@ -1536,26 +1547,55 @@
     document.getElementById('exp-bill-preview-box').style.display = 'none';
   }
 
+  // =========================================================================
+  // खर्च दर्ज करने व बैलेंस घटाने का लॉजिक (USER & ADMIN)
+  // =========================================================================
+  function openExpensesScreen() {
+    document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+    removeTempBillPhoto();
+
+    var expByInput = document.getElementById('exp-by');
+    if (currentUser) {
+      expByInput.value = currentUser.name + " (" + currentUser.code + ")";
+      expByInput.disabled = true;
+    } else {
+      expByInput.value = "एडमिन/समिति";
+      expByInput.disabled = false;
+    }
+
+    renderExpensesList();
+    showScreen('screen-expenses');
+  }
+
   function saveExpense() {
     var title = document.getElementById('exp-title').value.trim();
-    var amt = document.getElementById('exp-amt').value.trim();
-    var by = document.getElementById('exp-by').value.trim() || 'समिति';
+    var amtInput = document.getElementById('exp-amt').value.trim();
+    var by = currentUser ? (currentUser.name + " (" + currentUser.code + ")") : (document.getElementById('exp-by').value.trim() || 'एडमिन/समिति');
     var date = document.getElementById('exp-date').value || new Date().toISOString().split('T')[0];
 
-    if (!title || !amt) {
-      alert("विवरण व रकम भरें!");
+    if (!title || !amtInput) {
+      alert("⚠️ कृपया विवरण व रकम भरें!");
       return;
     }
 
-    expenses.unshift({
+    var expAmt = parseInt(amtInput, 10);
+    if (isNaN(expAmt) || expAmt <= 0) {
+      alert("⚠️ कृपया मान्य राशि दर्ज करें!");
+      return;
+    }
+
+    var newExp = {
       id: Date.now(),
       title: title,
-      amt: parseInt(amt, 10),
+      amt: expAmt,
       by: by,
+      userCode: currentUser ? currentUser.code : 'ADM',
+      userName: currentUser ? currentUser.name : 'एडमिन',
       date: date,
       billPhoto: tempExpenseBillPhoto || ''
-    });
+    };
 
+    expenses.unshift(newExp);
     localStorage.setItem('durga_expenses', JSON.stringify(expenses));
     syncToFirebase("expenses", expenses);
 
@@ -1565,40 +1605,66 @@
 
     renderExpensesList();
     updateAdminSummary();
-    alert("✅ खर्च व बिल रसीद सुरक्षित हो गई!");
+    if (currentUser) updateUserPassbook();
+
+    alert("✅ खर्च व बिल रसीद सुरक्षित हो गई! बैलेंस से राशि स्वतः घट गई है।");
+  }
+
+  function deleteExpense(expId) {
+    var item = expenses.find(function(e) { return e.id === expId; });
+    if (!item) return;
+
+    if (!confirm("क्या आप वाकई '" + item.title + "' (₹" + item.amt + ") का खर्च हटाना चाहते हैं?\nयह राशि वापस शेष बचत में जुड़ जाएगी।")) {
+      return;
+    }
+
+    expenses = expenses.filter(function(e) { return e.id !== expId; });
+    localStorage.setItem('durga_expenses', JSON.stringify(expenses));
+    syncToFirebase("expenses", expenses);
+
+    renderExpensesList();
+    updateAdminSummary();
+    if (currentUser) updateUserPassbook();
+    alert("✅ खर्च हटाया गया और राशि शेष बचत में जुड़ गई!");
   }
 
   function renderExpensesList() {
     var box = document.getElementById('expenses-list-box');
     box.innerHTML = '';
     var tot = 0;
+
     expenses.forEach(function(e) {
       tot += Number(e.amt);
       var div = document.createElement('div');
-      div.style.cssText = 'background:#fff; padding:10px; border-radius:6px; margin-bottom:8px; border-left:4px solid #c62828; display:flex; justify-content:space-between; align-items:center;';
-      
+      div.style.cssText = 'background:#fff; padding:10px 12px; border-radius:8px; margin-bottom:8px; border-left:4px solid #c2185b; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 3px rgba(0,0,0,0.06);';
+
       var billBtn = e.billPhoto 
-        ? `<a href="${e.billPhoto}" target="_blank" style="background:#e0f2fe; color:#0284c7; text-decoration:none; border:1px solid #7dd3fc; border-radius:6px; padding:4px 8px; font-size:11px; font-weight:bold;">🧾 बिल देखें</a>`
-        : `<span style="font-size:10.5px; color:#9e9e9e;">कोई बिल नहीं</span>`;
+        ? `<a href="${e.billPhoto}" target="_blank" style="background:#e0f2fe; color:#0284c7; text-decoration:none; border:1px solid #7dd3fc; border-radius:6px; padding:3px 7px; font-size:11px; font-weight:bold;">🧾 बिल</a>`
+        : `<span style="font-size:10px; color:#9e9e9e;">बिल नहीं</span>`;
+
+      var deleteBtn = (!currentUser) 
+        ? `<button onclick="deleteExpense(${e.id})" style="background:#ffebee; color:#c62828; border:1px solid #ef9a9a; border-radius:6px; padding:3px 7px; font-size:11px; font-weight:bold; cursor:pointer;" title="हटाएं">🗑️</button>` 
+        : '';
+
+      var userBadge = (e.userCode && e.userCode !== 'ADM')
+        ? `<span style="background:#e8eaf6; color:#283593; padding:1px 5px; border-radius:4px; font-size:10px; font-weight:bold;">कार्यकर्ता: ${e.userCode}</span>`
+        : `<span style="background:#fbe9e7; color:#d84315; padding:1px 5px; border-radius:4px; font-size:10px; font-weight:bold;">समिति/एडमिन</span>`;
 
       div.innerHTML = `
         <div>
-          <strong>${e.title}</strong> - <span style="color:#c62828; font-weight:bold;">₹${e.amt}</span><br>
-          <small style="color:#666;">${e.by} • ${e.date}</small>
+          <strong style="color:#212121; font-size:13.5px;">${e.title}</strong> - <span style="color:#c62828; font-weight:900;">₹${e.amt}</span><br>
+          <small style="color:#555; font-size:11px;">${userBadge} ${e.by} • ${e.date}</small>
         </div>
-        <div>${billBtn}</div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          ${billBtn}
+          ${deleteBtn}
+        </div>
       `;
       box.appendChild(div);
     });
+
     document.getElementById('tot-exp-count').innerText = expenses.length;
     document.getElementById('tot-exp-amt').innerText = 'रु. ' + tot;
-  }
-
-  function openExpensesScreen() {
-    document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
-    removeTempBillPhoto();
-    renderExpensesList();
-    showScreen('screen-expenses');
   }
 
   function requestReceiptCancellation() {
@@ -1635,7 +1701,7 @@
     localStorage.setItem('durga_receipts', JSON.stringify(receipts));
     syncToFirebase("receipts", receipts);
     showPreview(currentReceipt);
-    alert("✅ रद्दीकरण का अनुरोध एडमिन को भेज दिया गया है। एडमिन की स्वीकृति के बाद यह रद्द होगी।");
+    alert("✅ रद्दीकरण का अनुरोध एडमिन को भेज दिया गया है।");
   }
 
   function adminCancelCurrentReceipt() {
@@ -1652,7 +1718,7 @@
         "कार्यकर्ता: " + currentReceipt.cancelRequestedBy + "\n" +
         "कारण: " + currentReceipt.cancelRequestReason + "\n\n" +
         "[OK] = रद्दीकरण स्वीकार करें (Approve Cancel)\n" +
-        "[Cancel] = अनुरोध अस्वीकार करें या पीछे हटें"
+        "[Cancel] = अनुरोध अस्वीकार करें"
       );
 
       if (action) {
@@ -1660,15 +1726,15 @@
         currentReceipt.cancelRequested = false;
         currentReceipt.cancelReason = currentReceipt.cancelRequestReason;
         currentReceipt.cancelledAt = new Date().toLocaleString();
-        finalizeReceiptCancellation("✅ रद्दीकरण अनुरोध स्वीकृत कर दिया गया! रसीद रद्द हो चुकी है।");
+        finalizeReceiptCancellation("✅ रद्दीकरण अनुरोध स्वीकृत कर दिया गया!");
       } else {
-        var reject = confirm("क्या आप इस रद्दीकरण अनुरोध को खारिज (Reject) करना चाहते हैं ताकि रसीद पूर्ववत मान्य रहे?");
+        var reject = confirm("क्या आप इस रद्दीकरण अनुरोध को खारिज करना चाहते हैं?");
         if (reject) {
           currentReceipt.cancelRequested = false;
           delete currentReceipt.cancelRequestReason;
           delete currentReceipt.cancelRequestedBy;
           delete currentReceipt.cancelRequestedAt;
-          finalizeReceiptCancellation("रद्दीकरण अनुरोध खारिज कर दिया गया। रसीद मान्य है।");
+          finalizeReceiptCancellation("रद्दीकरण अनुरोध खारिज कर दिया गया।");
         }
       }
       return;
@@ -1842,6 +1908,7 @@
             renderNoticeBoard();
           }
           updateAdminSummary();
+          if (currentUser) updateUserPassbook();
         }
         if (callback) callback();
       }).catch(function() {
@@ -1912,6 +1979,7 @@
     }
 
     updateAdminSummary();
+    if (currentUser) updateUserPassbook();
     showPreview(newRec);
   }
 
@@ -1947,7 +2015,7 @@
       } else {
         if (btnAdminCancel) {
           btnAdminCancel.style.display = 'block';
-          btnAdminCancel.innerText = "⚖️ रद्दीकरण अनुरोध का निपटारा करें (Approve / Reject)";
+          btnAdminCancel.innerText = "⚖️ रद्दीकरण अनुरोध का निपटारा करें";
         }
         if (btnUserRequest) btnUserRequest.style.display = 'none';
       }
@@ -2404,6 +2472,13 @@
       }
     });
 
+    var myExpToday = 0;
+    expenses.forEach(function(e) {
+      if (e.userCode === currentUser.code && (e.date === todayStr || e.date === today.toISOString().split('T')[0])) {
+        myExpToday += Number(e.amt) || 0;
+      }
+    });
+
     var msg = "🚩 *दैनिक कार्यकर्ता चंदा रिपोर्ट* 🚩\n" +
       "*नवयुवा दुर्गा पूजा समिति, मारकुंडी*\n" +
       "👤 कार्यकर्ता: *" + currentUser.name + "* [कोड: " + currentUser.code + "]\n" +
@@ -2412,6 +2487,7 @@
       "📄 कुल काटी रसीदें: " + count + "\n" +
       "💵 नकद संग्रह: *रु. " + cash + "/-*\n" +
       "📲 ऑनलाइन संग्रह: *रु. " + online + "/-*\n" +
+      "💸 आज का दर्ज खर्च: *रु. " + myExpToday + "/-*\n" +
       "💰 कुल योग: *रु. " + (cash + online) + "/-*\n" +
       "-----------------------------------\n" +
       "जय माता दी! 🙏";
@@ -2562,9 +2638,15 @@
     for (var j = 0; j < expenses.length; j++) {
       totalExpense += Number(expenses[j].amt) || 0;
     }
+    
+    var netBalance = totalIncome - totalExpense;
+
     document.getElementById('adm-sum-income').innerText = '₹' + totalIncome;
     document.getElementById('adm-sum-expense').innerText = '₹' + totalExpense;
-    document.getElementById('adm-sum-balance').innerText = '₹' + (totalIncome - totalExpense);
+    
+    var balEl = document.getElementById('adm-sum-balance');
+    balEl.innerText = '₹' + netBalance;
+    balEl.style.color = (netBalance < 0) ? '#c62828' : '#1b5e20';
 
     var pBadge = document.getElementById('adm-pending-badge');
     if (pBadge) {
@@ -2579,16 +2661,26 @@
 
   function updateUserPassbook() {
     if (!currentUser) return;
-    var tot = 0;
+    var totCash = 0;
     for (var i = 0; i < receipts.length; i++) {
       if (receipts[i].code === currentUser.code && !receipts[i].isCancelled && (receipts[i].type === 'CASH' || !receipts[i].type)) {
-        tot += Number(receipts[i].amt) || 0;
+        totCash += Number(receipts[i].amt) || 0;
       }
     }
+    
+    var myExp = 0;
+    expenses.forEach(function(e) {
+      if (e.userCode === currentUser.code) {
+        myExp += Number(e.amt) || 0;
+      }
+    });
+
     var paid = Number(currentUser.deposited) || 0;
-    document.getElementById('usr-stat-total').innerText = 'रु. ' + tot;
-    document.getElementById('usr-stat-paid').innerText = 'रु. ' + paid;
-    document.getElementById('usr-stat-pending').innerText = 'रु. ' + Math.max(0, tot - paid);
+    var remaining = Math.max(0, totCash - paid - myExp);
+
+    document.getElementById('usr-stat-total').innerText = 'रु. ' + totCash;
+    document.getElementById('usr-stat-paid').innerText = 'रु. ' + paid + (myExp > 0 ? (' (+खर्च ₹' + myExp + ')') : '');
+    document.getElementById('usr-stat-pending').innerText = 'रु. ' + remaining;
   }
 
   function renderNoticeBoard() {
@@ -2651,9 +2743,6 @@
     }
   }
 
-  // =========================================================================
-  // ADMIN SECURE PASSWORD RESET FOR USERS
-  // =========================================================================
   function adminResetUserPassword(userId, userName) {
     var newP = prompt("कार्यकर्ता '" + userName + "' के लिए नया पासवर्ड दर्ज करें:\n(न्यूनतम 4 अक्षर/अंक)");
     if (!newP) return;
@@ -2668,7 +2757,7 @@
     for (var i = 0; i < users.length; i++) {
       if (users[i].id === userId) {
         users[i].pass = trimmedPass;
-        users[i].activeToken = ''; // पिछले सभी डिवाइस सत्र लॉगआउट करें
+        users[i].activeToken = '';
         targetUser = users[i];
         break;
       }
@@ -2677,7 +2766,7 @@
     if (targetUser) {
       localStorage.setItem('durga_users', JSON.stringify(users));
       syncToFirebase("users", users);
-      alert("✅ कार्यकर्ता '" + userName + "' का पासवर्ड सफलतापूर्वक रीसेट कर दिया गया!\nकार्यकर्ता को नया पासवर्ड बता दें।");
+      alert("✅ कार्यकर्ता '" + userName + "' का पासवर्ड रीसेट कर दिया गया!");
     }
   }
 
@@ -2757,8 +2846,14 @@
       receipts.forEach(function(r) {
         if (r.code === u.code && !r.isCancelled && (r.type === 'CASH' || !r.type)) tot += Number(r.amt);
       });
+      
+      var userExp = 0;
+      expenses.forEach(function(e) {
+        if (e.userCode === u.code) userExp += Number(e.amt);
+      });
+
       var paid = Number(u.deposited) || 0;
-      var pend = Math.max(0, tot - paid);
+      var pend = Math.max(0, tot - paid - userExp);
 
       var div = document.createElement('div');
       div.className = 'user-list-item';
@@ -2783,9 +2878,14 @@
             </button>
           </div>
         </div>
-        <div style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-top:4px;">
-          <div>नकद: <strong>₹${tot}</strong> | जमा: <strong style="color:#2e7d32;">₹${paid}</strong> | <span style="color:#d32f2f; font-weight:bold;">बकाया: ₹${pend}</span></div>
-          ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}',${pend})" style="background:#2e7d32; color:white; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">💰 जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
+        <div style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:11.5px; margin-top:4px;">
+          <div>
+            काटा नकद: <strong>₹${tot}</strong> | 
+            जमा: <strong style="color:#2e7d32;">₹${paid}</strong> | 
+            खर्च: <strong style="color:#c2185b;">₹${userExp}</strong> | 
+            <span style="color:#d32f2f; font-weight:bold;">बकाया: ₹${pend}</span>
+          </div>
+          ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}', ${pend})" style="background:#2e7d32; color:white; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">💰 जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
         </div>
       `;
       box.appendChild(div);
@@ -2814,16 +2914,22 @@
       if (r.type === 'CASH' || !r.type) totalCashCollected += Number(r.amt);
     });
     var deposited = targetUser ? (Number(targetUser.deposited) || 0) : 0;
-    var pendingCash = Math.max(0, totalCashCollected - deposited);
+    
+    var userExp = 0;
+    expenses.forEach(function(e) {
+      if (e.userCode === code) userExp += Number(e.amt);
+    });
+
+    var pendingCash = Math.max(0, totalCashCollected - deposited - userExp);
 
     if (pendingCash > 0) {
-      alert("⚠️ कार्यकर्ता को हटाया नहीं जा सकता!\n\n'" + name + "' के पास अभी ₹" + pendingCash + " नकद बकाया है। पहले पूरा हिसाब चुकता (जमा) करें।");
+      alert("⚠️ कार्यकर्ता को हटाया नहीं जा सकता!\n\n'" + name + "' के पास अभी ₹" + pendingCash + " नकद बकाया है। पहले पूरा हिसाब चुकता करें।");
       return;
     }
 
     var confirmMsg = "क्या आप निश्चित रूप से कार्यकर्ता '" + name + "' (कोड: " + code + ") को हटाना चाहते हैं?";
     if (userReceipts.length > 0) {
-      confirmMsg += "\n\n⚠️ ध्यान दें: इस कार्यकर्ता द्वारा " + userReceipts.length + " रसीदें काटी जा चुकी हैं। कार्यकर्ता हटने के बाद भी पुरानी रसीदों का ऑडिट रिकॉर्ड सुरक्षित रहेगा।";
+      confirmMsg += "\n\n⚠️ ध्यान दें: इस कार्यकर्ता द्वारा " + userReceipts.length + " रसीदें काटी जा चुकी हैं। ऑडिट रिकॉर्ड सुरक्षित रहेगा।";
     }
 
     if (!confirm(confirmMsg)) return;
