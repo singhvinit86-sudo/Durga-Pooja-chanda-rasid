@@ -1469,8 +1469,23 @@
     return str.trim() + ' रुपये मात्र';
   }
 
+  // रसीद के लिए छोटा व सुरक्षित 8-अक्षरों का HMAC टोकन
   function generateSecureReceiptSignature(r) {
     var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.code || '');
+    if (window.CryptoJS && CryptoJS.HmacSHA256) {
+      return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
+    }
+    var hash = 0;
+    for (var i = 0; i < payload.length; i++) {
+      hash = ((hash << 5) - hash) + payload.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash).toString(16).substring(0, 8);
+  }
+
+  // सम्मान पत्र के लिए अलग मजबूत व छोटा 8-अक्षरों का HMAC टोकन
+  function generateSecureCertificateSignature(r) {
+    var payload = "CERT_" + (r.no || '') + "_" + (r.name || '') + "_" + (r.amt || 0);
     if (window.CryptoJS && CryptoJS.HmacSHA256) {
       return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
     }
@@ -1488,10 +1503,11 @@
     return cleanBase + "/#" + encodeURIComponent(r.no) + "_" + sig;
   }
 
+  // सम्मान पत्र का संक्षिप्त व सुरक्षित लिंक (उदा. #C_A001_sig)
   function getSecureCertificateLink(r) {
-    var sig = generateSecureReceiptSignature(r);
+    var sig = generateSecureCertificateSignature(r);
     var cleanBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '');
-    return cleanBase + "/#CERT_" + encodeURIComponent(r.no) + "_" + sig;
+    return cleanBase + "/#C_" + encodeURIComponent(r.no) + "_" + sig;
   }
 
   function handleLogoMultiTap() {
@@ -2156,6 +2172,7 @@
     showScreen('screen-preview');
   }
 
+  // URL सत्यापन जांच - रसीद व सम्मान पत्र दोनों हेतु
   function checkUrlVerification() {
     var vNo = "";
     var sig = "";
@@ -2164,7 +2181,7 @@
     var h = window.location.hash.replace(/^#/, '');
     if (h && h.indexOf('_') !== -1) {
       var parts = h.split('_');
-      if (parts[0] === 'CERT') {
+      if (parts[0] === 'C') {
         isCertView = true;
         vNo = decodeURIComponent(parts[1]);
         sig = parts[2];
@@ -2203,15 +2220,18 @@
           var matched = cloudRecs.find(function(x) { return x.no === vNo; });
 
           if (matched) {
-            var legitimateSignature = generateSecureReceiptSignature(matched);
+            var legitimateSignature = isCertView 
+              ? generateSecureCertificateSignature(matched)
+              : generateSecureReceiptSignature(matched);
 
+            // अगर लिंक में 1 अक्षर का भी बदलाव होगा तो यह तुरंत ब्लॉक करेगा
             if (sig !== legitimateSignature) {
               document.body.innerHTML = `
                 <div style="text-align:center; padding:40px 20px; font-family:sans-serif; background:#fff; min-height:100vh;">
                   <div style="font-size:60px; color:#c62828;">⚠️</div>
                   <h2 style="color:#c62828; margin-top:10px;">सुरक्षा उल्लंघन (Tampering Detected)</h2>
                   <p style="color:#555; font-size:14px; margin-top:10px; line-height:1.5;">
-                    इस लिंक में <strong>अनाधिकृत बदलाव</strong> किया गया है।
+                    इस लिंक में <strong>अनाधिकृत बदलाव</strong> किया गया है। रिकॉर्ड प्रदर्शित नहीं किया जा सकता।
                   </p>
                 </div>
               `;
@@ -3254,7 +3274,7 @@
     showScreen('screen-admin');
   }
 
-  // ₹500+ पर रसीद और सम्मान पत्र दोनों का ऑटोमैटिक लिंक व्हाट्सएप संदेश
+  // ₹500+ पर रसीद और संक्षिप्त सुरक्षित सम्मान पत्र दोनों का ऑटोमैटिक WhatsApp संदेश
   function shareWhatsApp() {
     if (!currentReceipt) return;
     var verifyUrl = getSecureVerificationLink(currentReceipt);
