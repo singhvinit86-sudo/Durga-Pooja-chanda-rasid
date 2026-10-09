@@ -2771,16 +2771,19 @@
               <small style="color:#666;">पद: ${u.role || 'सहयोगी'} • ${u.mobile}</small>
             </div>
           </div>
-          <div style="display:flex; gap:6px; align-items:center;">
+          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; justify-content:flex-end;">
             <button onclick="adminResetUserPassword(${u.id}, '${u.name}')" style="border:1.5px solid #ff9800; background:#fff8e1; color:#e65100; padding:5px 8px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;" title="पासवर्ड रीसेट करें">
               🔑 रीसेट
             </button>
             <button onclick="toggleUserStatus(${u.id})" style="border:none; background:${isAct ? '#ffebee' : '#e8f5e9'}; color:${isAct ? '#d32f2f' : '#2e7d32'}; padding:5px 8px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;">
               ${isAct ? 'ब्लॉक' : 'सक्रिय'}
             </button>
+            <button onclick="adminDeleteUser(${u.id}, '${u.name}', '${u.code}')" style="border:none; background:#b71c1c; color:#ffffff; padding:5px 8px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;" title="कार्यकर्ता हटाएं">
+              🗑️ हटाएं
+            </button>
           </div>
         </div>
-        <div style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:12px;">
+        <div style="background:#f8f9fa; border:1px solid #e9ecef; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-top:4px;">
           <div>नकद: <strong>₹${tot}</strong> | जमा: <strong style="color:#2e7d32;">₹${paid}</strong> | <span style="color:#d32f2f; font-weight:bold;">बकाया: ₹${pend}</span></div>
           ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}',${pend})" style="background:#2e7d32; color:white; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">💰 जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
         </div>
@@ -2799,6 +2802,38 @@
     }
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
+    openUsersList();
+  }
+
+  function adminDeleteUser(id, name, code) {
+    var userReceipts = receipts.filter(function(r) { return r.code === code && !r.isCancelled; });
+    var targetUser = users.find(function(u) { return u.id === id; });
+    
+    var totalCashCollected = 0;
+    userReceipts.forEach(function(r) {
+      if (r.type === 'CASH' || !r.type) totalCashCollected += Number(r.amt);
+    });
+    var deposited = targetUser ? (Number(targetUser.deposited) || 0) : 0;
+    var pendingCash = Math.max(0, totalCashCollected - deposited);
+
+    if (pendingCash > 0) {
+      alert("⚠️ कार्यकर्ता को हटाया नहीं जा सकता!\n\n'" + name + "' के पास अभी ₹" + pendingCash + " नकद बकाया है। पहले पूरा हिसाब चुकता (जमा) करें।");
+      return;
+    }
+
+    var confirmMsg = "क्या आप निश्चित रूप से कार्यकर्ता '" + name + "' (कोड: " + code + ") को हटाना चाहते हैं?";
+    if (userReceipts.length > 0) {
+      confirmMsg += "\n\n⚠️ ध्यान दें: इस कार्यकर्ता द्वारा " + userReceipts.length + " रसीदें काटी जा चुकी हैं। कार्यकर्ता हटने के बाद भी पुरानी रसीदों का ऑडिट रिकॉर्ड सुरक्षित रहेगा।";
+    }
+
+    if (!confirm(confirmMsg)) return;
+
+    users = users.filter(function(u) { return u.id !== id; });
+
+    localStorage.setItem('durga_users', JSON.stringify(users));
+    syncToFirebase("users", users);
+
+    alert("✅ कार्यकर्ता '" + name + "' को सफलतापूर्वक हटा दिया गया है।");
     openUsersList();
   }
 
