@@ -773,7 +773,7 @@
     </div>
   </div>
 
-  <!-- 4.3 FULL AUDIT REPORT SCREEN (UPDATED SEAL APPLIED HERE) -->
+  <!-- 4.3 FULL AUDIT REPORT SCREEN -->
   <div id="screen-audit" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅</button> संपूर्ण ऑडिट रिपोर्ट (बैलेंस शीट)</h2>
@@ -2659,7 +2659,9 @@
     var searchText = (document.getElementById('inp-search-rec') ? document.getElementById('inp-search-rec').value : '').toLowerCase().trim();
 
     var visible = receipts.filter(function(r) {
+      // यदि सामान्य यूज़र है तो सख्ती से केवल उसी की रसीद दिखेगी
       if (currentUser && r.code !== currentUser.code) return false;
+      // यदि एडमिन है तो फ़िल्टर के अनुसार दिखेगा
       if (!currentUser && selectedUser !== 'ALL' && r.code !== selectedUser) return false;
       if (selectedStatus === 'VALID' && r.isCancelled) return false;
       if (selectedStatus === 'PENDING' && (!r.cancelRequested || r.isCancelled)) return false;
@@ -2701,13 +2703,20 @@
   function openReceiptsList() {
     var sel = document.getElementById('sel-user-filter');
     if (sel) {
-      sel.innerHTML = '<option value="ALL">📋 सभी कार्यकर्ता</option>';
-      users.forEach(function(u) {
-        var opt = document.createElement('option');
-        opt.value = u.code;
-        opt.innerText = u.name + ' (' + u.code + ')';
-        sel.appendChild(opt);
-      });
+      if (currentUser) {
+        // सामान्य कार्यकर्ता के लिए यूज़र फ़िल्टर ड्रॉपडाउन पूरी तरह छिपा रहेगा
+        sel.style.display = 'none';
+      } else {
+        // एडमिन के लिए यूज़र फ़िल्टर दिखाई देगा
+        sel.style.display = 'inline-block';
+        sel.innerHTML = '<option value="ALL">📋 सभी कार्यकर्ता</option>';
+        users.forEach(function(u) {
+          var opt = document.createElement('option');
+          opt.value = u.code;
+          opt.innerText = u.name + ' (' + u.code + ')';
+          sel.appendChild(opt);
+        });
+      }
     }
     renderReceiptsList();
     showScreen('screen-receipts-list');
