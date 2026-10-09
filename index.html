@@ -41,9 +41,6 @@
     html.donor-direct-view .receipt-staff-btn { 
       display: none !important; 
     }
-    html.donor-direct-view #screen-preview { 
-      display: flex !important; 
-    }
 
     .top-bar { background: linear-gradient(135deg, #b71c1c, #d32f2f); color: white; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
     .top-bar h2 { font-size: 17px; display: flex; align-items: center; gap: 8px; font-weight: bold; }
@@ -365,8 +362,8 @@
       <h2 style="color: #b71c1c; font-size: 19px; line-height: 1.3;">नवयुवा दुर्गा पूजा समिति</h2>
       <p style="color: #555; font-size: 13px; font-weight: bold; margin-top: 4px;">रेलवे गेट, मारकुंडी, सोनभद्र</p>
       <div style="background: #fff8e1; border: 1.5px dashed #ffb74d; border-radius: 8px; padding: 14px; margin-top: 16px; font-size: 13px; color: #444; line-height: 1.5;">
-        🚩 <strong>डिजिटल चंदा सत्यापन पोर्टल</strong><br><br>
-        दानदाता अपनी चंदा रसीद देखने हेतु समिति द्वारा <strong>WhatsApp</strong> पर भेजे गए आधिकारिक सुरक्षित लिंक का उपयोग करें।
+        🚩 <strong>डिजिटल चंदा व सम्मान पत्र पोर्टल</strong><br><br>
+        दानदाता अपनी चंदा रसीद अथवा सम्मान पत्र देखने हेतु समिति द्वारा <strong>WhatsApp</strong> पर भेजे गए आधिकारिक सुरक्षित लिंक का उपयोग करें।
       </div>
       <p style="color: #b71c1c; font-weight: bold; font-size: 13px; margin-top: 20px;">🚩 || जय माता दी || 🚩</p>
     </div>
@@ -1143,7 +1140,7 @@
   <!-- 6.1 DONOR CERTIFICATE SCREEN -->
   <div id="screen-certificate" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-preview')">⬅</button> दानदाता सम्मान पत्र</h2>
+      <h2><button class="icon-btn nav-home-btn" id="btn-cert-top-back" onclick="showScreen('screen-preview')">⬅</button> दानदाता सम्मान पत्र</h2>
     </div>
 
     <div class="cert-box">
@@ -1216,14 +1213,23 @@
       </div>
     </div>
 
+    <!-- बटन कंटेनर: डोनर लिंक खोलने पर सिर्फ Save PDF बटन दिखेगा -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
-      <button class="btn btn-green" id="btn-share-cert-pdf" onclick="shareDirectCertificatePDFWhatsApp()">
+      <button class="btn btn-purple" id="btn-save-cert-pdf" style="font-size: 16px;" onclick="downloadCertificatePDF()">
+        📥 Save PDF (सम्मान पत्र डाउनलोड करें)
+      </button>
+
+      <button class="btn btn-green receipt-staff-btn" id="btn-share-cert-pdf" onclick="shareDirectCertificatePDFWhatsApp()">
         📤 सीधा WhatsApp PDF भेजें (Certificate)
       </button>
-      <button class="btn btn-purple" onclick="downloadCertificatePDF()">
-        📥 Save Certificate PDF (डाउनलोड करें)
+
+      <button class="btn btn-blue receipt-staff-btn" id="btn-share-cert-link" onclick="shareCertificateLinkWhatsApp()">
+        💬 WhatsApp सम्मान पत्र लिंक भेजें
       </button>
-      <button class="btn btn-blue" onclick="showScreen('screen-preview')">⬅ रसीद पर वापस लौटें</button>
+
+      <button class="btn receipt-staff-btn" style="background:#546e7a;" onclick="showScreen('screen-preview')">
+        ⬅ रसीद पर वापस लौटें
+      </button>
     </div>
   </div>
 
@@ -1482,6 +1488,13 @@
     var sig = generateSecureReceiptSignature(r);
     var cleanBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '');
     return cleanBase + "/#" + encodeURIComponent(r.no) + "_" + sig;
+  }
+
+  // सम्मान पत्र के लिए अलग सीधा सुरक्षित लिंक
+  function getSecureCertificateLink(r) {
+    var sig = generateSecureReceiptSignature(r);
+    var cleanBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '');
+    return cleanBase + "/#CERT_" + encodeURIComponent(r.no) + "_" + sig;
   }
 
   function handleLogoMultiTap() {
@@ -2149,16 +2162,25 @@
   function checkUrlVerification() {
     var vNo = "";
     var sig = "";
+    var isCertView = false;
 
     var h = window.location.hash.replace(/^#/, '');
     if (h && h.indexOf('_') !== -1) {
       var parts = h.split('_');
-      vNo = decodeURIComponent(parts[0]);
-      sig = parts[1];
+      // अगर हैश में CERT_ लगा है तो सीधे सम्मान पत्र खुलेगा
+      if (parts[0] === 'CERT') {
+        isCertView = true;
+        vNo = decodeURIComponent(parts[1]);
+        sig = parts[2];
+      } else {
+        vNo = decodeURIComponent(parts[0]);
+        sig = parts[1];
+      }
     } else {
       var params = new URLSearchParams(window.location.search);
       vNo = params.get('id') || params.get('verify') || "";
       sig = params.get('s') || params.get('sig') || "";
+      if (params.get('type') === 'cert') isCertView = true;
     }
     
     if (!vNo) return;
@@ -2170,7 +2192,7 @@
       document.body.innerHTML = `
         <div style="text-align:center; padding:50px 20px; font-family:sans-serif; background:#fff; min-height:100vh;">
           <div style="font-size:55px; color:#c62828;">🚫</div>
-          <h2 style="color:#c62828; margin-top:10px;">अवैध रसीद लिंक</h2>
+          <h2 style="color:#c62828; margin-top:10px;">अवैध लिंक</h2>
           <p style="color:#555; margin-top:8px;">इस लिंक में सुरक्षा टोकन (Token) गायब है।</p>
         </div>
       `;
@@ -2193,7 +2215,7 @@
                   <div style="font-size:60px; color:#c62828;">⚠️</div>
                   <h2 style="color:#c62828; margin-top:10px;">सुरक्षा उल्लंघन (Tampering Detected)</h2>
                   <p style="color:#555; font-size:14px; margin-top:10px; line-height:1.5;">
-                    इस रसीद लिंक में <strong>अनाधिकृत बदलाव</strong> किया गया है।
+                    इस लिंक में <strong>अनाधिकृत बदलाव</strong> किया गया है।
                   </p>
                 </div>
               `;
@@ -2202,15 +2224,35 @@
 
             receipts = cloudRecs;
             localStorage.setItem('durga_receipts', JSON.stringify(receipts));
-            showPreview(matched);
+
+            // अगर डोनर सम्मान पत्र के लिंक से आया है तो सीधे सम्मान पत्र दिखाएं
+            if (isCertView) {
+              currentReceipt = matched;
+              renderCertificateData(matched);
+              showScreen('screen-certificate');
+              // डोनर व्यू में बैक बटन और स्टाफ एक्शन छुपाएं
+              var topBack = document.getElementById('btn-cert-top-back');
+              if (topBack) topBack.style.display = 'none';
+              document.querySelectorAll('.receipt-staff-btn').forEach(function(el) { el.style.display = 'none'; });
+            } else {
+              showPreview(matched);
+            }
             return;
           }
         }
-        document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h2 style='color:#c62828;'>❌ रसीद सर्वर पर नहीं मिली!</h2></div>";
+        document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h2 style='color:#c62828;'>❌ रिकॉर्ड सर्वर पर नहीं मिला!</h2></div>";
       })
       .catch(function() {
-        alert("रसीद लोड करने में समस्या आई, कृपया इंटरनेट कनेक्शन जांचें।");
+        alert("डेटा लोड करने में समस्या आई, कृपया इंटरनेट कनेक्शन जांचें।");
       });
+  }
+
+  function renderCertificateData(r) {
+    document.getElementById('cert-donor-name').innerText = r.name;
+    document.getElementById('cert-donor-addr').innerText = r.addr || 'मारकुंडी';
+    document.getElementById('cert-donor-amt').innerText = (r.type === 'ITEM') ? r.itemDesc : ('₹' + r.amt + '/-');
+    document.getElementById('cert-date').innerText = r.date;
+    document.getElementById('cert-durga-img').src = currentDurgaImg || DEFAULT_DURGA;
   }
 
   function openDonorCertificateScreen() {
@@ -2222,17 +2264,26 @@
       return;
     }
 
-    document.getElementById('cert-donor-name').innerText = currentReceipt.name;
-    document.getElementById('cert-donor-addr').innerText = currentReceipt.addr || 'मारकुंडी';
-    document.getElementById('cert-donor-amt').innerText = (currentReceipt.type === 'ITEM') ? currentReceipt.itemDesc : ('₹' + currentReceipt.amt + '/-');
-    document.getElementById('cert-date').innerText = currentReceipt.date;
-    document.getElementById('cert-durga-img').src = currentDurgaImg || DEFAULT_DURGA;
-
+    renderCertificateData(currentReceipt);
     showScreen('screen-certificate');
   }
 
+  // सम्मान पत्र का सीधा लिंक WhatsApp पर भेजने वाला फंक्शन
+  function shareCertificateLinkWhatsApp() {
+    if (!currentReceipt) return;
+    var certUrl = getSecureCertificateLink(currentReceipt);
+    var text = "🚩 *॥ नवयुवा दुर्गा पूजा समिति, मारकुंडी ॥* 🚩\n\n" +
+               "परम आदरणीय *" + currentReceipt.name + "* जी,\n" +
+               "माँ दुर्गा पूजा महोत्सव 2026 में आपके अमूल्य सहयोग हेतु समिति की ओर से आपका *डिजिटल सम्मान व आभार पत्र* जारी किया गया है।\n\n" +
+               "📜 *सम्मान पत्र देखने व डाउनलोड करने हेतु नीचे दिए गए लिंक पर क्लिक करें:*\n" +
+               certUrl + "\n\n" +
+               "माँ भगवती की कृपा आप एवं आपके परिवार पर सदैव बनी रहे। 🙏";
+
+    window.open("https://api.whatsapp.com/send?phone=91" + currentReceipt.phone + "&text=" + encodeURIComponent(text), "_blank");
+  }
+
   // =========================================================================
-  // PIXEL-PERFECT ELEMENT CAPTURE HELPER
+  // PIXEL-PERFECT ELEMENT CAPTURE HELPER (NO CUT-OFF)
   // =========================================================================
   async function generateFullElementCanvas(targetElement, bgColor) {
     var rect = targetElement.getBoundingClientRect();
@@ -2346,7 +2397,7 @@
         format: [pdfWidth + 8, pdfHeight + 8] 
       });
       pdf.addImage(imgData, 'JPEG', 4, 4, pdfWidth, pdfHeight);
-      pdf.save('सम्मान_पत्र_' + currentReceipt.name + '.pdf');
+      pdf.save('सम्मान_पत्र_' + (currentReceipt ? currentReceipt.name : 'दानदाता') + '.pdf');
     } catch(err) {
       window.print();
     }
@@ -2545,9 +2596,6 @@
     showScreen('screen-audit');
   }
 
-  // =========================================================================
-  // संपूर्ण ऑडिट रिपोर्ट - MULTI-PAGE AUTO SLICING ENGINE (NO CUT-OFF)
-  // =========================================================================
   async function downloadAuditPDF() {
     var target = document.getElementById('audit-capture-target');
     var btn = document.getElementById('btn-dl-audit');
@@ -2556,7 +2604,6 @@
     btn.disabled = true;
 
     try {
-      // 1. पूर्ण ऑडिट रिपोर्ट का हाई-रेजोल्यूशन कैनवास कैप्चर करें
       var rect = target.getBoundingClientRect();
       var fullWidth = Math.ceil(rect.width) || target.offsetWidth || 360;
       var fullHeight = Math.ceil(Math.max(target.scrollHeight, target.offsetHeight, rect.height)) + 12;
@@ -2579,14 +2626,12 @@
       var jsPDF = window.jspdf.jsPDF;
       var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
-      // A4 मानक आयाम (मार्जिन सहित)
       var pdfWidth = 210;
       var pdfHeight = 297;
       var margin = 10;
-      var printWidth = pdfWidth - (margin * 2);      // 190 mm
-      var printPageHeight = pdfHeight - (margin * 2); // 277 mm
+      var printWidth = pdfWidth - (margin * 2);
+      var printPageHeight = pdfHeight - (margin * 2);
 
-      // कैनवास पिक्सेल में एक A4 पेज की ऊंचाई निकालें
       var canvasPageHeight = (fullCanvas.width * printPageHeight) / printWidth;
       var totalCanvasHeight = fullCanvas.height;
 
@@ -2599,7 +2644,6 @@
           pdf.addPage('a4', 'p');
         }
 
-        // वर्तमान पेज का स्लाइस बनाएं
         var sliceHeight = Math.min(canvasPageHeight, totalCanvasHeight - currentY);
         var pageCanvas = document.createElement('canvas');
         pageCanvas.width = fullCanvas.width;
@@ -2609,7 +2653,6 @@
         pageCtx.fillStyle = '#ffffff';
         pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
 
-        // मूल कैनवास से वर्तमान पेज का भाग कॉपी करें
         pageCtx.drawImage(
           fullCanvas,
           0, currentY, fullCanvas.width, sliceHeight,
@@ -2621,7 +2664,6 @@
 
         pdf.addImage(sliceImgData, 'JPEG', margin, margin, printWidth, renderedSliceHeight);
 
-        // फुटर में पेज नंबर अंकित करें
         pdf.setFontSize(9);
         pdf.setTextColor(150, 150, 150);
         pdf.text(
@@ -3131,7 +3173,7 @@
             खर्च: <strong style="color:#c2185b;">₹${userExp}</strong> | 
             <span style="color:#d32f2f; font-weight:bold;">बकाया: ₹${pend}</span>
           </div>
-          ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}', ${pend})" style="background:#2e7d32; colorwhite; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">💰 जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
+          ${pend > 0 ? `<button onclick="adminSettleCash('${u.code}', '${u.name}', ${pend})" style="background:#2e7d32; color:white; border:none; padding:4px 8px; border-radius:4px; font-weight:bold; cursor:pointer;">💰 जमा लें</button>` : `<span style="color:#2e7d32; font-weight:bold;">✅ चुकता</span>`}
         </div>
       `;
       box.appendChild(div);
@@ -3235,12 +3277,22 @@
   function shareWhatsApp() {
     if (!currentReceipt) return;
     var verifyUrl = getSecureVerificationLink(currentReceipt);
+    var certUrl = getSecureCertificateLink(currentReceipt);
+    var donationVal = (currentReceipt.type === 'ITEM') ? (currentReceipt.itemVal || 0) : (Number(currentReceipt.amt) || 0);
+
+    var certSection = "";
+    if (donationVal >= 500 && !currentReceipt.isCancelled) {
+      certSection = "\n\n📜 *डिजिटल सम्मान व आभार पत्र:*\n" + certUrl;
+    }
+
     var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n\n" +
                "प्रिय *" + currentReceipt.name + "* जी,\n" +
                "सहयोग राशि: *रु. " + currentReceipt.amt + "/-*\n" +
                "रसीद संख्या: *" + currentReceipt.no + "*\n\n" +
-               "🔗 *डिजिटल रसीद:*\n" + verifyUrl + "\n\n" +
-               "(यह रसीद डिजिटल रूप से प्रमाणित है) 🙏";
+               "🔗 *डिजिटल रसीद:*\n" + verifyUrl +
+               certSection + "\n\n" +
+               "(यह डिजिटल रूप से प्रमाणित है) 🙏 जय माता दी!";
+
     window.open("https://api.whatsapp.com/send?phone=91" + currentReceipt.phone + "&text=" + encodeURIComponent(text), "_blank");
   }
 
