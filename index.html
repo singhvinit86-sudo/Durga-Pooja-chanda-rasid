@@ -1574,12 +1574,10 @@
     var selFilter = document.getElementById('sel-exp-user-filter');
 
     if (currentUser) {
-      // कार्यकर्ता मोड: केवल अपना नाम दिखेगा और फ़िल्टर छिपा रहेगा
       expByInput.value = currentUser.name + " (" + currentUser.code + ")";
       expByInput.disabled = true;
       if (filterBox) filterBox.style.display = 'none';
     } else {
-      // एडमिन मोड: फ़िल्टर दिखेगा और ड्रॉपडाउन पॉप्युलेट होगा
       expByInput.value = "एडमिन/समिति";
       expByInput.disabled = false;
       if (filterBox) {
@@ -1669,18 +1667,15 @@
     var searchText = (document.getElementById('inp-search-exp') ? document.getElementById('inp-search-exp').value : '').toLowerCase().trim();
 
     expenses.forEach(function(e) {
-      // 1. यदि कार्यकर्ता लॉग-इन है, तो केवल उसी का खर्च दिखेगा
       if (currentUser && e.userCode !== currentUser.code) {
         return;
       }
 
-      // 2. यदि एडमिन लॉग-इन है और उसने किसी विशिष्ट कार्यकर्ता का फ़िल्टर चुना है
       if (!currentUser && selectedUser !== 'ALL') {
         if (selectedUser === 'ADM' && e.userCode && e.userCode !== 'ADM') return;
         if (selectedUser !== 'ADM' && e.userCode !== selectedUser) return;
       }
 
-      // 3. सर्च बार फ़िल्टर (मद, नाम या तारीख से)
       if (searchText) {
         var str = (e.title + " " + e.by + " " + e.date + " " + (e.userCode || '')).toLowerCase();
         if (str.indexOf(searchText) === -1) return;
@@ -2218,16 +2213,37 @@
     showScreen('screen-certificate');
   }
 
-  async function downloadCertificatePDF() {
-    var target = document.getElementById('cert-capture-target');
+  // =========================================================================
+  // पूरी रसीद PDF डाउनलोड (कटने की समस्या ठीक की गई)
+  // =========================================================================
+  async function downloadReceiptPDF() {
+    if (!currentReceipt) return;
+    var target = document.getElementById('receipt-capture-target');
     try {
-      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fffdf2' });
-      var imgData = canvas.toDataURL('image/png');
+      var canvas = await html2canvas(target, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#fffdf2',
+        scrollY: -window.scrollY,
+        windowWidth: document.documentElement.offsetWidth,
+        height: target.scrollHeight
+      });
+
+      var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
-      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a5' });
-      pdf.addImage(imgData, 'PNG', 8, 8, 132, (canvas.height * 132) / canvas.width);
-      pdf.save('सम्मान_पत्र_' + currentReceipt.name + '.pdf');
+      var pdfWidth = 140; // mm
+      var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      var pdf = new jsPDF({ 
+        orientation: 'p', 
+        unit: 'mm', 
+        format: [pdfWidth + 10, pdfHeight + 10] 
+      });
+
+      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
+      pdf.save('रसीद_' + currentReceipt.no + '.pdf');
     } catch(err) {
+      console.error(err);
       window.print();
     }
   }
@@ -2241,11 +2257,27 @@
 
     try {
       var target = document.getElementById('receipt-capture-target');
-      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fffdf2' });
-      var imgData = canvas.toDataURL('image/png');
+      var canvas = await html2canvas(target, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#fffdf2',
+        scrollY: -window.scrollY,
+        windowWidth: document.documentElement.offsetWidth,
+        height: target.scrollHeight
+      });
+
+      var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
-      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a5' });
-      pdf.addImage(imgData, 'PNG', 8, 8, 132, (canvas.height * 132) / canvas.width);
+      var pdfWidth = 140;
+      var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      var pdf = new jsPDF({ 
+        orientation: 'p', 
+        unit: 'mm', 
+        format: [pdfWidth + 10, pdfHeight + 10] 
+      });
+
+      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
 
       var pdfBlob = pdf.output('blob');
       var fileName = 'रसीद_' + currentReceipt.no + '_' + currentReceipt.name + '.pdf';
@@ -2273,6 +2305,34 @@
     }
   }
 
+  async function downloadCertificatePDF() {
+    var target = document.getElementById('cert-capture-target');
+    try {
+      var canvas = await html2canvas(target, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#fffdf2',
+        scrollY: -window.scrollY,
+        windowWidth: document.documentElement.offsetWidth,
+        height: target.scrollHeight
+      });
+      var imgData = canvas.toDataURL('image/jpeg', 0.95);
+      var jsPDF = window.jspdf.jsPDF;
+      var pdfWidth = 140;
+      var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      var pdf = new jsPDF({ 
+        orientation: 'p', 
+        unit: 'mm', 
+        format: [pdfWidth + 10, pdfHeight + 10] 
+      });
+      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
+      pdf.save('सम्मान_पत्र_' + currentReceipt.name + '.pdf');
+    } catch(err) {
+      window.print();
+    }
+  }
+
   async function shareDirectCertificatePDFWhatsApp() {
     if (!currentReceipt) return;
     var btn = document.getElementById('btn-share-cert-pdf');
@@ -2282,11 +2342,25 @@
 
     try {
       var target = document.getElementById('cert-capture-target');
-      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fffdf2' });
-      var imgData = canvas.toDataURL('image/png');
+      var canvas = await html2canvas(target, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#fffdf2',
+        scrollY: -window.scrollY,
+        windowWidth: document.documentElement.offsetWidth,
+        height: target.scrollHeight
+      });
+      var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
-      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a5' });
-      pdf.addImage(imgData, 'PNG', 8, 8, 132, (canvas.height * 132) / canvas.width);
+      var pdfWidth = 140;
+      var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      var pdf = new jsPDF({ 
+        orientation: 'p', 
+        unit: 'mm', 
+        format: [pdfWidth + 10, pdfHeight + 10] 
+      });
+      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
 
       var pdfBlob = pdf.output('blob');
       var fileName = 'सम्मान_पत्र_' + currentReceipt.name + '.pdf';
@@ -2366,11 +2440,25 @@
     if (!currentHandover) return;
     var target = document.getElementById('handover-capture-target');
     try {
-      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fffdf2' });
-      var imgData = canvas.toDataURL('image/png');
+      var canvas = await html2canvas(target, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#fffdf2',
+        scrollY: -window.scrollY,
+        windowWidth: document.documentElement.offsetWidth,
+        height: target.scrollHeight
+      });
+      var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
-      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a5' });
-      pdf.addImage(imgData, 'PNG', 8, 8, 132, (canvas.height * 132) / canvas.width);
+      var pdfWidth = 140;
+      var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      var pdf = new jsPDF({ 
+        orientation: 'p', 
+        unit: 'mm', 
+        format: [pdfWidth + 10, pdfHeight + 10] 
+      });
+      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
       pdf.save('हैंडओवर_रसीद_' + currentHandover.voucherNo + '.pdf');
     } catch(err) {
       window.print();
@@ -2453,11 +2541,18 @@
   async function downloadAuditPDF() {
     var target = document.getElementById('audit-capture-target');
     try {
-      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#ffffff' });
-      var imgData = canvas.toDataURL('image/png');
+      var canvas = await html2canvas(target, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#ffffff',
+        scrollY: -window.scrollY,
+        windowWidth: document.documentElement.offsetWidth,
+        height: target.scrollHeight
+      });
+      var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
       var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-      pdf.addImage(imgData, 'PNG', 10, 10, 190, (canvas.height * 190) / canvas.width);
+      pdf.addImage(imgData, 'JPEG', 10, 10, 190, (canvas.height * 190) / canvas.width);
       pdf.save('समिति_ऑडिट_बैलेंस_शीट_2026.pdf');
     } catch(err) {
       window.print();
@@ -2614,11 +2709,25 @@
   async function downloadIdCardPDF() {
     var target = document.getElementById('id-card-capture-target');
     try {
-      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fef3c7' });
-      var imgData = canvas.toDataURL('image/png');
+      var canvas = await html2canvas(target, { 
+        scale: 2, 
+        useCORS: true, 
+        backgroundColor: '#fef3c7',
+        scrollY: -window.scrollY,
+        windowWidth: document.documentElement.offsetWidth,
+        height: target.scrollHeight
+      });
+      var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
-      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: [100, 160] });
-      pdf.addImage(imgData, 'PNG', 5, 5, 90, (canvas.height * 90) / canvas.width);
+      var pdfWidth = 90;
+      var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      var pdf = new jsPDF({ 
+        orientation: 'p', 
+        unit: 'mm', 
+        format: [pdfWidth + 10, pdfHeight + 10] 
+      });
+      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
       pdf.save('पहचान_पत्र_' + (currentUser ? currentUser.name : 'कार्यकर्ता') + '.pdf');
     } catch(err) {
       window.print();
@@ -3042,21 +3151,6 @@
     syncToFirebase("users", users);
     alert("कार्यकर्ता जुड़ गया! पद: " + r + " | कोड: " + code);
     showScreen('screen-admin');
-  }
-
-  async function downloadReceiptPDF() {
-    if (!currentReceipt) return;
-    var target = document.getElementById('receipt-capture-target');
-    try {
-      var canvas = await html2canvas(target, { scale: 2, useCORS: true, backgroundColor: '#fffdf2' });
-      var imgData = canvas.toDataURL('image/png');
-      var jsPDF = window.jspdf.jsPDF;
-      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a5' });
-      pdf.addImage(imgData, 'PNG', 8, 8, 132, (canvas.height * 132) / canvas.width);
-      pdf.save('रसीद_' + currentReceipt.no + '.pdf');
-    } catch(err) {
-      window.print();
-    }
   }
 
   function shareWhatsApp() {
