@@ -26,7 +26,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
     html, body { width: 100%; height: 100%; background-color: #f1f2f6; overflow-x: hidden; }
     body { display: flex; justify-content: center; }
-    #app { width: 100%; max-width: 460px; min-height: 100vh; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+    #app { width: 100%; max-width: 460px; min-height: 100vh; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; }
 
     /* Strict Screen Display Control */
     .screen { display: none !important; flex-direction: column; width: 100%; min-height: 100vh; }
@@ -103,10 +103,25 @@
     .user-circle { width: 36px; height: 36px; border-radius: 50%; background: #b71c1c; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; flex-shrink: 0; }
     .user-list-item { background: white; border-radius: 8px; border: 1px solid #e0e0e0; padding: 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
 
-    /* Receipt Box & Layout */
-    .receipt-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
-    .receipt-border { width: 100%; background: #fffdf2; border: 3px solid #b71c1c; border-radius: 10px; padding: 10px; position: relative; }
-    .receipt-inner { border: 2px dashed #d97706; padding: 16px 14px 18px 14px; background: #ffffff; border-radius: 6px; position: relative; }
+    /* Receipt Box & Layout - Extra bottom clearance */
+    .receipt-box { padding: 14px 12px 20px 12px; background: #f0f2f5; display: flex; justify-content: center; }
+    .receipt-border { 
+      width: 100%; 
+      background: #fffdf2; 
+      border: 3.5px solid #b71c1c; 
+      border-radius: 10px; 
+      padding: 10px 10px 14px 10px; 
+      position: relative; 
+      box-sizing: border-box; 
+    }
+    .receipt-inner { 
+      border: 2px dashed #d97706; 
+      padding: 16px 14px 18px 14px; 
+      background: #ffffff; 
+      border-radius: 6px; 
+      position: relative; 
+      box-sizing: border-box; 
+    }
     
     .corner-swastik { position: absolute; font-size: 13px; color: #b71c1c; font-weight: bold; line-height: 1; pointer-events: none; opacity: 0.85; }
     .corner-tl { top: 6px; left: 6px; }
@@ -123,16 +138,16 @@
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.25)); }
 
     /* Certificate Box & Layout */
-    .cert-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
-    .cert-border { width: 100%; background: #fffdf2; border: 4px double #b71c1c; border-radius: 12px; padding: 12px; position: relative; }
-    .cert-inner { border: 2px dashed #d97706; padding: 18px 14px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; }
+    .cert-box { padding: 14px 12px 20px 12px; background: #f0f2f5; display: flex; justify-content: center; }
+    .cert-border { width: 100%; background: #fffdf2; border: 4px double #b71c1c; border-radius: 12px; padding: 12px 12px 16px 12px; position: relative; box-sizing: border-box; }
+    .cert-inner { border: 2px dashed #d97706; padding: 18px 14px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; box-sizing: border-box; }
     .cert-header-photo { width: 70px; height: 70px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ffb300; }
     .cert-badge { background: linear-gradient(135deg, #d32f2f, #b71c1c); color: #ffeb3b; padding: 4px 16px; border-radius: 20px; display: inline-block; font-size: 13px; font-weight: 900; margin: 8px 0 12px 0; }
     .cert-donor-name { font-size: 20px; font-weight: 900; color: #b71c1c; margin: 8px 0; border-bottom: 2px dashed #ffcc80; padding-bottom: 4px; }
     .cert-body-p { font-size: 13px; line-height: 1.6; color: #37474f; font-weight: 600; margin-bottom: 14px; }
 
     /* VIP ID Card */
-    .id-card-wrap { padding: 14px; background: #f0f2f5; display: flex; justify-content: center; }
+    .id-card-wrap { padding: 14px 12px 20px 12px; background: #f0f2f5; display: flex; justify-content: center; }
     .id-card-border { 
       width: 100%; 
       max-width: 335px; 
@@ -141,6 +156,7 @@
       padding: 6px; 
       box-shadow: 0 12px 30px rgba(230, 81, 0, 0.45); 
       position: relative;
+      box-sizing: border-box;
     }
     .id-card-inner-frame { 
       background: radial-gradient(circle at 50% 32%, #fff3e0 0%, #ffe0b2 40%, #ffb74d 75%, #f57c00 100%);
@@ -151,6 +167,7 @@
       flex-direction: column; 
       border: 1.5px solid #ffe082;
       box-shadow: inset 0 0 15px rgba(183, 28, 28, 0.15);
+      box-sizing: border-box;
     }
     .id-card-inner-frame::before {
       content: "";
@@ -283,12 +300,12 @@
     }
 
     /* Handover & Audit Layouts */
-    .handover-box, .audit-box { padding: 12px; background: #f0f2f5; display: flex; justify-content: center; }
-    .handover-border { width: 100%; background: #fffdf2; border: 3px solid #2e7d32; border-radius: 10px; padding: 10px; position: relative; }
-    .handover-inner { border: 2px dashed #81c784; padding: 14px; background: #ffffff; border-radius: 6px; position: relative; }
+    .handover-box, .audit-box { padding: 14px 12px 20px 12px; background: #f0f2f5; display: flex; justify-content: center; }
+    .handover-border { width: 100%; background: #fffdf2; border: 3px solid #2e7d32; border-radius: 10px; padding: 10px 10px 14px 10px; position: relative; box-sizing: border-box; }
+    .handover-inner { border: 2px dashed #81c784; padding: 14px; background: #ffffff; border-radius: 6px; position: relative; box-sizing: border-box; }
     .handover-durga-photo { width: 65px; height: 65px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 3px solid #81c784; }
     
-    .audit-border { width: 100%; background: #ffffff; border: 2px solid #b71c1c; border-radius: 10px; padding: 14px; }
+    .audit-border { width: 100%; background: #ffffff; border: 2px solid #b71c1c; border-radius: 10px; padding: 14px 14px 18px 14px; box-sizing: border-box; }
     .audit-header { text-align: center; border-bottom: 2px dashed #ffb74d; padding-bottom: 8px; margin-bottom: 10px; }
     .audit-tbl { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 12px; }
     .audit-tbl th { background: #ffebee; color: #b71c1c; padding: 5px; border: 1px solid #ffcdd2; text-align: left; }
@@ -1049,7 +1066,7 @@
             🌺 माँ भगवती दुर्गा की कृपा आप एवं आपके परिवार पर सदैव बनी रहे। 🌺
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 8px; padding: 0 4px 4px 4px; font-size: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 10px; padding: 2px 4px 6px 4px; font-size: 12px;">
             <div>
               <div class="seal-wrap">
                 <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
@@ -1073,7 +1090,7 @@
                   <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
                 </svg>
               </div>
-              <div style="font-size: 11px; color: #444; margin-top: 2px;">दिनांक: <strong id="pv-date">-</strong></div>
+              <div style="font-size: 11px; color: #444; margin-top: 4px;">दिनांक: <strong id="pv-date">-</strong></div>
             </div>
 
             <div style="text-align: right; padding-right: 6px;">
@@ -1270,7 +1287,7 @@
       <button class="btn btn-green" style="margin-top: 10px; padding: 10px;" onclick="saveExpense()">💾 खर्च व बिल सुरक्षित करें</button>
     </div>
 
-    <!-- एडमिन के लिए विशेष फ़िल्टर बार (नाम/मद/तारीख से खोजें) -->
+    <!-- एडमिन के लिए विशेष फ़िल्टर बार -->
     <div id="admin-exp-filter-box" style="padding: 10px 14px; background: #fdf2e9; border-bottom: 1.5px solid #f0b27a; display: flex; flex-direction: column; gap: 8px;">
       <div style="font-size: 11.5px; font-weight: bold; color: #b71c1c;">🔍 खर्च फ़िल्टर व खोज (Admin Filter)</div>
       <div style="display: flex; gap: 8px;">
@@ -1292,7 +1309,7 @@
     <div id="expenses-list-box" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
   </div>
 
-  <!-- 9. USERS LIST & हिसाब (ADMIN MANAGE USERS) -->
+  <!-- 9. USERS LIST & हिसाब -->
   <div id="screen-users-list" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> कार्यकर्ता हिसाब</h2>
@@ -1562,9 +1579,6 @@
     document.getElementById('exp-bill-preview-box').style.display = 'none';
   }
 
-  // =========================================================================
-  // खर्च दर्ज करने, फ़िल्टर करने व गोपनीयता का लॉजिक
-  // =========================================================================
   function openExpensesScreen() {
     document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
     removeTempBillPhoto();
@@ -2214,33 +2228,49 @@
   }
 
   // =========================================================================
-  // पूरी रसीद PDF डाउनलोड (कटने की समस्या ठीक की गई)
+  // 100% सटीक बिना कटे PDF जनरेटर हेल्पर फंक्शन (Pixel-Perfect Helper)
   // =========================================================================
+  async function generateFullElementCanvas(targetElement, bgColor) {
+    // तत्व की वास्तविक पूरी ऊंचाई व चौड़ाई मापें
+    var rect = targetElement.getBoundingClientRect();
+    var fullWidth = Math.ceil(rect.width) || targetElement.offsetWidth || 340;
+    var fullHeight = Math.ceil(Math.max(targetElement.scrollHeight, targetElement.offsetHeight, rect.height)) + 8; // अतिरिक्त 8px ताकि बॉर्डर कभी न कटे
+
+    return await html2canvas(targetElement, {
+      scale: 2.5,
+      useCORS: true,
+      backgroundColor: bgColor || '#fffdf2',
+      scrollY: 0,
+      scrollX: 0,
+      x: 0,
+      y: 0,
+      width: fullWidth,
+      height: fullHeight,
+      windowWidth: document.documentElement.offsetWidth,
+      windowHeight: document.documentElement.offsetHeight,
+      logging: false
+    });
+  }
+
   async function downloadReceiptPDF() {
     if (!currentReceipt) return;
     var target = document.getElementById('receipt-capture-target');
     try {
-      var canvas = await html2canvas(target, { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: '#fffdf2',
-        scrollY: -window.scrollY,
-        windowWidth: document.documentElement.offsetWidth,
-        height: target.scrollHeight
-      });
-
+      var canvas = await generateFullElementCanvas(target, '#fffdf2');
       var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
+
       var pdfWidth = 140; // mm
       var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
+      // 4mm एक्स्ट्रा पैडिंग पेज में चारों ओर
       var pdf = new jsPDF({ 
         orientation: 'p', 
         unit: 'mm', 
-        format: [pdfWidth + 10, pdfHeight + 10] 
+        format: [pdfWidth + 8, pdfHeight + 8] 
       });
 
-      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'JPEG', 4, 4, pdfWidth, pdfHeight);
       pdf.save('रसीद_' + currentReceipt.no + '.pdf');
     } catch(err) {
       console.error(err);
@@ -2257,27 +2287,20 @@
 
     try {
       var target = document.getElementById('receipt-capture-target');
-      var canvas = await html2canvas(target, { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: '#fffdf2',
-        scrollY: -window.scrollY,
-        windowWidth: document.documentElement.offsetWidth,
-        height: target.scrollHeight
-      });
-
+      var canvas = await generateFullElementCanvas(target, '#fffdf2');
       var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
+
       var pdfWidth = 140;
       var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       var pdf = new jsPDF({ 
         orientation: 'p', 
         unit: 'mm', 
-        format: [pdfWidth + 10, pdfHeight + 10] 
+        format: [pdfWidth + 8, pdfHeight + 8] 
       });
 
-      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'JPEG', 4, 4, pdfWidth, pdfHeight);
 
       var pdfBlob = pdf.output('blob');
       var fileName = 'रसीद_' + currentReceipt.no + '_' + currentReceipt.name + '.pdf';
@@ -2308,25 +2331,19 @@
   async function downloadCertificatePDF() {
     var target = document.getElementById('cert-capture-target');
     try {
-      var canvas = await html2canvas(target, { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: '#fffdf2',
-        scrollY: -window.scrollY,
-        windowWidth: document.documentElement.offsetWidth,
-        height: target.scrollHeight
-      });
+      var canvas = await generateFullElementCanvas(target, '#fffdf2');
       var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
+
       var pdfWidth = 140;
       var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       var pdf = new jsPDF({ 
         orientation: 'p', 
         unit: 'mm', 
-        format: [pdfWidth + 10, pdfHeight + 10] 
+        format: [pdfWidth + 8, pdfHeight + 8] 
       });
-      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'JPEG', 4, 4, pdfWidth, pdfHeight);
       pdf.save('सम्मान_पत्र_' + currentReceipt.name + '.pdf');
     } catch(err) {
       window.print();
@@ -2342,25 +2359,19 @@
 
     try {
       var target = document.getElementById('cert-capture-target');
-      var canvas = await html2canvas(target, { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: '#fffdf2',
-        scrollY: -window.scrollY,
-        windowWidth: document.documentElement.offsetWidth,
-        height: target.scrollHeight
-      });
+      var canvas = await generateFullElementCanvas(target, '#fffdf2');
       var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
+
       var pdfWidth = 140;
       var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       var pdf = new jsPDF({ 
         orientation: 'p', 
         unit: 'mm', 
-        format: [pdfWidth + 10, pdfHeight + 10] 
+        format: [pdfWidth + 8, pdfHeight + 8] 
       });
-      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'JPEG', 4, 4, pdfWidth, pdfHeight);
 
       var pdfBlob = pdf.output('blob');
       var fileName = 'सम्मान_पत्र_' + currentReceipt.name + '.pdf';
@@ -2440,25 +2451,19 @@
     if (!currentHandover) return;
     var target = document.getElementById('handover-capture-target');
     try {
-      var canvas = await html2canvas(target, { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: '#fffdf2',
-        scrollY: -window.scrollY,
-        windowWidth: document.documentElement.offsetWidth,
-        height: target.scrollHeight
-      });
+      var canvas = await generateFullElementCanvas(target, '#fffdf2');
       var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
+
       var pdfWidth = 140;
       var pdfHeight = (canvas.height * pdfWidth) / canvas.width;
 
       var pdf = new jsPDF({ 
         orientation: 'p', 
         unit: 'mm', 
-        format: [pdfWidth + 10, pdfHeight + 10] 
+        format: [pdfWidth + 8, pdfHeight + 8] 
       });
-      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'JPEG', 4, 4, pdfWidth, pdfHeight);
       pdf.save('हैंडओवर_रसीद_' + currentHandover.voucherNo + '.pdf');
     } catch(err) {
       window.print();
@@ -2541,14 +2546,7 @@
   async function downloadAuditPDF() {
     var target = document.getElementById('audit-capture-target');
     try {
-      var canvas = await html2canvas(target, { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: '#ffffff',
-        scrollY: -window.scrollY,
-        windowWidth: document.documentElement.offsetWidth,
-        height: target.scrollHeight
-      });
+      var canvas = await generateFullElementCanvas(target, '#ffffff');
       var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
       var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
@@ -2709,14 +2707,7 @@
   async function downloadIdCardPDF() {
     var target = document.getElementById('id-card-capture-target');
     try {
-      var canvas = await html2canvas(target, { 
-        scale: 2, 
-        useCORS: true, 
-        backgroundColor: '#fef3c7',
-        scrollY: -window.scrollY,
-        windowWidth: document.documentElement.offsetWidth,
-        height: target.scrollHeight
-      });
+      var canvas = await generateFullElementCanvas(target, '#fef3c7');
       var imgData = canvas.toDataURL('image/jpeg', 0.95);
       var jsPDF = window.jspdf.jsPDF;
       var pdfWidth = 90;
@@ -2725,9 +2716,9 @@
       var pdf = new jsPDF({ 
         orientation: 'p', 
         unit: 'mm', 
-        format: [pdfWidth + 10, pdfHeight + 10] 
+        format: [pdfWidth + 8, pdfHeight + 8] 
       });
-      pdf.addImage(imgData, 'JPEG', 5, 5, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'JPEG', 4, 4, pdfWidth, pdfHeight);
       pdf.save('पहचान_पत्र_' + (currentUser ? currentUser.name : 'कार्यकर्ता') + '.pdf');
     } catch(err) {
       window.print();
