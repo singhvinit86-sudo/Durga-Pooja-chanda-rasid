@@ -330,7 +330,7 @@
     .pending-cancel-badge { background: #fff3e0; border: 2px solid #ff9800; color: #e65100; padding: 8px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; font-size: 13px; }
 
     /* Public Screen Specific */
-    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
+    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: center; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
     .pub-card { background: white; border-radius: 14px; padding: 28px 20px; border-top: 6px solid #b71c1c; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
 
     @media print {
@@ -1193,7 +1193,7 @@
           🚫 यह रसीद रद्द करें (Cancel Receipt)
         </button>
 
-        <button class="btn receipt-staff-btn" style="background: #b71c1c;" id="btn-admin-delete-rec" style="display: none;" onclick="adminPermanentDeleteCurrentReceipt()">
+        <button class="btn receipt-staff-btn" style="background: #b71c1c; display: none;" id="btn-admin-delete-rec" onclick="adminPermanentDeleteCurrentReceipt()">
           🗑️ यह रसीद हमेशा के लिए हटाएं (Delete Receipt)
         </button>
 
@@ -1364,7 +1364,7 @@
 
     <div id="admin-exp-filter-box" style="padding: 10px 14px; background: #fdf2e9; border-bottom: 1.5px solid #f0b27a; display: flex; flex-direction: column; gap: 8px;">
       <div style="font-size: 11.5px; font-weight: bold; color: #b71c1c;">🔍 खर्च फ़िल्टर व खोज (Admin Filter)</div>
-      <div style="display: gap: 8px;">
+      <div style="display: flex; gap: 8px;">
         <select id="sel-exp-user-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderExpensesList()">
           <option value="ALL">👥 सभी के खर्च (All)</option>
         </select>
@@ -1431,8 +1431,11 @@
         <button class="btn btn-green" style="margin-bottom: 10px;" onclick="downloadFullBackupJSON()">
           📥 संपूर्ण बैकअप डाउनलोड करें (.json)
         </button>
-        <button class="btn btn-orange" onclick="syncOfflineDrafts()">
+        <button class="btn btn-orange" style="margin-bottom: 10px;" onclick="syncOfflineDrafts()">
           🔄 ऑफ़लाइन ड्राफ्ट सिंक करें
+        </button>
+        <button class="btn btn-purple" onclick="resetUserCodeSequence()">
+          🔄 कार्यकर्ता कोड अनुक्रम 'A' से रीसेट करें
         </button>
       </div>
 
@@ -1495,6 +1498,7 @@
   var logoTapCounter = 0;
   var logoTapTimer = null;
 
+  // डिफ़ॉल्ट यूज़र्स (A, B, C क्रम में)
   var users = [
     { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', role: 'व्यवस्था सहयोगी', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true, activeToken: '' },
     { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', role: 'कोषाध्यक्ष', photo: '', addr: 'रेलवे गेट, मारकुंडी', deposited: 0, isActive: true, activeToken: '' },
@@ -1537,7 +1541,9 @@
     return str.trim() + ' रुपये मात्र';
   }
 
-  // Safe Excel-style Code Generator
+  // =========================================================================
+  // STRICT SEQUENTIAL & NON-REPEATING USER CODE SYSTEM (A, B, C ... Z, AA ...)
+  // =========================================================================
   function indexToExcelCode(index) {
     var code = '';
     index = index + 1;
@@ -1551,7 +1557,7 @@
 
   function excelCodeToIndex(code) {
     if (!code) return -1;
-    code = code.toUpperCase();
+    code = code.toUpperCase().trim();
     var idx = 0;
     for (var i = 0; i < code.length; i++) {
       idx = idx * 26 + (code.charCodeAt(i) - 64);
@@ -1559,10 +1565,17 @@
     return idx - 1;
   }
 
+  // स्थायी काउंटर जो कभी दोबारा पुराना कोड नहीं देगा
   function getNextUniqueUserCode() {
     var maxIndex = -1;
+
+    var savedCounter = localStorage.getItem('durga_permanent_user_code_idx');
+    if (savedCounter !== null && savedCounter !== undefined) {
+      maxIndex = Math.max(maxIndex, parseInt(savedCounter, 10));
+    }
+
     users.forEach(function(u) {
-      if (u.code) {
+      if (u.code && u.code !== 'ADM') {
         var idx = excelCodeToIndex(u.code);
         if (idx > maxIndex) maxIndex = idx;
       }
@@ -1575,12 +1588,19 @@
       }
     });
 
-    var savedMax = parseInt(localStorage.getItem('durga_last_user_code_index') || "-1", 10);
-    if (savedMax > maxIndex) maxIndex = savedMax;
-
     var nextIndex = maxIndex + 1;
-    localStorage.setItem('durga_last_user_code_index', nextIndex);
+    localStorage.setItem('durga_permanent_user_code_idx', nextIndex);
+    syncToFirebase("meta/lastUserCodeIndex", nextIndex);
+
     return indexToExcelCode(nextIndex);
+  }
+
+  function resetUserCodeSequence() {
+    if (confirm("⚠️ क्या आप कोड काउंटर को फिर से 'A' से शुरू करना चाहते हैं?\n(ध्यान दें: यह तभी करें जब आप नया सत्र शुरू कर रहे हों)")) {
+      localStorage.setItem('durga_permanent_user_code_idx', -1);
+      syncToFirebase("meta/lastUserCodeIndex", -1);
+      alert("✅ कोड काउंटर रीसेट हो गया! अब नया यूज़र 'A' से बनेगा।");
+    }
   }
 
   function generateSecureReceiptSignature(r) {
@@ -2236,6 +2256,13 @@
           if (data.committeeNotice) {
             currentNotice = data.committeeNotice;
             renderNoticeBoard();
+          }
+          if (data.meta && data.meta.lastUserCodeIndex !== undefined) {
+            var cloudIdx = parseInt(data.meta.lastUserCodeIndex, 10);
+            var localIdx = parseInt(localStorage.getItem('durga_permanent_user_code_idx') || "-1", 10);
+            if (cloudIdx > localIdx) {
+              localStorage.setItem('durga_permanent_user_code_idx', cloudIdx);
+            }
           }
           updateAdminSummary();
           if (currentUser) updateUserPassbook();
@@ -3536,7 +3563,7 @@
 
     var confirmMsg = "क्या आप निश्चित रूप से कार्यकर्ता '" + name + "' (कोड: " + code + ") को हटाना चाहते हैं?";
     if (userReceipts.length > 0) {
-      confirmMsg += "\n\n⚠️ ध्यान दें: इस कार्यकर्ता द्वारा " + userReceipts.length + " रसीदें काटी जा चुकी हैं। ऑडिट रिकॉर्ड सुरक्षित रहेगा।";
+      confirmMsg += "\n\n⚠️ ध्यान दें: इस कार्यकर्ता द्वारा " + userReceipts.length + " रसीदें काटी जा चुकी हैं। ऑडिट रिकॉर्ड सुरक्षित रहेगा और कोड '" + code + "' किसी अन्य कार्यकर्ता को दोबारा आवंटित नहीं होगा।";
     }
 
     if (!confirm(confirmMsg)) return;
@@ -3546,7 +3573,7 @@
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
 
-    alert("✅ कार्यकर्ता '" + name + "' को सफलतापूर्वक हटा दिया गया है।");
+    alert("✅ कार्यकर्ता '" + name + "' को हटा दिया गया है। उसका कोड (" + code + ") सुरक्षित लॉक रहेगा।");
     openUsersList();
   }
 
@@ -3562,6 +3589,7 @@
       return;
     }
 
+    // नया गैर-दोहराव वाला कोड प्राप्त करें (A, B, C...)
     var code = getNextUniqueUserCode();
 
     users.push({ 
@@ -3580,7 +3608,7 @@
     
     localStorage.setItem('durga_users', JSON.stringify(users));
     syncToFirebase("users", users);
-    alert("कार्यकर्ता जुड़ गया! पद: " + r + " | कोड: " + code);
+    alert("कार्यकर्ता जुड़ गया! पद: " + r + " | स्थायी कोड: " + code);
     showScreen('screen-admin');
   }
 
@@ -3621,7 +3649,15 @@
   }
 
   function downloadFullBackupJSON() {
-    var b = { receipts: receipts, expenses: expenses, users: users, adminPass: adminPass, committeeNotice: currentNotice, samitiUPI: SAMITI_UPI_ID };
+    var b = { 
+      receipts: receipts, 
+      expenses: expenses, 
+      users: users, 
+      adminPass: adminPass, 
+      committeeNotice: currentNotice, 
+      samitiUPI: SAMITI_UPI_ID,
+      lastUserCodeIndex: localStorage.getItem('durga_permanent_user_code_idx')
+    };
     var a = document.createElement('a');
     a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(b, null, 2));
     a.download = "Durga_Puja_Backup_2026.json";
