@@ -6,9 +6,10 @@
   <title>नवयुवा दुर्गा पूजा समिति - चंदा, नोटिस व हैंडओवर ऐप</title>
   <meta name="theme-color" content="#b71c1c" />
 
-  <!-- PDF, Canvas & Cryptography Libraries -->
+  <!-- PDF, AutoTable, Canvas & Cryptography Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
   <!-- Prevent Splash Flash on Direct Donor Verification Link -->
@@ -805,7 +806,7 @@
 
     <div class="audit-box">
       <div class="audit-border" id="audit-capture-target">
-        <div class="audit-header">
+        <div id="audit-header-content" class="audit-header">
           <div style="font-size: 11px; font-weight: bold; color: #b71c1c;">|| श्री गणेशाय नमः || जय माता दी ||</div>
           <h2 style="color: #b71c1c; font-size: 18px; margin-top: 2px;">नवयुवा दुर्गा पूजा समिति</h2>
           <p style="font-size: 11.5px; color: #455a64; font-weight: bold;">रेलवे गेट, मारकुंडी, सोनभद्र</p>
@@ -815,7 +816,7 @@
           <div style="font-size: 10.5px; color: #666; margin-top: 4px;" id="audit-gen-date">दिनांक: -</div>
         </div>
 
-        <div style="background: #fff8e1; border: 1.5px solid #ffe082; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+        <div id="audit-summary-content" style="background: #fff8e1; border: 1.5px solid #ffe082; border-radius: 8px; padding: 10px; margin-bottom: 12px;">
           <div style="display: flex; justify-content: space-between; font-size: 12.5px; font-weight: bold; margin-bottom: 4px;">
             <span>कुल चंदा संग्रह (वैध आय):</span>
             <span style="color: #2e7d32;" id="aud-tot-inc">₹0</span>
@@ -833,7 +834,7 @@
         <h4 style="color: #b71c1c; font-size: 12px; margin-bottom: 6px;">
           👥 1. कार्यकर्ता-वार संग्रह विवरण (Income Ledger)
         </h4>
-        <table class="audit-tbl">
+        <table class="audit-tbl" id="aud-table-income">
           <thead>
             <tr>
               <th style="width: 45px;">कोड</th>
@@ -848,7 +849,7 @@
         <h4 style="color: #b71c1c; font-size: 12px; margin: 10px 0 6px 0;">
           💸 2. मद-वार खर्च विवरण (Expense Ledger)
         </h4>
-        <table class="audit-tbl">
+        <table class="audit-tbl" id="aud-table-expense">
           <thead>
             <tr>
               <th>मद / विवरण</th>
@@ -1290,7 +1291,7 @@
 
     <div id="admin-exp-filter-box" style="padding: 10px 14px; background: #fdf2e9; border-bottom: 1.5px solid #f0b27a; display: flex; flex-direction: column; gap: 8px;">
       <div style="font-size: 11.5px; font-weight: bold; color: #b71c1c;">🔍 खर्च फ़िल्टर व खोज (Admin Filter)</div>
-      <div style="display: gap: 8px;">
+      <div style="display: flex; gap: 8px;">
         <select id="sel-exp-user-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderExpensesList()">
           <option value="ALL">👥 सभी के खर्च (All)</option>
         </select>
@@ -2588,144 +2589,169 @@
   }
 
   // =========================================================================
-  // MULTI-PAGE AUDIT PDF: ACCURATE FOUR-SIDED BORDER & SEAL ONLY ON LAST PAGE
+  // MULTI-PAGE AUDIT PDF (ACCURATE ROWS & PERFECT DUAL BORDER ON EVERY PAGE)
   // =========================================================================
   async function downloadAuditPDF() {
-    var target = document.getElementById('audit-capture-target');
     var btn = document.getElementById('btn-dl-audit');
     var oldText = btn.innerText;
     btn.innerText = "⏳ ऑडिट रिपोर्ट PDF तैयार हो रही है...";
     btn.disabled = true;
 
     try {
-      var rect = target.getBoundingClientRect();
-      var fullWidth = Math.ceil(rect.width) || target.offsetWidth || 360;
-      var fullHeight = Math.ceil(Math.max(target.scrollHeight, target.offsetHeight, rect.height)) + 8;
-
-      var fullCanvas = await html2canvas(target, {
-        scale: 2.2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        scrollY: 0,
-        scrollX: 0,
-        x: 0,
-        y: 0,
-        width: fullWidth,
-        height: fullHeight,
-        windowWidth: document.documentElement.offsetWidth,
-        windowHeight: document.documentElement.offsetHeight,
-        logging: false
-      });
-
-      // समिति की गोल मोहर को अलग कैनवस से कैप्चर करें
+      var headerEl = document.getElementById('audit-header-content');
+      var summaryEl = document.getElementById('audit-summary-content');
       var sealElement = document.getElementById('audit-seal-offscreen');
-      var sealCanvas = await html2canvas(sealElement, {
-        scale: 2.5,
-        useCORS: true,
-        backgroundColor: null,
-        logging: false
-      });
-      var sealImgData = sealCanvas.toDataURL('image/png');
+
+      // हेडर, समरी और मुहर को अलग-अलग हाई-रेजोल्यूशन में रेंडर करें
+      var headerCanvas = await html2canvas(headerEl, { scale: 2.5, backgroundColor: '#ffffff', logging: false });
+      var summaryCanvas = await html2canvas(summaryEl, { scale: 2.5, backgroundColor: '#ffffff', logging: false });
+      var sealCanvas = await html2canvas(sealElement, { scale: 2.5, backgroundColor: null, logging: false });
+
+      var headerImg = headerCanvas.toDataURL('image/jpeg', 0.95);
+      var summaryImg = summaryCanvas.toDataURL('image/jpeg', 0.95);
+      var sealImg = sealCanvas.toDataURL('image/png');
 
       var jsPDF = window.jspdf.jsPDF;
       var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
       var pdfWidth = 210;
       var pdfHeight = 297;
-      var topMargin = 12;
-      var bottomMargin = 16;
       var leftMargin = 12;
       var rightMargin = 12;
+      var contentWidth = pdfWidth - leftMargin - rightMargin;
 
-      var printWidth = pdfWidth - leftMargin - rightMargin;
-      var printPageHeight = pdfHeight - topMargin - bottomMargin;
+      // 1. कार्यकर्ता संग्रह डेटा पंक्ति-वार तैयार करें (कोई शब्द/अंक नहीं कटेगा)
+      var incomeRows = [];
+      var trsIncome = document.querySelectorAll('#aud-collector-tbody tr');
+      trsIncome.forEach(function(tr) {
+        var tds = tr.querySelectorAll('td');
+        if (tds.length >= 4) {
+          incomeRows.push([
+            tds[0].innerText.trim(),
+            tds[1].innerText.trim(),
+            tds[2].innerText.trim(),
+            tds[3].innerText.trim()
+          ]);
+        }
+      });
 
-      var canvasPageHeight = (fullCanvas.width * printPageHeight) / printWidth;
-      var totalCanvasHeight = fullCanvas.height;
+      // 2. खर्च विवरण डेटा पंक्ति-वार तैयार करें
+      var expenseRows = [];
+      var trsExpense = document.querySelectorAll('#aud-exp-tbody tr');
+      trsExpense.forEach(function(tr) {
+        var tds = tr.querySelectorAll('td');
+        if (tds.length >= 5) {
+          expenseRows.push([
+            tds[0].innerText.trim(),
+            tds[1].innerText.trim(),
+            tds[2].innerText.trim(),
+            tds[3].innerText.trim(),
+            tds[4].innerText.trim() === '-' ? 'नहीं' : 'हाँ'
+          ]);
+        }
+      });
 
-      // प्रत्येक पेज पर चारों तरफ एक समान सटीक डबल-लाइन बॉर्डर
-      function drawFullPageBorder(pdfInstance) {
-        pdfInstance.setDrawColor(183, 28, 28); // गहरा लाल (#b71c1c)
-        pdfInstance.setLineWidth(1.0);
-        pdfInstance.rect(5, 5, pdfWidth - 10, pdfHeight - 10);
+      var currentY = 14;
 
-        pdfInstance.setDrawColor(217, 119, 6); // गोल्डन ऑरेन्ज
-        pdfInstance.setLineWidth(0.4);
-        pdfInstance.rect(7, 7, pdfWidth - 14, pdfHeight - 14);
+      // पहले पेज पर हेडर इमेज जोड़ें
+      var headerHeight = (headerCanvas.height * contentWidth) / headerCanvas.width;
+      pdf.addImage(headerImg, 'JPEG', leftMargin, currentY, contentWidth, headerHeight);
+      currentY += headerHeight + 3;
+
+      // पहले पेज पर समरी कार्ड इमेज जोड़ें
+      var summaryHeight = (summaryCanvas.height * contentWidth) / summaryCanvas.width;
+      pdf.addImage(summaryImg, 'JPEG', leftMargin, currentY, contentWidth, summaryHeight);
+      currentY += summaryHeight + 5;
+
+      // टेबल 1: कार्यकर्ता संग्रह टेबल
+      pdf.autoTable({
+        startY: currentY,
+        margin: { left: leftMargin, right: rightMargin, top: 14, bottom: 20 },
+        head: [['कोड', 'कार्यकर्ता का नाम', 'काटी रसीदें', 'संग्रह राशि (₹)']],
+        body: incomeRows,
+        theme: 'grid',
+        headStyles: { fillColor: [183, 28, 28], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'center' },
+        styles: { fontSize: 9.5, cellPadding: 2.5, textColor: [33, 33, 33] },
+        columnStyles: {
+          0: { cellWidth: 20, halign: 'center', fontStyle: 'bold' },
+          1: { cellWidth: 'auto' },
+          2: { cellWidth: 26, halign: 'center' },
+          3: { cellWidth: 35, halign: 'right', fontStyle: 'bold', textColor: [46, 125, 50] }
+        }
+      });
+
+      currentY = pdf.lastAutoTable.finalY + 6;
+
+      // यदि पहले टेबल के बाद जगह 40mm से कम बचे तो नया पेज लें
+      if (currentY > pdfHeight - 45) {
+        pdf.addPage();
+        currentY = 16;
       }
 
-      // केवल अंतिम पृष्ठ (Last Page) के नीचे आधिकारिक मुहर व हस्ताक्षर
-      function drawLastPageFooterSeal(pdfInstance) {
-        var footerY = pdfHeight - 38;
+      // टेबल 2: खर्च रजिस्टर
+      pdf.autoTable({
+        startY: currentY,
+        margin: { left: leftMargin, right: rightMargin, top: 14, bottom: 20 },
+        head: [['मद / खर्च विवरण', 'खर्चकर्ता', 'तारीख', 'राशि (₹)', 'बिल']],
+        body: expenseRows,
+        theme: 'grid',
+        headStyles: { fillColor: [194, 24, 91], textColor: [255, 255, 255], fontStyle: 'bold', halign: 'center' },
+        styles: { fontSize: 9, cellPadding: 2.2, textColor: [33, 33, 33] },
+        columnStyles: {
+          0: { cellWidth: 'auto', fontStyle: 'bold' },
+          1: { cellWidth: 35 },
+          2: { cellWidth: 25, halign: 'center' },
+          3: { cellWidth: 30, halign: 'right', fontStyle: 'bold', textColor: [198, 40, 40] },
+          4: { cellWidth: 16, halign: 'center' }
+        }
+      });
 
-        // गोलाकार प्रमाणित मुहर (Seal)
-        pdfInstance.addImage(sealImgData, 'PNG', leftMargin + 2, footerY - 5, 23, 23);
+      currentY = pdf.lastAutoTable.finalY + 4;
 
-        // कोषाध्यक्ष
-        pdfInstance.setFontSize(8.5);
-        pdfInstance.setTextColor(60, 60, 60);
-        pdfInstance.text("कोषाध्यक्ष", leftMargin + 13.5, footerY + 22, { align: 'center' });
-
-        // सचिव / अध्यक्ष हस्ताक्षर
-        pdfInstance.text("सत्यापित एवं अनुमोदित", pdfWidth - rightMargin - 4, footerY + 12, { align: 'right' });
-        pdfInstance.setFontSize(10.5);
-        pdfInstance.setTextColor(183, 28, 28);
-        pdfInstance.text("अध्यक्ष / सचिव (नवयुवा समिति)", pdfWidth - rightMargin - 4, footerY + 17, { align: 'right' });
+      // मुहर व हस्ताक्षर के लिए कम से कम 36mm जगह आवश्यक है
+      if (currentY > pdfHeight - 44) {
+        pdf.addPage();
+        currentY = 16;
       }
 
-      var currentY = 0;
-      var pageNum = 1;
-      var totalPages = Math.ceil(totalCanvasHeight / canvasPageHeight);
+      // अंतिम पृष्ठ पर आधिकारिक डिजिटल मुहर व हस्ताक्षर
+      var footerY = Math.max(currentY + 2, pdfHeight - 40);
 
-      while (currentY < totalCanvasHeight) {
-        if (pageNum > 1) {
-          pdf.addPage('a4', 'p');
-        }
+      pdf.addImage(sealImg, 'PNG', leftMargin + 2, footerY - 5, 22, 22);
 
-        var isLastPage = (pageNum === totalPages);
-        var effectivePageContentHeight = isLastPage ? (printPageHeight - 34) : printPageHeight;
-        var sliceCanvasHeight = (fullCanvas.width * effectivePageContentHeight) / printWidth;
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(60, 60, 60);
+      pdf.text("कोषाध्यक्ष", leftMargin + 13, footerY + 20, { align: 'center' });
 
-        var sliceHeight = Math.min(sliceCanvasHeight, totalCanvasHeight - currentY);
-        var pageCanvas = document.createElement('canvas');
-        pageCanvas.width = fullCanvas.width;
-        pageCanvas.height = sliceHeight;
+      pdf.text("सत्यापित एवं अनुमोदित", pdfWidth - rightMargin - 4, footerY + 11, { align: 'right' });
+      pdf.setFontSize(10.5);
+      pdf.setTextColor(183, 28, 28);
+      pdf.text("अध्यक्ष / सचिव (नवयुवा समिति)", pdfWidth - rightMargin - 4, footerY + 16, { align: 'right' });
 
-        var pageCtx = pageCanvas.getContext('2d');
-        pageCtx.fillStyle = '#ffffff';
-        pageCtx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
+      // प्रत्येक पृष्ठ पर चारों तरफ एक समान डबल-लाइन बॉर्डर व पेज नंबर जोड़ें
+      var totalPages = pdf.internal.getNumberOfPages();
+      for (var p = 1; p <= totalPages; p++) {
+        pdf.setPage(p);
 
-        pageCtx.drawImage(
-          fullCanvas,
-          0, currentY, fullCanvas.width, sliceHeight,
-          0, 0, fullCanvas.width, sliceHeight
-        );
+        // बाहरी बॉर्डर लाइन (गहरी लाल)
+        pdf.setDrawColor(183, 28, 28);
+        pdf.setLineWidth(1.1);
+        pdf.rect(5, 5, pdfWidth - 10, pdfHeight - 10);
 
-        var sliceImgData = pageCanvas.toDataURL('image/jpeg', 0.95);
-        var renderedSliceHeight = (sliceHeight * printWidth) / fullCanvas.width;
-
-        pdf.addImage(sliceImgData, 'JPEG', leftMargin, topMargin, printWidth, renderedSliceHeight);
-
-        // प्रत्येक पृष्ठ पर चारों ओर समान बॉर्डर
-        drawFullPageBorder(pdf);
-
-        // केवल अंतिम पेज पर मुहर व हस्ताक्षर
-        if (isLastPage) {
-          drawLastPageFooterSeal(pdf);
-        }
+        // भीतरी बॉर्डर लाइन (गोल्डन ऑरेन्ज)
+        pdf.setDrawColor(217, 119, 6);
+        pdf.setLineWidth(0.4);
+        pdf.rect(7, 7, pdfWidth - 14, pdfHeight - 14);
 
         // पेज नंबर
         pdf.setFontSize(8);
         pdf.setTextColor(120, 120, 120);
         pdf.text(
-          "पृष्ठ " + pageNum + " / " + totalPages + "  •  नवयुवा दुर्गा पूजा समिति, मारकुंडी",
+          "पृष्ठ " + p + " / " + totalPages + "  •  नवयुवा दुर्गा पूजा समिति, मारकुंडी",
           pdfWidth / 2,
-          pdfHeight - 8,
+          pdfHeight - 8.5,
           { align: 'center' }
         );
-
-        currentY += sliceHeight;
-        pageNum++;
       }
 
       pdf.save('समिति_ऑडिट_बैलेंस_शीट_2026.pdf');
