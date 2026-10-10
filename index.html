@@ -824,7 +824,7 @@
             <span>कुल समिति खर्च (व्यय):</span>
             <span style="color: #c62828;" id="aud-tot-exp">₹0</span>
           </div>
-          <div style="border-top: 1.5px dashed #ffa000; padding-top: 6px; display: justify; display: flex; justify-content: space-between; font-size: 14px; font-weight: 900;">
+          <div style="border-top: 1.5px dashed #ffa000; padding-top: 6px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 900;">
             <span style="color: #b71c1c;">शुद्ध शेष बचत (Net Balance):</span>
             <span style="color: #1b5e20;" id="aud-tot-bal">₹0</span>
           </div>
@@ -860,40 +860,31 @@
           </thead>
           <tbody id="aud-exp-tbody"></tbody>
         </table>
-
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 24px; padding-bottom: 6px;">
-          <div style="text-align: center;">
-            <div class="seal-wrap" style="width: 58px; height: 58px; margin: 0 auto 2px auto;">
-              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
-                <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
-                <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
-                <defs>
-                  <path id="seal-aud-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
-                  <path id="seal-aud-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
-                </defs>
-                <text fill="#b71c1c" font-size="14" font-weight="900">
-                  <textPath href="#seal-aud-top-curve" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
-                </text>
-                <text fill="#b71c1c" font-size="12.5" font-weight="900">
-                  <textPath href="#seal-aud-bot-curve" startOffset="50%" text-anchor="middle">रेलवे गेट, मारकुंडी</textPath>
-                </text>
-                <line x1="40" y1="84" x2="160" y2="84" stroke="#b71c1c" stroke-width="2" />
-                <line x1="40" y1="116" x2="160" y2="116" stroke="#b71c1c" stroke-width="2" />
-                <text x="100" y="105" font-size="14.5" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="0.5">★ लेखा परीक्षित ★</text>
-                <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
-                <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
-              </svg>
-            </div>
-            <span style="font-size: 10px; color: #444; font-weight: bold;">कोषाध्यक्ष</span>
-          </div>
-
-          <div style="text-align: right;">
-            <span style="font-size: 10px; color: #444; font-weight: bold;">सत्यापित एवं अनुमोदित</span><br />
-            <strong style="color: #b71c1c; font-size: 12px;">अध्यक्ष / सचिव</strong>
-          </div>
-        </div>
       </div>
+    </div>
+
+    <!-- छिपी हुई मोहर (PDF रेंडरिंग हेतु) -->
+    <div id="audit-seal-offscreen" style="position: absolute; left: -9999px; top: -9999px; width: 140px; height: 140px; background: transparent;">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width: 140px; height: 140px;">
+        <circle cx="100" cy="100" r="95" fill="#fffdf9" stroke="#b71c1c" stroke-width="3.5" />
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#b71c1c" stroke-width="1.2" stroke-dasharray="3,2" />
+        <circle cx="100" cy="100" r="62" fill="none" stroke="#b71c1c" stroke-width="2" />
+        <defs>
+          <path id="seal-aud-top-curve" d="M 28,100 A 72,72 0 0,1 172,100" />
+          <path id="seal-aud-bot-curve" d="M 172,100 A 72,72 0 0,1 28,100" />
+        </defs>
+        <text fill="#b71c1c" font-size="14" font-weight="900">
+          <textPath href="#seal-aud-top-curve" startOffset="50%" text-anchor="middle">नवयुवा दुर्गा पूजा समिति</textPath>
+        </text>
+        <text fill="#b71c1c" font-size="12.5" font-weight="900">
+          <textPath href="#seal-aud-bot-curve" startOffset="50%" text-anchor="middle">रेलवे गेट, मारकुंडी</textPath>
+        </text>
+        <line x1="40" y1="84" x2="160" y2="84" stroke="#b71c1c" stroke-width="2" />
+        <line x1="40" y1="116" x2="160" y2="116" stroke="#b71c1c" stroke-width="2" />
+        <text x="100" y="105" font-size="14.5" font-weight="900" fill="#b71c1c" text-anchor="middle" letter-spacing="0.5">★ लेखा परीक्षित ★</text>
+        <text x="21" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
+        <text x="179" y="104" font-size="11" fill="#b71c1c" text-anchor="middle">★</text>
+      </svg>
     </div>
 
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
@@ -1299,7 +1290,7 @@
 
     <div id="admin-exp-filter-box" style="padding: 10px 14px; background: #fdf2e9; border-bottom: 1.5px solid #f0b27a; display: flex; flex-direction: column; gap: 8px;">
       <div style="font-size: 11.5px; font-weight: bold; color: #b71c1c;">🔍 खर्च फ़िल्टर व खोज (Admin Filter)</div>
-      <div style="display: flex; gap: 8px;">
+      <div style="display: gap: 8px;">
         <select id="sel-exp-user-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderExpensesList()">
           <option value="ALL">👥 सभी के खर्च (All)</option>
         </select>
@@ -2597,7 +2588,7 @@
   }
 
   // =========================================================================
-  // MULTI-PAGE AUDIT PDF WITH FOUR-SIDED BORDER ON EVERY PAGE
+  // MULTI-PAGE AUDIT PDF: ACCURATE FOUR-SIDED BORDER & SEAL ONLY ON LAST PAGE
   // =========================================================================
   async function downloadAuditPDF() {
     var target = document.getElementById('audit-capture-target');
@@ -2609,7 +2600,7 @@
     try {
       var rect = target.getBoundingClientRect();
       var fullWidth = Math.ceil(rect.width) || target.offsetWidth || 360;
-      var fullHeight = Math.ceil(Math.max(target.scrollHeight, target.offsetHeight, rect.height)) + 12;
+      var fullHeight = Math.ceil(Math.max(target.scrollHeight, target.offsetHeight, rect.height)) + 8;
 
       var fullCanvas = await html2canvas(target, {
         scale: 2.2,
@@ -2626,41 +2617,76 @@
         logging: false
       });
 
+      // समिति की गोल मोहर को अलग कैनवस से कैप्चर करें
+      var sealElement = document.getElementById('audit-seal-offscreen');
+      var sealCanvas = await html2canvas(sealElement, {
+        scale: 2.5,
+        useCORS: true,
+        backgroundColor: null,
+        logging: false
+      });
+      var sealImgData = sealCanvas.toDataURL('image/png');
+
       var jsPDF = window.jspdf.jsPDF;
       var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
 
       var pdfWidth = 210;
       var pdfHeight = 297;
-      var margin = 10;
-      var printWidth = pdfWidth - (margin * 2);
-      var printPageHeight = pdfHeight - (margin * 2);
+      var topMargin = 12;
+      var bottomMargin = 16;
+      var leftMargin = 12;
+      var rightMargin = 12;
+
+      var printWidth = pdfWidth - leftMargin - rightMargin;
+      var printPageHeight = pdfHeight - topMargin - bottomMargin;
 
       var canvasPageHeight = (fullCanvas.width * printPageHeight) / printWidth;
       var totalCanvasHeight = fullCanvas.height;
 
-      var currentY = 0;
-      var pageNum = 1;
-      var totalPages = Math.ceil(totalCanvasHeight / canvasPageHeight);
-
-      // प्रत्येक पेज पर चारों तरफ आकर्षक डबल बॉर्डर खींचने का फ़ंक्शन
+      // प्रत्येक पेज पर चारों तरफ एक समान सटीक डबल-लाइन बॉर्डर
       function drawFullPageBorder(pdfInstance) {
         pdfInstance.setDrawColor(183, 28, 28); // गहरा लाल (#b71c1c)
-        pdfInstance.setLineWidth(1.2);
-        // बाहरी बॉर्डर (Outer Border)
-        pdfInstance.rect(4, 4, pdfWidth - 8, pdfHeight - 8);
+        pdfInstance.setLineWidth(1.0);
+        pdfInstance.rect(5, 5, pdfWidth - 10, pdfHeight - 10);
 
         pdfInstance.setDrawColor(217, 119, 6); // गोल्डन ऑरेन्ज
         pdfInstance.setLineWidth(0.4);
-        // आंतरिक बॉर्डर (Inner Decorative Border)
-        pdfInstance.rect(5.5, 5.5, pdfWidth - 11, pdfHeight - 11);
+        pdfInstance.rect(7, 7, pdfWidth - 14, pdfHeight - 14);
       }
+
+      // केवल अंतिम पृष्ठ (Last Page) के नीचे आधिकारिक मुहर व हस्ताक्षर
+      function drawLastPageFooterSeal(pdfInstance) {
+        var footerY = pdfHeight - 38;
+
+        // गोलाकार प्रमाणित मुहर (Seal)
+        pdfInstance.addImage(sealImgData, 'PNG', leftMargin + 2, footerY - 5, 23, 23);
+
+        // कोषाध्यक्ष
+        pdfInstance.setFontSize(8.5);
+        pdfInstance.setTextColor(60, 60, 60);
+        pdfInstance.text("कोषाध्यक्ष", leftMargin + 13.5, footerY + 22, { align: 'center' });
+
+        // सचिव / अध्यक्ष हस्ताक्षर
+        pdfInstance.text("सत्यापित एवं अनुमोदित", pdfWidth - rightMargin - 4, footerY + 12, { align: 'right' });
+        pdfInstance.setFontSize(10.5);
+        pdfInstance.setTextColor(183, 28, 28);
+        pdfInstance.text("अध्यक्ष / सचिव (नवयुवा समिति)", pdfWidth - rightMargin - 4, footerY + 17, { align: 'right' });
+      }
+
+      var currentY = 0;
+      var pageNum = 1;
+      var totalPages = Math.ceil(totalCanvasHeight / canvasPageHeight);
 
       while (currentY < totalCanvasHeight) {
         if (pageNum > 1) {
           pdf.addPage('a4', 'p');
         }
 
-        var sliceHeight = Math.min(canvasPageHeight, totalCanvasHeight - currentY);
+        var isLastPage = (pageNum === totalPages);
+        var effectivePageContentHeight = isLastPage ? (printPageHeight - 34) : printPageHeight;
+        var sliceCanvasHeight = (fullCanvas.width * effectivePageContentHeight) / printWidth;
+
+        var sliceHeight = Math.min(sliceCanvasHeight, totalCanvasHeight - currentY);
         var pageCanvas = document.createElement('canvas');
         pageCanvas.width = fullCanvas.width;
         pageCanvas.height = sliceHeight;
@@ -2678,19 +2704,23 @@
         var sliceImgData = pageCanvas.toDataURL('image/jpeg', 0.95);
         var renderedSliceHeight = (sliceHeight * printWidth) / fullCanvas.width;
 
-        // पेज कंटेंट जोड़ें
-        pdf.addImage(sliceImgData, 'JPEG', margin, margin, printWidth, renderedSliceHeight);
+        pdf.addImage(sliceImgData, 'JPEG', leftMargin, topMargin, printWidth, renderedSliceHeight);
 
-        // हर पेज पर चारों तरफ सुंदर बॉर्डर बनाएं
+        // प्रत्येक पृष्ठ पर चारों ओर समान बॉर्डर
         drawFullPageBorder(pdf);
 
-        // नीचे पेज नंबर
-        pdf.setFontSize(8.5);
+        // केवल अंतिम पेज पर मुहर व हस्ताक्षर
+        if (isLastPage) {
+          drawLastPageFooterSeal(pdf);
+        }
+
+        // पेज नंबर
+        pdf.setFontSize(8);
         pdf.setTextColor(120, 120, 120);
         pdf.text(
-          "पृष्ठ " + pageNum + " / " + totalPages + "  •  नवयुवा दुर्गा पूजा समिति, रेलवे गेट, मारकुंडी",
+          "पृष्ठ " + pageNum + " / " + totalPages + "  •  नवयुवा दुर्गा पूजा समिति, मारकुंडी",
           pdfWidth / 2,
-          pdfHeight - 6.5,
+          pdfHeight - 8,
           { align: 'center' }
         );
 
