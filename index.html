@@ -936,6 +936,12 @@
         <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" value="मारकुंडी" />
       </div>
 
+      <!-- ऑफलाइन रसीद संख्या इनपुट (बाय डिफॉल्ट N/A) -->
+      <div class="form-group">
+        <label>ऑफलाइन रसीद संख्या (कागज़ी बुक नं.)</label>
+        <input type="text" id="r-offline-no" class="form-input" placeholder="उदा. बुक रसीद नं. या N/A" value="N/A" />
+      </div>
+
       <div class="form-group" id="grp-money">
         <label>सहयोग राशि (रु.) *</label>
         <input type="number" id="r-amt" class="form-input" placeholder="राशि दर्ज करें" oninput="handleAmountChange()" />
@@ -1008,6 +1014,12 @@
         <input type="text" id="ed-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
       </div>
 
+      <!-- एडिट में ऑफलाइन रसीद संख्या -->
+      <div class="form-group">
+        <label>ऑफलाइन रसीद संख्या (कागज़ी बुक नं.)</label>
+        <input type="text" id="ed-offline-no" class="form-input" placeholder="उदा. बुक रसीद नं. या N/A" />
+      </div>
+
       <div class="form-group" id="ed-grp-money">
         <label>सहयोग राशि (रु.) *</label>
         <input type="number" id="ed-amt" class="form-input" placeholder="राशि दर्ज करें" />
@@ -1073,9 +1085,14 @@
 
           <table class="rec-table">
             <tr>
-              <td style="width: 105px; font-weight: bold; color: #880e4f;">रसीद संख्या</td>
+              <td style="width: 115px; font-weight: bold; color: #880e4f;">डिजिटल रसीद नं.</td>
               <td style="width: 8px;">:</td>
               <td id="pv-no" style="font-weight: bold; color: #b71c1c;">-</td>
+            </tr>
+            <tr>
+              <td style="font-weight: bold; color: #880e4f;">ऑफलाइन रसीद नं.</td>
+              <td>:</td>
+              <td id="pv-offline-no" style="font-weight: 700; color: #455a64;">N/A</td>
             </tr>
             <tr>
               <td style="font-weight: bold; color: #880e4f;">दानदाता</td>
@@ -1498,7 +1515,6 @@
   var logoTapCounter = 0;
   var logoTapTimer = null;
 
-  // कार्यकर्ताओं की खाली सूची (शुरुआत 'A' से होगी)
   var users = [];
   try {
     var storedU = localStorage.getItem('durga_users');
@@ -1561,7 +1577,6 @@
     return idx - 1;
   }
 
-  // कोड कभी दोहराया नहीं जाएगा और डिलीट करने पर भी आगे ही बढ़ेगा
   function getNextUniqueUserCode() {
     var savedCounter = localStorage.getItem('durga_permanent_user_code_idx');
     var nextIndex = 0;
@@ -2017,6 +2032,7 @@
     document.getElementById('ed-name').value = rec.name || '';
     document.getElementById('ed-phone').value = rec.phone || '';
     document.getElementById('ed-addr').value = rec.addr || 'मारकुंडी';
+    document.getElementById('ed-offline-no').value = rec.offlineNo || 'N/A';
     document.getElementById('ed-amt').value = rec.amt || '';
     document.getElementById('ed-item-name').value = rec.itemDesc || '';
     document.getElementById('ed-item-val').value = rec.itemVal || '';
@@ -2032,6 +2048,7 @@
     var name = document.getElementById('ed-name').value.trim();
     var phone = document.getElementById('ed-phone').value.trim();
     var addr = document.getElementById('ed-addr').value.trim();
+    var offlineNo = document.getElementById('ed-offline-no').value.trim() || 'N/A';
     var amt = document.getElementById('ed-amt').value.trim();
     var itemName = document.getElementById('ed-item-name').value.trim();
     var itemVal = document.getElementById('ed-item-val').value.trim();
@@ -2063,6 +2080,7 @@
     r.name = name;
     r.phone = phone;
     r.addr = addr || 'मारकुंडी';
+    r.offlineNo = offlineNo;
     r.type = editSelectedType;
     r.amt = (editSelectedType === 'ITEM') ? 0 : parseInt(amt, 10);
     r.itemDesc = itemName || '';
@@ -2277,6 +2295,7 @@
     var name = document.getElementById('r-name').value.trim();
     var phone = document.getElementById('r-phone').value.trim();
     var addr = document.getElementById('r-addr').value.trim();
+    var offlineNo = document.getElementById('r-offline-no').value.trim() || 'N/A';
     var amt = document.getElementById('r-amt').value.trim();
     var itemName = document.getElementById('r-item-name').value.trim();
     var itemVal = document.getElementById('r-item-val').value.trim();
@@ -2306,6 +2325,7 @@
 
     var newRec = {
       no: num,
+      offlineNo: offlineNo,
       name: name,
       phone: phone,
       addr: addr || 'मारकुंडी',
@@ -2342,6 +2362,7 @@
   function showPreview(r) {
     currentReceipt = r;
     document.getElementById('pv-no').innerText = r.no;
+    document.getElementById('pv-offline-no').innerText = r.offlineNo || 'N/A';
     document.getElementById('pv-name').innerText = r.name;
     document.getElementById('pv-phone').innerText = r.phone;
     document.getElementById('pv-addr').innerText = r.addr;
@@ -3227,6 +3248,8 @@
   function openReceiptForm() {
     document.getElementById('r-name').value = '';
     document.getElementById('r-phone').value = '';
+    document.getElementById('r-addr').value = 'मारकुंडी';
+    document.getElementById('r-offline-no').value = 'N/A';
     document.getElementById('r-amt').value = '';
     document.getElementById('r-item-name').value = '';
     document.getElementById('r-item-val').value = '';
@@ -3406,7 +3429,7 @@
       if (selectedStatus === 'VALID' && r.isCancelled) return false;
       if (selectedStatus === 'PENDING' && (!r.cancelRequested || r.isCancelled)) return false;
       if (selectedStatus === 'CANCELLED' && !r.isCancelled) return false;
-      if (searchText && (r.no + r.name + r.phone).toLowerCase().indexOf(searchText) === -1) return false;
+      if (searchText && (r.no + (r.offlineNo || '') + r.name + r.phone).toLowerCase().indexOf(searchText) === -1) return false;
       return true;
     });
 
@@ -3436,7 +3459,7 @@
       div.innerHTML = `
         <div>
           <strong>${r.no} - ${r.name} [${r.code}]</strong> ${statusTag}<br>
-          <small style="color:#555;">${r.phone} • ${r.type === 'ITEM' ? (r.itemDesc || 'वस्तु दान') : ('रु. ' + r.amt)}</small>
+          <small style="color:#555;">${r.phone} • ऑफ. नं: <strong style="color:#880e4f;">${r.offlineNo || 'N/A'}</strong> • ${r.type === 'ITEM' ? (r.itemDesc || 'वस्तु दान') : ('रु. ' + r.amt)}</small>
         </div>
         <div style="display:flex; align-items:center; gap:5px;">
           ${adminActionButtons}
@@ -3598,7 +3621,6 @@
       return;
     }
 
-    // नया गैर-दोहराव वाला कोड प्राप्त करें (शुरुआत 'A', फिर 'B', 'C'...)
     var code = getNextUniqueUserCode();
 
     users.push({ 
@@ -3635,7 +3657,7 @@
     var text = "🚩 *नवयुवा दुर्गा पूजा समिति, मारकुंडी* 🚩\n\n" +
                "प्रिय *" + currentReceipt.name + "* जी,\n" +
                "सहयोग राशि: *रु. " + currentReceipt.amt + "/-*\n" +
-               "रसीद संख्या: *" + currentReceipt.no + "*\n\n" +
+               "रसीद संख्या: *" + currentReceipt.no + "* (ऑफलाइन नं: " + (currentReceipt.offlineNo || 'N/A') + ")\n\n" +
                "🔗 *डिजिटल रसीद लिंक:*\n" + verifyUrl +
                certSection + "\n\n" +
                "(यह डिजिटल रूप से प्रमाणित है) 🙏 जय माता दी!";
@@ -3645,10 +3667,10 @@
 
   function exportReceiptsToCSV() {
     if (!receipts.length) return alert("डेटा नहीं है!");
-    var csv = "\uFEFFरसीद,दानदाता,मोबाइल,पता,माध्यम,राशि,कार्यकर्ता,कोड,स्थिति\n";
+    var csv = "\uFEFFरसीद,ऑफलाइन रसीद,दानदाता,मोबाइल,पता,माध्यम,राशि,कार्यकर्ता,कोड,स्थिति\n";
     receipts.forEach(function(r) {
       var st = r.isCancelled ? 'CANCELLED' : (r.cancelRequested ? 'CANCEL_REQUESTED' : 'VALID');
-      csv += `"${r.no}","${r.name}","${r.phone}","${r.addr}","${r.type}",${r.amt},"${r.by}","${r.code}","${st}"\n`;
+      csv += `"${r.no}","${r.offlineNo || 'N/A'}","${r.name}","${r.phone}","${r.addr}","${r.type}",${r.amt},"${r.by}","${r.code}","${st}"\n`;
     });
     var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     var a = document.createElement('a');
