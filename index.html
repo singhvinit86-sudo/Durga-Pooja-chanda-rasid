@@ -1664,7 +1664,7 @@
 
     if (logoTapCounter >= 3) {
       logoTapCounter = 0;
-      var inputKey = prompt("🔒 समिति एक्सेस कोड दर्ज करें (उदा. nydps2026):");
+      var inputKey = prompt("🔒 समिति एक्सेस कोड दर्ज करें");
       if (inputKey === SECRET_ACCESS_KEY || inputKey === adminPass) {
         localStorage.setItem('durga_staff_device_unlocked', 'true');
         var pubCard = document.getElementById('screen-public-card');
