@@ -330,7 +330,7 @@
     .pending-cancel-badge { background: #fff3e0; border: 2px solid #ff9800; color: #e65100; padding: 8px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; font-size: 13px; }
 
     /* Public Screen Specific */
-    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: center; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
+    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
     .pub-card { background: white; border-radius: 14px; padding: 28px 20px; border-top: 6px solid #b71c1c; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
 
     @media print {
@@ -1498,12 +1498,8 @@
   var logoTapCounter = 0;
   var logoTapTimer = null;
 
-  // डिफ़ॉल्ट यूज़र्स (A, B, C क्रम में)
-  var users = [
-    { id: 1, name: 'अमित सिंह', mobile: '9876543210', pass: '1234', code: 'A', role: 'व्यवस्था सहयोगी', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true, activeToken: '' },
-    { id: 2, name: 'बबलू कुमार', mobile: '9123456780', pass: '1234', code: 'B', role: 'कोषाध्यक्ष', photo: '', addr: 'रेलवे गेट, मारकुंडी', deposited: 0, isActive: true, activeToken: '' },
-    { id: 3, name: 'चंदन कुमार', mobile: '8765432109', pass: '1234', code: 'C', role: 'प्रचार प्रमुख', photo: '', addr: 'ग्राम-मारकुंडी', deposited: 0, isActive: true, activeToken: '' }
-  ];
+  // कार्यकर्ताओं की खाली सूची (शुरुआत 'A' से होगी)
+  var users = [];
   try {
     var storedU = localStorage.getItem('durga_users');
     if (storedU) users = JSON.parse(storedU);
@@ -1542,7 +1538,7 @@
   }
 
   // =========================================================================
-  // STRICT SEQUENTIAL & NON-REPEATING USER CODE SYSTEM (A, B, C ... Z, AA ...)
+  // STRICT NON-REPEATING SEQUENTIAL CODE LOGIC (A, B, C ... Z, AA ...)
   // =========================================================================
   function indexToExcelCode(index) {
     var code = '';
@@ -1565,30 +1561,24 @@
     return idx - 1;
   }
 
-  // स्थायी काउंटर जो कभी दोबारा पुराना कोड नहीं देगा
+  // कोड कभी दोहराया नहीं जाएगा और डिलीट करने पर भी आगे ही बढ़ेगा
   function getNextUniqueUserCode() {
-    var maxIndex = -1;
-
     var savedCounter = localStorage.getItem('durga_permanent_user_code_idx');
-    if (savedCounter !== null && savedCounter !== undefined) {
-      maxIndex = Math.max(maxIndex, parseInt(savedCounter, 10));
+    var nextIndex = 0;
+
+    if (savedCounter !== null && savedCounter !== undefined && savedCounter !== "") {
+      nextIndex = parseInt(savedCounter, 10) + 1;
+    } else {
+      var maxIndex = -1;
+      users.forEach(function(u) {
+        if (u.code && u.code !== 'ADM') {
+          var idx = excelCodeToIndex(u.code);
+          if (idx > maxIndex) maxIndex = idx;
+        }
+      });
+      nextIndex = maxIndex + 1;
     }
 
-    users.forEach(function(u) {
-      if (u.code && u.code !== 'ADM') {
-        var idx = excelCodeToIndex(u.code);
-        if (idx > maxIndex) maxIndex = idx;
-      }
-    });
-
-    receipts.concat(offlineQueue).forEach(function(r) {
-      if (r.code && r.code !== 'ADM') {
-        var idx = excelCodeToIndex(r.code);
-        if (idx > maxIndex) maxIndex = idx;
-      }
-    });
-
-    var nextIndex = maxIndex + 1;
     localStorage.setItem('durga_permanent_user_code_idx', nextIndex);
     syncToFirebase("meta/lastUserCodeIndex", nextIndex);
 
@@ -1596,11 +1586,20 @@
   }
 
   function resetUserCodeSequence() {
-    if (confirm("⚠️ क्या आप कोड काउंटर को फिर से 'A' से शुरू करना चाहते हैं?\n(ध्यान दें: यह तभी करें जब आप नया सत्र शुरू कर रहे हों)")) {
-      localStorage.setItem('durga_permanent_user_code_idx', -1);
-      syncToFirebase("meta/lastUserCodeIndex", -1);
-      alert("✅ कोड काउंटर रीसेट हो गया! अब नया यूज़र 'A' से बनेगा।");
+    var wipeUsers = confirm("क्या आप पुराने कार्यकर्ताओं की सूची भी खाली करके बिल्कुल नए सिरे से (A) से आरंभ करना चाहते हैं?\n\n[OK] = कार्यकर्ता सूची और कोड दोनों 'A' से रीसेट करें\n[Cancel] = केवल कोड को 'A' पर रीसेट करें");
+    
+    localStorage.setItem('durga_permanent_user_code_idx', '-1');
+    syncToFirebase("meta/lastUserCodeIndex", -1);
+    
+    if (wipeUsers) {
+      users = [];
+      localStorage.setItem('durga_users', JSON.stringify([]));
+      syncToFirebase("users", []);
+      if (document.getElementById('screen-users-list').classList.contains('active')) {
+        openUsersList();
+      }
     }
+    alert("✅ कोड काउंटर सफलतापूर्वक रीसेट हो गया! अब बनने वाला नया कार्यकर्ता 'A' कोड प्राप्त करेगा।");
   }
 
   function generateSecureReceiptSignature(r) {
@@ -3474,6 +3473,16 @@
   function openUsersList() {
     var box = document.getElementById('users-list-box');
     box.innerHTML = '';
+    
+    if (users.length === 0) {
+      box.innerHTML = `<div style="text-align:center; padding:30px 10px; color:#666;">
+        <p style="font-size:15px; font-weight:bold;">कोई कार्यकर्ता मौजूद नहीं है।</p>
+        <p style="font-size:12px; margin-top:4px;">एडमिन पैनल से 'नया यूज़र जोड़ें' पर क्लिक करें। पहला कार्यकर्ता 'A' बनेगा।</p>
+      </div>`;
+      showScreen('screen-users-list');
+      return;
+    }
+
     users.forEach(function(u) {
       var isAct = (u.isActive !== false);
       var tot = 0;
@@ -3589,7 +3598,7 @@
       return;
     }
 
-    // नया गैर-दोहराव वाला कोड प्राप्त करें (A, B, C...)
+    // नया गैर-दोहराव वाला कोड प्राप्त करें (शुरुआत 'A', फिर 'B', 'C'...)
     var code = getNextUniqueUserCode();
 
     users.push({ 
