@@ -861,7 +861,7 @@
           <tbody id="aud-exp-tbody"></tbody>
         </table>
 
-        <!-- मोहर और हस्ताक्षर ब्लॉक (केवल प्रिंटिंग और रेंडरिंग हेतु) -->
+        <!-- मोहर और हस्ताक्षर ब्लॉक -->
         <div id="audit-footer-signatures" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 22px; padding: 6px 4px;">
           <div style="text-align: center;">
             <div class="seal-wrap" style="width: 58px; height: 58px; margin: 0 auto 2px auto;">
@@ -1217,7 +1217,7 @@
       </div>
     </div>
 
-    <!-- बटन कंटेनर: डोनर को केवल Save PDF का बटन दिखेगा -->
+    <!-- बटन कंटेनर -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
       <button class="btn btn-purple" id="btn-save-cert-pdf" style="font-size: 16px;" onclick="downloadCertificatePDF()">
         📥 Save PDF (सम्मान पत्र डाउनलोड करें)
@@ -1360,7 +1360,7 @@
   <!-- 11. SETTINGS SCREEN -->
   <div id="screen-settings" class="screen">
     <div class="top-bar">
-      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> सेटिंग्स व बैकअप</h2>
+      <h2><button class="icon-btn" onclick="showScreen('screen-admin')">⬅️</button> setिंग्स व बैकअप</h2>
     </div>
     <div style="padding: 20px; overflow-y: auto;">
       <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">💾 डेटा बैकअप व सिंक</h3>
@@ -1471,7 +1471,59 @@
     return str.trim() + ' रुपये मात्र';
   }
 
-  // रसीद के लिए छोटा व सुरक्षित 8-अक्षरों का HMAC टोकन
+  // =========================================================================
+  // SAFE EXCEL-STYLE CODE GENERATION (NEVER REUSES DELETED USER CODES)
+  // =========================================================================
+  function indexToExcelCode(index) {
+    var code = '';
+    index = index + 1;
+    while (index > 0) {
+      var rem = (index - 1) % 26;
+      code = String.fromCharCode(65 + rem) + code;
+      index = Math.floor((index - 1) / 26);
+    }
+    return code;
+  }
+
+  function excelCodeToIndex(code) {
+    if (!code) return -1;
+    code = code.toUpperCase();
+    var idx = 0;
+    for (var i = 0; i < code.length; i++) {
+      idx = idx * 26 + (code.charCodeAt(i) - 64);
+    }
+    return idx - 1;
+  }
+
+  function getNextUniqueUserCode() {
+    var maxIndex = -1;
+
+    // Check all existing users
+    users.forEach(function(u) {
+      if (u.code) {
+        var idx = excelCodeToIndex(u.code);
+        if (idx > maxIndex) maxIndex = idx;
+      }
+    });
+
+    // Check all receipts in history
+    receipts.concat(offlineQueue).forEach(function(r) {
+      if (r.code && r.code !== 'ADM') {
+        var idx = excelCodeToIndex(r.code);
+        if (idx > maxIndex) maxIndex = idx;
+      }
+    });
+
+    // Check saved state in localStorage
+    var savedMax = parseInt(localStorage.getItem('durga_last_user_code_index') || "-1", 10);
+    if (savedMax > maxIndex) maxIndex = savedMax;
+
+    var nextIndex = maxIndex + 1;
+    localStorage.setItem('durga_last_user_code_index', nextIndex);
+    return indexToExcelCode(nextIndex);
+  }
+
+  // Secure receipt signature
   function generateSecureReceiptSignature(r) {
     var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.code || '');
     if (window.CryptoJS && CryptoJS.HmacSHA256) {
@@ -1485,7 +1537,7 @@
     return Math.abs(hash).toString(16).substring(0, 8);
   }
 
-  // सम्मान पत्र के लिए अलग मजबूत व छोटा 8-अक्षरों का HMAC टोकन
+  // Secure certificate signature
   function generateSecureCertificateSignature(r) {
     var payload = "CERT_" + (r.no || '') + "_" + (r.name || '') + "_" + (r.amt || 0);
     if (window.CryptoJS && CryptoJS.HmacSHA256) {
@@ -1505,7 +1557,6 @@
     return cleanBase + "/#" + encodeURIComponent(r.no) + "_" + sig;
   }
 
-  // सम्मान पत्र का संक्षिप्त व सुरक्षित लिंक (उदा. #C_A001_sig)
   function getSecureCertificateLink(r) {
     var sig = generateSecureCertificateSignature(r);
     var cleanBase = window.location.origin + window.location.pathname.replace(/\/index\.html$/i, '/').replace(/\/$/, '');
@@ -2174,7 +2225,6 @@
     showScreen('screen-preview');
   }
 
-  // URL सत्यापन जांच - रसीद व सम्मान पत्र दोनों हेतु
   function checkUrlVerification() {
     var vNo = "";
     var sig = "";
@@ -2283,9 +2333,6 @@
     showScreen('screen-certificate');
   }
 
-  // =========================================================================
-  // PIXEL-PERFECT ELEMENT CAPTURE HELPER (NO CUT-OFF)
-  // =========================================================================
   async function generateFullElementCanvas(targetElement, bgColor) {
     var rect = targetElement.getBoundingClientRect();
     var fullWidth = Math.ceil(rect.width) || targetElement.offsetWidth || 340;
@@ -2597,9 +2644,6 @@
     showScreen('screen-audit');
   }
 
-  // =========================================================================
-  // MULTI-PAGE AUDIT PDF: ZERO TEXT CUT-OFF + PERFECT ORIGINAL HINDI RENDERING
-  // =========================================================================
   async function downloadAuditPDF() {
     var btn = document.getElementById('btn-dl-audit');
     var oldText = btn.innerText;
@@ -2617,22 +2661,18 @@
       var topMargin = 14;
       var bottomMargin = 16;
       var contentWidth = pdfWidth - leftMargin - rightMargin;
-      var maxContentHeight = pdfHeight - topMargin - bottomMargin; // 267 mm
+      var maxContentHeight = pdfHeight - topMargin - bottomMargin;
 
-      // प्रत्येक पेज पर दोनों बॉर्डर सटीक रूप से खींचने का फ़ंक्शन
       function drawDualBorder(pdfInstance) {
-        // बाहरी बॉर्डर लाइन (गहरा लाल)
         pdfInstance.setDrawColor(183, 28, 28);
         pdfInstance.setLineWidth(1.1);
         pdfInstance.rect(5, 5, pdfWidth - 10, pdfHeight - 10);
 
-        // भीतरी बॉर्डर लाइन (गोल्डन ऑरेन्ज)
         pdfInstance.setDrawColor(217, 119, 6);
         pdfInstance.setLineWidth(0.4);
         pdfInstance.rect(7, 7, pdfWidth - 14, pdfHeight - 14);
       }
 
-      // किसी भी DOM एलिमेंट को बिना काटे ओरिजिनल फ़ॉन्ट के साथ कैनवस में बदलने का हेल्पर
       async function captureElementBlock(el, bg) {
         return await html2canvas(el, {
           scale: 2.3,
@@ -2642,35 +2682,27 @@
         });
       }
 
-      // ब्लॉक 1: हेडर
       var headerCanvas = await captureElementBlock(document.getElementById('audit-header-content'));
       var headerH = (headerCanvas.height * contentWidth) / headerCanvas.width;
 
-      // ब्लॉक 2: समरी कार्ड (आय, व्यय, बैलेंस)
       var summaryCanvas = await captureElementBlock(document.getElementById('audit-summary-content'));
       var summaryH = (summaryCanvas.height * contentWidth) / summaryCanvas.width;
 
-      // ब्लॉक 3: टेबल 1 शीर्षक
       var title1Canvas = await captureElementBlock(document.getElementById('aud-sec-title-income'));
       var title1H = (title1Canvas.height * contentWidth) / title1Canvas.width;
 
-      // ब्लॉक 4: टेबल 1 हेडर
       var th1Canvas = await captureElementBlock(document.querySelector('#aud-table-income thead'));
       var th1H = (th1Canvas.height * contentWidth) / th1Canvas.width;
 
-      // ब्लॉक 5: टेबल 2 शीर्षक
       var title2Canvas = await captureElementBlock(document.getElementById('aud-sec-title-expense'));
       var title2H = (title2Canvas.height * contentWidth) / title2Canvas.width;
 
-      // ब्लॉक 6: टेबल 2 हेडर
       var th2Canvas = await captureElementBlock(document.querySelector('#aud-table-expense thead'));
       var th2H = (th2Canvas.height * contentWidth) / th2Canvas.width;
 
-      // ब्लॉक 7: हस्ताक्षर व मोहर (केवल अंतिम पेज पर)
       var footerCanvas = await captureElementBlock(document.getElementById('audit-footer-signatures'));
       var footerH = (footerCanvas.height * contentWidth) / footerCanvas.width;
 
-      // टेबल 1 (कार्यकर्ता संग्रह) की सभी पंक्तियाँ रेंडर करें
       var incomeRows = document.querySelectorAll('#aud-collector-tbody tr');
       var incRowBlocks = [];
       for (var i = 0; i < incomeRows.length; i++) {
@@ -2681,7 +2713,6 @@
         });
       }
 
-      // टेबल 2 (खर्च रजिस्टर) की सभी पंक्तियाँ रेंडर करें
       var expenseRows = document.querySelectorAll('#aud-exp-tbody tr');
       var expRowBlocks = [];
       for (var j = 0; j < expenseRows.length; j++) {
@@ -2694,7 +2725,6 @@
 
       var currentY = topMargin;
 
-      // ब्लॉक सुरक्षित जोड़ने का फ़ंक्शन - अगर जगह कम हो तो स्वतः नया पेज ले लेगा (कभी अक्षर नहीं कटेगा)
       function addBlock(imgData, height, minSpaceNeeded) {
         var needed = minSpaceNeeded || height;
         if ((currentY + needed) > (topMargin + maxContentHeight)) {
@@ -2705,23 +2735,18 @@
         currentY += height;
       }
 
-      // 1. हेडर जोड़ें
-      addBlock(headerImg = headerCanvas.toDataURL('image/jpeg', 0.95), headerH);
+      addBlock(headerCanvas.toDataURL('image/jpeg', 0.95), headerH);
       currentY += 1.5;
 
-      // 2. समरी कार्ड जोड़ें
       addBlock(summaryCanvas.toDataURL('image/jpeg', 0.95), summaryH);
       currentY += 3;
 
-      // 3. टेबल 1 शीर्षक व हेडर
       addBlock(title1Canvas.toDataURL('image/jpeg', 0.95), title1H, title1H + th1H + 10);
       currentY += 1;
       addBlock(th1Canvas.toDataURL('image/jpeg', 0.95), th1H);
 
-      // 4. टेबल 1 की पंक्तियाँ जोड़ें
       for (var r = 0; r < incRowBlocks.length; r++) {
         var row = incRowBlocks[r];
-        // यदि पंक्ति अगले पेज पर जा रही है तो वहाँ टेबल हेडर भी स्वतः दोहराएँ
         if ((currentY + row.h) > (topMargin + maxContentHeight)) {
           pdf.addPage();
           currentY = topMargin;
@@ -2733,12 +2758,10 @@
 
       currentY += 4;
 
-      // 5. टेबल 2 शीर्षक व हेडर
       addBlock(title2Canvas.toDataURL('image/jpeg', 0.95), title2H, title2H + th2H + 10);
       currentY += 1;
       addBlock(th2Canvas.toDataURL('image/jpeg', 0.95), th2H);
 
-      // 6. टेबल 2 की पंक्तियाँ जोड़ें
       for (var e = 0; e < expRowBlocks.length; e++) {
         var expRow = expRowBlocks[e];
         if ((currentY + expRow.h) > (topMargin + maxContentHeight)) {
@@ -2752,14 +2775,12 @@
 
       currentY += 3;
 
-      // 7. मोहर व हस्ताक्षर ब्लॉक (यदि जगह कम हो तो नया पेज लेकर नीचे रखें)
       if ((currentY + footerH) > (topMargin + maxContentHeight)) {
         pdf.addPage();
         currentY = topMargin;
       }
       pdf.addImage(footerCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', leftMargin, currentY, contentWidth, footerH);
 
-      // 8. प्रत्येक पृष्ठ पर दोनों संपूर्ण बॉर्डर और सुंदर पेज नंबर प्रिंट करें
       var totalPages = pdf.internal.getNumberOfPages();
       for (var p = 1; p <= totalPages; p++) {
         pdf.setPage(p);
@@ -3320,6 +3341,7 @@
 
     if (!confirm(confirmMsg)) return;
 
+    // यूजर लिस्ट से हटा दें, बिना किसी अन्य यूजर के कोड को छेड़े
     users = users.filter(function(u) { return u.id !== id; });
 
     localStorage.setItem('durga_users', JSON.stringify(users));
@@ -3327,15 +3349,6 @@
 
     alert("✅ कार्यकर्ता '" + name + "' को सफलतापूर्वक हटा दिया गया है।");
     openUsersList();
-  }
-
-  function generateUserCode(index) {
-    var code = '';
-    while (index >= 0) {
-      code = String.fromCharCode((index % 26) + 65) + code;
-      index = Math.floor(index / 26) - 1;
-    }
-    return code;
   }
 
   function saveNewUser() {
@@ -3350,7 +3363,8 @@
       return;
     }
 
-    var code = generateUserCode(users.length);
+    // नया यूनिक कोड प्राप्त करें जो कभी किसी पुराने या हटाए गए यूजर से नहीं टकराएगा
+    var code = getNextUniqueUserCode();
 
     users.push({ 
       id: Date.now(), 
@@ -3372,9 +3386,6 @@
     showScreen('screen-admin');
   }
 
-  // =========================================================================
-  // WHATSAPP SHARE: 500+ PAR RASID & SAMMAN PATRA DONO KE ALAG-ALAG SECURE LINKS
-  // =========================================================================
   function shareWhatsApp() {
     if (!currentReceipt) return;
     var verifyUrl = getSecureVerificationLink(currentReceipt);
