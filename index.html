@@ -824,7 +824,7 @@
             <span>कुल समिति खर्च (व्यय):</span>
             <span style="color: #c62828;" id="aud-tot-exp">₹0</span>
           </div>
-          <div style="border-top: 1.5px dashed #ffa000; padding-top: 6px; display: flex; justify-content: space-between; font-size: 14px; font-weight: 900;">
+          <div style="border-top: 1.5px dashed #ffa000; padding-top: 6px; display: justify; display: flex; justify-content: space-between; font-size: 14px; font-weight: 900;">
             <span style="color: #b71c1c;">शुद्ध शेष बचत (Net Balance):</span>
             <span style="color: #1b5e20;" id="aud-tot-bal">₹0</span>
           </div>
@@ -2596,6 +2596,9 @@
     showScreen('screen-audit');
   }
 
+  // =========================================================================
+  // MULTI-PAGE AUDIT PDF WITH FOUR-SIDED BORDER ON EVERY PAGE
+  // =========================================================================
   async function downloadAuditPDF() {
     var target = document.getElementById('audit-capture-target');
     var btn = document.getElementById('btn-dl-audit');
@@ -2639,6 +2642,19 @@
       var pageNum = 1;
       var totalPages = Math.ceil(totalCanvasHeight / canvasPageHeight);
 
+      // प्रत्येक पेज पर चारों तरफ आकर्षक डबल बॉर्डर खींचने का फ़ंक्शन
+      function drawFullPageBorder(pdfInstance) {
+        pdfInstance.setDrawColor(183, 28, 28); // गहरा लाल (#b71c1c)
+        pdfInstance.setLineWidth(1.2);
+        // बाहरी बॉर्डर (Outer Border)
+        pdfInstance.rect(4, 4, pdfWidth - 8, pdfHeight - 8);
+
+        pdfInstance.setDrawColor(217, 119, 6); // गोल्डन ऑरेन्ज
+        pdfInstance.setLineWidth(0.4);
+        // आंतरिक बॉर्डर (Inner Decorative Border)
+        pdfInstance.rect(5.5, 5.5, pdfWidth - 11, pdfHeight - 11);
+      }
+
       while (currentY < totalCanvasHeight) {
         if (pageNum > 1) {
           pdf.addPage('a4', 'p');
@@ -2662,14 +2678,19 @@
         var sliceImgData = pageCanvas.toDataURL('image/jpeg', 0.95);
         var renderedSliceHeight = (sliceHeight * printWidth) / fullCanvas.width;
 
+        // पेज कंटेंट जोड़ें
         pdf.addImage(sliceImgData, 'JPEG', margin, margin, printWidth, renderedSliceHeight);
 
-        pdf.setFontSize(9);
-        pdf.setTextColor(150, 150, 150);
+        // हर पेज पर चारों तरफ सुंदर बॉर्डर बनाएं
+        drawFullPageBorder(pdf);
+
+        // नीचे पेज नंबर
+        pdf.setFontSize(8.5);
+        pdf.setTextColor(120, 120, 120);
         pdf.text(
-          "पृष्ठ " + pageNum + " / " + totalPages + "  •  नवयुवा दुर्गा पूजा समिति, मारकुंडी",
+          "पृष्ठ " + pageNum + " / " + totalPages + "  •  नवयुवा दुर्गा पूजा समिति, रेलवे गेट, मारकुंडी",
           pdfWidth / 2,
-          pdfHeight - 4,
+          pdfHeight - 6.5,
           { align: 'center' }
         );
 
@@ -3274,7 +3295,9 @@
     showScreen('screen-admin');
   }
 
-  // ₹500+ पर रसीद और संक्षिप्त सुरक्षित सम्मान पत्र दोनों का ऑटोमैटिक WhatsApp संदेश
+  // =========================================================================
+  // WHATSAPP SHARE: 500+ PAR RASID & SAMMAN PATRA DONO KE ALAG-ALAG SECURE LINKS
+  // =========================================================================
   function shareWhatsApp() {
     if (!currentReceipt) return;
     var verifyUrl = getSecureVerificationLink(currentReceipt);
