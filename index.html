@@ -188,7 +188,7 @@
       background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,152,0,0.08) 70%, transparent 100%);
       border-radius: 50%;
       pointer-events: none;
-      z-index: 1;
+      z-1;
     }
     .id-lanyard-hole { 
       width: 44px; 
@@ -935,9 +935,8 @@
       </div>
 
       <div class="form-group">
-        <label>दानदाता का नाम *</label>
-        <!-- Removed problematic oninput here to enable flawless Hindi IME input -->
-        <input type="text" id="r-name" class="form-input" placeholder="दानदाता का नाम दर्ज करें" autocomplete="off" spellcheck="false" />
+        <label>दानदाता का नाम * <span style="font-size:11px; font-weight:normal; color:#e65100;">(सीधे हिंदी या इंग्लिश में लिखकर Space दबाएं)</span></label>
+        <input type="text" id="r-name" class="form-input auto-hindi-field" placeholder="उदा. Ramesh Kumar या रमेश कुमार" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
         <label>मोबाइल नंबर *</label>
@@ -945,7 +944,7 @@
       </div>
       <div class="form-group">
         <label>पता / ग्राम</label>
-        <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" value="मारकुंडी" autocomplete="off" />
+        <input type="text" id="r-addr" class="form-input auto-hindi-field" placeholder="ग्राम, पोस्ट, जिला" value="मारकुंडी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
 
       <!-- ऑफलाइन रसीद संख्या इनपुट (बाय डिफॉल्ट N/A) -->
@@ -981,7 +980,7 @@
       <div id="grp-item-fields" style="display: none;">
         <div class="form-group">
           <label>समर्पित वस्तु / सेवा का नाम व विवरण *</label>
-          <input type="text" id="r-item-name" class="form-input" placeholder="उदा. चुनरी, 5L तेल/घी, श्रृंगार, टेंट सेवा" />
+          <input type="text" id="r-item-name" class="form-input auto-hindi-field" placeholder="उदा. chunri, prasad या चुनरी, प्रसाद" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
         </div>
         <div class="form-group">
           <label>अनुमानित मूल्य ₹ (वैकल्पिक)</label>
@@ -1015,7 +1014,7 @@
 
       <div class="form-group">
         <label>दानदाता का नाम *</label>
-        <input type="text" id="ed-name" class="form-input" placeholder="दानदाता का नाम" autocomplete="off" spellcheck="false" />
+        <input type="text" id="ed-name" class="form-input auto-hindi-field" placeholder="दानदाता का नाम" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
         <label>मोबाइल नंबर *</label>
@@ -1023,7 +1022,7 @@
       </div>
       <div class="form-group">
         <label>पता / ग्राम</label>
-        <input type="text" id="ed-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" autocomplete="off" />
+        <input type="text" id="ed-addr" class="form-input auto-hindi-field" placeholder="ग्राम, पोस्ट, जिला" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
 
       <!-- एडिट में ऑफलाइन रसीद संख्या -->
@@ -1040,7 +1039,7 @@
       <div id="ed-grp-item-fields" style="display: none;">
         <div class="form-group">
           <label>समर्पित वस्तु / सेवा का विवरण *</label>
-          <input type="text" id="ed-item-name" class="form-input" placeholder="उदा. चुनरी, श्रृंगार, टेंट सेवा" />
+          <input type="text" id="ed-item-name" class="form-input auto-hindi-field" placeholder="उदा. चुनरी, श्रृंगार, टेंट सेवा" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
         </div>
         <div class="form-group">
           <label>अनुमानित मूल्य ₹ (वैकल्पिक)</label>
@@ -1366,7 +1365,7 @@
     <div style="padding: 14px 16px; background: #fff8e1; border-bottom: 1.5px solid #ffe082;">
       <h3 style="font-size: 14px; color: #b71c1c; margin-bottom: 8px; font-weight: bold;">➕ नया खर्च व बिल दर्ज करें</h3>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <input type="text" id="exp-title" class="form-input" placeholder="मद (उदा. टेंट, प्रसाद)" />
+        <input type="text" id="exp-title" class="form-input auto-hindi-field" placeholder="मद (उदा. tent, prasad)" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
         <input type="number" id="exp-amt" class="form-input" placeholder="रकम (₹)" />
       </div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
@@ -1427,11 +1426,11 @@
     <div style="padding: 20px;">
       <div class="form-group">
         <label>कार्यकर्ता का नाम *</label>
-        <input type="text" id="nu-name" class="form-input" placeholder="नाम लिखें" autocomplete="off" />
+        <input type="text" id="nu-name" class="form-input auto-hindi-field" placeholder="नाम लिखें" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
         <label>समिति पदनाम (Designation) *</label>
-        <input type="text" id="nu-role" class="form-input" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष, व्यवस्थापक" value="व्यवस्था सहयोगी" />
+        <input type="text" id="nu-role" class="form-input auto-hindi-field" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष, व्यवस्थापक" value="व्यवस्था सहयोगी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
         <label>मोबाइल नंबर *</label>
@@ -1443,7 +1442,7 @@
       </div>
       <div class="form-group">
         <label>निवास / ग्राम</label>
-        <input type="text" id="nu-addr" class="form-input" value="मारकुंडी" autocomplete="off" />
+        <input type="text" id="nu-addr" class="form-input auto-hindi-field" value="मारकुंडी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <button class="btn" onclick="saveNewUser()">कार्यकर्ता जोड़ें</button>
     </div>
@@ -1550,6 +1549,54 @@
     var storedE = localStorage.getItem('durga_expenses');
     if (storedE) expenses = JSON.parse(storedE);
   } catch(e) {}
+
+  // =========================================================================
+  // AUTOMATIC HINGLISH TO HINDI REALTIME ENGINE
+  // =========================================================================
+  function transliterateWordOnline(word, callback) {
+    if (!word || !word.trim()) { callback(word); return; }
+    var cleanWord = word.trim();
+    var url = "https://inputtools.google.com/request?text=" + encodeURIComponent(cleanWord) + "&itc=hi-t-i0-und&num=1";
+    fetch(url)
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data && data[1] && data[1][0] && data[1][0][1] && data[1][0][1][0]) {
+          callback(data[1][0][1][0]);
+        } else {
+          callback(word);
+        }
+      })
+      .catch(function() {
+        callback(word);
+      });
+  }
+
+  function setupAutoHindiTransliteration() {
+    document.querySelectorAll('.auto-hindi-field').forEach(function(el) {
+      if (el.getAttribute('data-translit-bound')) return;
+      el.setAttribute('data-translit-bound', 'true');
+
+      el.addEventListener('keydown', function(e) {
+        if (e.key === ' ' || e.keyCode === 32 || e.key === 'Enter' || e.keyCode === 13) {
+          var cursorPosition = el.selectionStart;
+          var textBeforeCursor = el.value.substring(0, cursorPosition);
+          var textAfterCursor = el.value.substring(cursorPosition);
+
+          var words = textBeforeCursor.split(/\s+/);
+          var targetWord = words[words.length - 1];
+
+          if (targetWord && /[a-zA-Z]/.test(targetWord)) {
+            transliterateWordOnline(targetWord, function(hindiResult) {
+              words[words.length - 1] = hindiResult;
+              var newBeforeCursor = words.join(" ") + (e.key === ' ' ? ' ' : '');
+              el.value = newBeforeCursor + textAfterCursor;
+              el.setSelectionRange(newBeforeCursor.length, newBeforeCursor.length);
+            });
+          }
+        }
+      });
+    });
+  }
 
   function numberToHindiWords(num) {
     var n = parseInt(num, 10);
@@ -3239,6 +3286,7 @@
       target.style.display = 'flex';
       window.scrollTo(0, 0);
     }
+    setupAutoHindiTransliteration();
   }
 
   function setRole(role) {
@@ -3723,6 +3771,7 @@
     updateImages();
     renderNoticeBoard();
     updateOfflineQueueUI();
+    setupAutoHindiTransliteration();
     document.getElementById('set-upi-id').value = SAMITI_UPI_ID;
     
     if (isDonorLinkView) {
