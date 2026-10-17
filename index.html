@@ -66,9 +66,13 @@
     .btn-grey { background: #546e7a; }
 
     .form-group { margin-bottom: 13px; }
-    .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #333; }
+    .form-group label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #333; }
     .form-input { width: 100%; padding: 10px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 14px; outline: none; }
     .form-input:focus { border-color: #d32f2f; }
+
+    .mic-btn { background: #ffebee; border: 1px solid #ffcdd2; color: #b71c1c; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .mic-btn.listening { background: #c62828; color: #fff; animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
     .quick-amt-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .quick-amt-chip { background: #fff3e0; border: 1px solid #ffb74d; color: #b71c1c; padding: 5px 10px; border-radius: 16px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -188,7 +192,7 @@
       background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,152,0,0.08) 70%, transparent 100%);
       border-radius: 50%;
       pointer-events: none;
-      z-1;
+      z-index: 1;
     }
     .id-lanyard-hole { 
       width: 44px; 
@@ -420,12 +424,12 @@
       </div>
 
       <div class="form-group">
-        <label>📞 मोबाइल नंबर</label>
+        <label><span>📞 मोबाइल नंबर</span></label>
         <input type="tel" id="inp-mobile" class="form-input" placeholder="10 अंकों का मोबाइल दर्ज करें" maxlength="10" />
       </div>
 
       <div class="form-group">
-        <label>🔒 पासवर्ड</label>
+        <label><span>🔒 पासवर्ड</span></label>
         <input type="password" id="inp-pass" class="form-input" placeholder="पासवर्ड दर्ज करें" />
       </div>
 
@@ -519,7 +523,7 @@
     </div>
     <div style="padding: 20px;">
       <div class="form-group">
-        <label>📢 नया नोटिस लिखें (सभी को दिखेगा)</label>
+        <label><span>📢 नया नोटिस लिखें (सभी को दिखेगा)</span></label>
         <textarea id="inp-notice-text" class="form-input" rows="5"></textarea>
       </div>
       <button class="btn btn-green" onclick="saveNoticeBoard()">📢 लाइव नोटिस जारी करें</button>
@@ -935,26 +939,32 @@
       </div>
 
       <div class="form-group">
-        <label>दानदाता का नाम * <span style="font-size:11px; font-weight:normal; color:#e65100;">(सीधे हिंदी या इंग्लिश में लिखकर Space दबाएं)</span></label>
+        <label>
+          <span>दानदाता का नाम *</span>
+          <button type="button" class="mic-btn" id="mic-r-name" onclick="startVoiceInput('r-name')">🎤 बोलकर लिखें</button>
+        </label>
         <input type="text" id="r-name" class="form-input auto-hindi-field" placeholder="उदा. Ramesh Kumar या रमेश कुमार" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
-        <label>मोबाइल नंबर *</label>
+        <label><span>मोबाइल नंबर *</span></label>
         <input type="tel" id="r-phone" class="form-input" placeholder="10 अंकों का मोबाइल" maxlength="10" />
       </div>
       <div class="form-group">
-        <label>पता / ग्राम</label>
+        <label>
+          <span>पता / ग्राम</span>
+          <button type="button" class="mic-btn" id="mic-r-addr" onclick="startVoiceInput('r-addr')">🎤 बोलकर लिखें</button>
+        </label>
         <input type="text" id="r-addr" class="form-input auto-hindi-field" placeholder="ग्राम, पोस्ट, जिला" value="मारकुंडी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
 
       <!-- ऑफलाइन रसीद संख्या इनपुट (बाय डिफॉल्ट N/A) -->
       <div class="form-group">
-        <label>ऑफलाइन रसीद संख्या (कागज़ी बुक नं.)</label>
+        <label><span>ऑफलाइन रसीद संख्या (कागज़ी बुक नं.)</span></label>
         <input type="text" id="r-offline-no" class="form-input" placeholder="उदा. बुक रसीद नं. या N/A" value="N/A" />
       </div>
 
       <div class="form-group" id="grp-money">
-        <label>सहयोग राशि (रु.) *</label>
+        <label><span>सहयोग राशि (रु.) *</span></label>
         <input type="number" id="r-amt" class="form-input" placeholder="राशि दर्ज करें" oninput="handleAmountChange()" />
         <div class="quick-amt-group">
           <span class="quick-amt-chip" onclick="setQuickAmount(51)">₹51</span>
@@ -979,11 +989,11 @@
 
       <div id="grp-item-fields" style="display: none;">
         <div class="form-group">
-          <label>समर्पित वस्तु / सेवा का नाम व विवरण *</label>
-          <input type="text" id="r-item-name" class="form-input auto-hindi-field" placeholder="उदा. chunri, prasad या चुनरी, प्रसाद" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
+          <label><span>समर्पित वस्तु / सेवा का नाम व विवरण *</span></label>
+          <input type="text" id="r-item-name" class="form-input auto-hindi-field" placeholder="उदा. चुनरी, 5L तेल, टेंट सेवा" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
         </div>
         <div class="form-group">
-          <label>अनुमानित मूल्य ₹ (वैकल्पिक)</label>
+          <label><span>अनुमानित मूल्य ₹ (वैकल्पिक)</span></label>
           <input type="number" id="r-item-val" class="form-input" placeholder="उदा. 1500" />
         </div>
       </div>
@@ -1013,36 +1023,42 @@
       </div>
 
       <div class="form-group">
-        <label>दानदाता का नाम *</label>
+        <label>
+          <span>दानदाता का नाम *</span>
+          <button type="button" class="mic-btn" id="mic-ed-name" onclick="startVoiceInput('ed-name')">🎤 बोलकर लिखें</button>
+        </label>
         <input type="text" id="ed-name" class="form-input auto-hindi-field" placeholder="दानदाता का नाम" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
-        <label>मोबाइल नंबर *</label>
+        <label><span>मोबाइल नंबर *</span></label>
         <input type="tel" id="ed-phone" class="form-input" placeholder="10 अंकों का मोबाइल" maxlength="10" />
       </div>
       <div class="form-group">
-        <label>पता / ग्राम</label>
+        <label>
+          <span>पता / ग्राम</span>
+          <button type="button" class="mic-btn" id="mic-ed-addr" onclick="startVoiceInput('ed-addr')">🎤 बोलकर लिखें</button>
+        </label>
         <input type="text" id="ed-addr" class="form-input auto-hindi-field" placeholder="ग्राम, पोस्ट, जिला" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
 
       <!-- एडिट में ऑफलाइन रसीद संख्या -->
       <div class="form-group">
-        <label>ऑफलाइन रसीद संख्या (कागज़ी बुक नं.)</label>
+        <label><span>ऑफलाइन रसीद संख्या (कागज़ी बुक नं.)</span></label>
         <input type="text" id="ed-offline-no" class="form-input" placeholder="उदा. बुक रसीद नं. या N/A" />
       </div>
 
       <div class="form-group" id="ed-grp-money">
-        <label>सहयोग राशि (रु.) *</label>
+        <label><span>सहयोग राशि (रु.) *</span></label>
         <input type="number" id="ed-amt" class="form-input" placeholder="राशि दर्ज करें" />
       </div>
 
       <div id="ed-grp-item-fields" style="display: none;">
         <div class="form-group">
-          <label>समर्पित वस्तु / सेवा का विवरण *</label>
+          <label><span>समर्पित वस्तु / सेवा का विवरण *</span></label>
           <input type="text" id="ed-item-name" class="form-input auto-hindi-field" placeholder="उदा. चुनरी, श्रृंगार, टेंट सेवा" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
         </div>
         <div class="form-group">
-          <label>अनुमानित मूल्य ₹ (वैकल्पिक)</label>
+          <label><span>अनुमानित मूल्य ₹ (वैकल्पिक)</span></label>
           <input type="number" id="ed-item-val" class="form-input" placeholder="उदा. 1500" />
         </div>
       </div>
@@ -1365,7 +1381,7 @@
     <div style="padding: 14px 16px; background: #fff8e1; border-bottom: 1.5px solid #ffe082;">
       <h3 style="font-size: 14px; color: #b71c1c; margin-bottom: 8px; font-weight: bold;">➕ नया खर्च व बिल दर्ज करें</h3>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <input type="text" id="exp-title" class="form-input auto-hindi-field" placeholder="मद (उदा. tent, prasad)" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
+        <input type="text" id="exp-title" class="form-input auto-hindi-field" placeholder="मद (उदा. टेंट, प्रसाद)" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
         <input type="number" id="exp-amt" class="form-input" placeholder="रकम (₹)" />
       </div>
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;">
@@ -1425,23 +1441,23 @@
     </div>
     <div style="padding: 20px;">
       <div class="form-group">
-        <label>कार्यकर्ता का नाम *</label>
+        <label><span>कार्यकर्ता का नाम *</span></label>
         <input type="text" id="nu-name" class="form-input auto-hindi-field" placeholder="नाम लिखें" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
-        <label>समिति पदनाम (Designation) *</label>
+        <label><span>समिति पदनाम (Designation) *</span></label>
         <input type="text" id="nu-role" class="form-input auto-hindi-field" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष, व्यवस्थापक" value="व्यवस्था सहयोगी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
-        <label>मोबाइल नंबर *</label>
+        <label><span>मोबाइल नंबर *</span></label>
         <input type="tel" id="nu-phone" class="form-input" maxlength="10" placeholder="10 अंकों का मोबाइल" />
       </div>
       <div class="form-group">
-        <label>लॉगिन पासवर्ड *</label>
+        <label><span>लॉगिन पासवर्ड *</span></label>
         <input type="text" id="nu-pass" class="form-input" value="1234" />
       </div>
       <div class="form-group">
-        <label>निवास / ग्राम</label>
+        <label><span>निवास / ग्राम</span></label>
         <input type="text" id="nu-addr" class="form-input auto-hindi-field" value="मारकुंडी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <button class="btn" onclick="saveNewUser()">कार्यकर्ता जोड़ें</button>
@@ -1470,7 +1486,7 @@
       <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">📲 समिति आधिकारिक UPI ID (डायनामिक QR हेतु)</h3>
       <div style="border: 1px solid #ffe082; background: #fffdf5; border-radius: 8px; padding: 14px; margin-bottom: 20px;">
         <div class="form-group">
-          <label>UPI VPA (उदा. 7905106011@okbizaxis)</label>
+          <label><span>UPI VPA (उदा. 7905106011@okbizaxis)</span></label>
           <input type="text" id="set-upi-id" class="form-input" />
         </div>
         <button class="btn btn-blue" onclick="saveUPIId()">💾 UPI ID सेव करें</button>
@@ -1479,11 +1495,11 @@
       <h3 style="font-size: 15px; margin-bottom: 8px; color: #333;">🔒 एडमिन पासवर्ड बदलें</h3>
       <div style="border: 1px solid #ffe082; background: #fffdf5; border-radius: 8px; padding: 14px;">
         <div class="form-group">
-          <label>वर्तमान पासवर्ड</label>
+          <label><span>वर्तमान पासवर्ड</span></label>
           <input type="password" id="set-old-pass" class="form-input" />
         </div>
         <div class="form-group">
-          <label>नया पासवर्ड</label>
+          <label><span>नया पासवर्ड</span></label>
           <input type="password" id="set-new-pass" class="form-input" />
         </div>
         <button class="btn btn-green" onclick="changeAdminPass()">💾 अपडेट करें</button>
@@ -1551,51 +1567,194 @@
   } catch(e) {}
 
   // =========================================================================
-  // AUTOMATIC HINGLISH TO HINDI REALTIME ENGINE
+  // 100% OFFLINE PHONETIC HINGLISH TO HINDI ENGINE (NO CORS ERROR)
   // =========================================================================
-  function transliterateWordOnline(word, callback) {
-    if (!word || !word.trim()) { callback(word); return; }
-    var cleanWord = word.trim();
-    var url = "https://inputtools.google.com/request?text=" + encodeURIComponent(cleanWord) + "&itc=hi-t-i0-und&num=1";
-    fetch(url)
-      .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data && data[1] && data[1][0] && data[1][0][1] && data[1][0][1][0]) {
-          callback(data[1][0][1][0]);
+  var PHONETIC_CONSONANTS = {
+    'k': 'क', 'kh': 'ख', 'g': 'ग', 'gh': 'घ',
+    'ch': 'च', 'chh': 'छ', 'j': 'ज', 'jh': 'झ',
+    't': 'ट', 'th': 'ठ', 'd': 'ड', 'dh': 'ढ', 'n': 'न',
+    't': 'त', 'th': 'थ', 'd': 'द', 'dh': 'ध',
+    'p': 'प', 'ph': 'फ', 'f': 'फ़', 'b': 'ब', 'bh': 'भ', 'm': 'म',
+    'y': 'य', 'r': 'र', 'l': 'ल', 'v': 'व', 'w': 'व',
+    'sh': 'श', 'shh': 'ष', 's': 'स', 'h': 'ह',
+    'gy': 'ज्ञ', 'tr': 'त्र', 'ksh': 'क्ष'
+  };
+
+  var PHONETIC_VOWELS = {
+    'a': '', 'aa': 'ा', 'i': 'ि', 'ee': 'ी', 'u': 'ु', 'oo': 'ू',
+    'e': 'े', 'ai': 'ै', 'o': 'ो', 'au': 'ौ', 'an': 'ं', 'ah': 'ः'
+  };
+
+  var INITIAL_VOWELS = {
+    'a': 'अ', 'aa': 'आ', 'i': 'इ', 'ee': 'ई', 'u': 'उ', 'oo': 'ऊ',
+    'e': 'ए', 'ai': 'ऐ', 'o': 'ओ', 'au': 'औ'
+  };
+
+  var COMMON_HINDI_NAMES = {
+    'ramesh': 'रमेश', 'suresh': 'सुरेश', 'mahesh': 'महेश', 'dinesh': 'दिनेश',
+    'mukesh': 'मुकेश', 'rajesh': 'राजेश', 'anil': 'अनिल', 'sunil': 'सुनील',
+    'amit': 'अमित', 'sumit': 'सुमित', 'vinit': 'विनीत', 'vineet': 'विनीत',
+    'kumar': 'कुमार', 'singh': 'सिंह', 'sharma': 'शर्मा', 'verma': 'वर्मा',
+    'gupta': 'गुप्ता', 'yadav': 'यादव', 'patel': 'पटेल', 'pandey': 'पांडेय',
+    'tiwari': 'तिवारी', 'mishra': 'मिश्रा', 'shukla': 'शुक्ला', 'dubey': 'दुबे',
+    'sonu': 'सोनू', 'monu': 'मोनू', 'raju': 'राजू', 'rahul': 'राहुल',
+    'rohit': 'रोहित', 'mohit': 'मोहित', 'vikas': 'विकास', 'vishal': 'विशाल',
+    'deepak': 'दीपक', 'pradeep': 'प्रदीप', 'sanjay': 'संजय', 'vijay': 'विजय',
+    'ajay': 'अजय', 'pankaj': 'पंकज', 'neeraj': 'नीरज', 'manoj': 'मनोज',
+    'markundi': 'मारकुंडी', 'sonbhadra': 'सोनभद्र', 'robertsganj': 'राबर्ट्सगंज',
+    'devi': 'देवी', 'kumari': 'कुमारी', 'prasad': 'प्रसाद', 'tent': 'टेंट',
+    'chunri': 'चुनरी', 'tel': 'तेल', 'ghee': 'घी'
+  };
+
+  function offlineTransliterateWord(word) {
+    if (!word) return '';
+    var low = word.toLowerCase().trim();
+    if (COMMON_HINDI_NAMES[low]) {
+      return COMMON_HINDI_NAMES[low];
+    }
+
+    var res = '';
+    var i = 0;
+    var len = low.length;
+
+    while (i < len) {
+      // 3-char match
+      var c3 = low.substring(i, i + 3);
+      if (PHONETIC_CONSONANTS[c3]) {
+        res += PHONETIC_CONSONANTS[c3];
+        i += 3;
+        i = handleVowel(low, i, res);
+        continue;
+      }
+
+      // 2-char match
+      var c2 = low.substring(i, i + 2);
+      if (PHONETIC_CONSONANTS[c2]) {
+        res += PHONETIC_CONSONANTS[c2];
+        i += 2;
+        i = handleVowel(low, i, res);
+        continue;
+      }
+
+      var c1 = low.charAt(i);
+      if (i === 0 && INITIAL_VOWELS[c1]) {
+        if (low.substring(0, 2) === 'aa') {
+          res += 'आ';
+          i += 2;
         } else {
-          callback(word);
+          res += INITIAL_VOWELS[c1];
+          i += 1;
         }
-      })
-      .catch(function() {
-        callback(word);
-      });
+        continue;
+      }
+
+      if (PHONETIC_CONSONANTS[c1]) {
+        res += PHONETIC_CONSONANTS[c1];
+        i += 1;
+        i = handleVowel(low, i, res);
+        continue;
+      }
+
+      res += c1;
+      i++;
+    }
+
+    function handleVowel(str, idx, curRes) {
+      if (idx >= str.length) return idx;
+      var v2 = str.substring(idx, idx + 2);
+      if (PHONETIC_VOWELS[v2] !== undefined) {
+        res += PHONETIC_VOWELS[v2];
+        return idx + 2;
+      }
+      var v1 = str.charAt(idx);
+      if (PHONETIC_VOWELS[v1] !== undefined) {
+        res += PHONETIC_VOWELS[v1];
+        return idx + 1;
+      }
+      return idx;
+    }
+
+    return res;
   }
 
   function setupAutoHindiTransliteration() {
     document.querySelectorAll('.auto-hindi-field').forEach(function(el) {
-      if (el.getAttribute('data-translit-bound')) return;
-      el.setAttribute('data-translit-bound', 'true');
+      if (el.getAttribute('data-hindi-attached')) return;
+      el.setAttribute('data-hindi-attached', 'true');
 
+      // 1. Mobile & Desktop Space/Enter Key Trigger
       el.addEventListener('keydown', function(e) {
         if (e.key === ' ' || e.keyCode === 32 || e.key === 'Enter' || e.keyCode === 13) {
-          var cursorPosition = el.selectionStart;
-          var textBeforeCursor = el.value.substring(0, cursorPosition);
-          var textAfterCursor = el.value.substring(cursorPosition);
-
-          var words = textBeforeCursor.split(/\s+/);
-          var targetWord = words[words.length - 1];
-
-          if (targetWord && /[a-zA-Z]/.test(targetWord)) {
-            transliterateWordOnline(targetWord, function(hindiResult) {
-              words[words.length - 1] = hindiResult;
-              var newBeforeCursor = words.join(" ") + (e.key === ' ' ? ' ' : '');
-              el.value = newBeforeCursor + textAfterCursor;
-              el.setSelectionRange(newBeforeCursor.length, newBeforeCursor.length);
-            });
-          }
+          processTransliteration(el, e.key === ' ' ? ' ' : '');
         }
       });
+
+      // 2. Mobile onInput & Blur Fallback
+      el.addEventListener('blur', function() {
+        processTransliteration(el, '');
+      });
     });
+  }
+
+  function processTransliteration(el, trailingChar) {
+    var text = el.value;
+    if (!/[a-zA-Z]/.test(text)) return; // No English characters
+
+    var words = text.split(/(\s+)/);
+    for (var i = 0; i < words.length; i++) {
+      if (/[a-zA-Z]/.test(words[i])) {
+        words[i] = offlineTransliterateWord(words[i]);
+      }
+    }
+    el.value = words.join('') + trailingChar;
+  }
+
+  // =========================================================================
+  // VOICE TYPING (MIC) FEATURE IN HINDI
+  // =========================================================================
+  function startVoiceInput(targetInputId) {
+    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("⚠️ आपके ब्राउज़र में वॉइस टाइपिंग सपोर्ट नहीं है। कृपया Google Chrome का उपयोग करें।");
+      return;
+    }
+
+    var micBtn = document.getElementById('mic-' + targetInputId);
+    var targetInput = document.getElementById(targetInputId);
+    var recognition = new SpeechRecognition();
+    recognition.lang = 'hi-IN';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    if (micBtn) {
+      micBtn.classList.add('listening');
+      micBtn.innerText = "🔴 बोलिए...";
+    }
+
+    recognition.onresult = function(event) {
+      var speechResult = event.results[0][0].transcript;
+      if (targetInput) {
+        targetInput.value = (targetInput.value ? targetInput.value + ' ' : '') + speechResult;
+      }
+    };
+
+    recognition.onspeechend = function() {
+      recognition.stop();
+      if (micBtn) {
+        micBtn.classList.remove('listening');
+        micBtn.innerText = "🎤 बोलकर लिखें";
+      }
+    };
+
+    recognition.onerror = function() {
+      recognition.stop();
+      if (micBtn) {
+        micBtn.classList.remove('listening');
+        micBtn.innerText = "🎤 बोलकर लिखें";
+      }
+    };
+
+    recognition.start();
   }
 
   function numberToHindiWords(num) {
