@@ -6,6 +6,11 @@
   <title>नवयुवा दुर्गा पूजा समिति - चंदा, नोटिस व हैंडओवर ऐप</title>
   <meta name="theme-color" content="#b71c1c" />
 
+  <!-- Google Fonts: Noto Sans Devanagari for clean Hindi rendering -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;900&display=swap" rel="stylesheet">
+
   <!-- PDF, Canvas & Cryptography Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -23,7 +28,13 @@
   </script>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      -webkit-tap-highlight-color: transparent; 
+    }
     html, body { width: 100%; height: 100%; background-color: #f1f2f6; overflow-x: hidden; }
     body { display: flex; justify-content: center; }
     #app { width: 100%; max-width: 460px; min-height: 100vh; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; }
@@ -135,7 +146,7 @@
     .seal-wrap svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 1px 2px rgba(183,28,28,0.25)); }
 
     /* Certificate Box & Layout */
-    .cert-box { padding: 14px 12px 20px 12px; background: #f0f2f5; display: center; justify-content: center; }
+    .cert-box { padding: 14px 12px 20px 12px; background: #f0f2f5; display: flex; justify-content: center; }
     .cert-border { width: 100%; background: #fffdf2; border: 4px double #b71c1c; border-radius: 12px; padding: 12px 12px 16px 12px; position: relative; box-sizing: border-box; }
     .cert-inner { border: 2px dashed #d97706; padding: 18px 14px; background: #ffffff; border-radius: 8px; text-align: center; position: relative; box-sizing: border-box; }
     .cert-header-photo { width: 70px; height: 70px; margin: 0 auto 6px auto; border-radius: 50%; overflow: hidden; border: 3px solid #ffb300; }
@@ -925,7 +936,8 @@
 
       <div class="form-group">
         <label>दानदाता का नाम *</label>
-        <input type="text" id="r-name" class="form-input" placeholder="दानदाता का नाम दर्ज करें" oninput="handleAmountChange()" />
+        <!-- Removed problematic oninput here to enable flawless Hindi IME input -->
+        <input type="text" id="r-name" class="form-input" placeholder="दानदाता का नाम दर्ज करें" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
         <label>मोबाइल नंबर *</label>
@@ -933,7 +945,7 @@
       </div>
       <div class="form-group">
         <label>पता / ग्राम</label>
-        <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" value="मारकुंडी" />
+        <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" value="मारकुंडी" autocomplete="off" />
       </div>
 
       <!-- ऑफलाइन रसीद संख्या इनपुट (बाय डिफॉल्ट N/A) -->
@@ -1003,7 +1015,7 @@
 
       <div class="form-group">
         <label>दानदाता का नाम *</label>
-        <input type="text" id="ed-name" class="form-input" placeholder="दानदाता का नाम" />
+        <input type="text" id="ed-name" class="form-input" placeholder="दानदाता का नाम" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
         <label>मोबाइल नंबर *</label>
@@ -1011,7 +1023,7 @@
       </div>
       <div class="form-group">
         <label>पता / ग्राम</label>
-        <input type="text" id="ed-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
+        <input type="text" id="ed-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" autocomplete="off" />
       </div>
 
       <!-- एडिट में ऑफलाइन रसीद संख्या -->
@@ -1415,7 +1427,7 @@
     <div style="padding: 20px;">
       <div class="form-group">
         <label>कार्यकर्ता का नाम *</label>
-        <input type="text" id="nu-name" class="form-input" placeholder="नाम लिखें" />
+        <input type="text" id="nu-name" class="form-input" placeholder="नाम लिखें" autocomplete="off" />
       </div>
       <div class="form-group">
         <label>समिति पदनाम (Designation) *</label>
@@ -1431,7 +1443,7 @@
       </div>
       <div class="form-group">
         <label>निवास / ग्राम</label>
-        <input type="text" id="nu-addr" class="form-input" value="मारकुंडी" />
+        <input type="text" id="nu-addr" class="form-input" value="मारकुंडी" autocomplete="off" />
       </div>
       <button class="btn" onclick="saveNewUser()">कार्यकर्ता जोड़ें</button>
     </div>
@@ -1617,8 +1629,9 @@
     alert("✅ कोड काउंटर सफलतापूर्वक रीसेट हो गया! अब बनने वाला नया कार्यकर्ता 'A' कोड प्राप्त करेगा।");
   }
 
+  // Unicode/Hindi Safe Hash Generation
   function generateSecureReceiptSignature(r) {
-    var payload = (r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + (r.code || '');
+    var payload = encodeURIComponent(r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + encodeURIComponent(r.code || '');
     if (window.CryptoJS && CryptoJS.HmacSHA256) {
       return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
     }
@@ -1631,7 +1644,7 @@
   }
 
   function generateSecureCertificateSignature(r) {
-    var payload = "CERT_" + (r.no || '') + "_" + (r.name || '') + "_" + (r.amt || 0);
+    var payload = "CERT_" + encodeURIComponent(r.no || '') + "_" + encodeURIComponent(r.name || '') + "_" + (r.amt || 0);
     if (window.CryptoJS && CryptoJS.HmacSHA256) {
       return CryptoJS.HmacSHA256(payload, SECRET_SIGNING_KEY).toString(CryptoJS.enc.Hex).substring(0, 8);
     }
@@ -2289,7 +2302,7 @@
         if (callback) callback();
       });
   }
-  setInterval(fetchFromFirebase, 5000);
+  setInterval(fetchFromFirebase, 10000);
 
   function saveReceipt() {
     var name = document.getElementById('r-name').value.trim();
