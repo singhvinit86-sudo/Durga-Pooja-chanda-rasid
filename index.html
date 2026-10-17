@@ -70,10 +70,6 @@
     .form-input { width: 100%; padding: 10px; border: 1.5px solid #dcdde1; border-radius: 8px; font-size: 14px; outline: none; }
     .form-input:focus { border-color: #d32f2f; }
 
-    .mic-btn { background: #ffebee; border: 1px solid #ffcdd2; color: #b71c1c; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
-    .mic-btn.listening { background: #c62828; color: #fff; animation: pulse 1s infinite; }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
     .quick-amt-group { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
     .quick-amt-chip { background: #fff3e0; border: 1px solid #ffb74d; color: #b71c1c; padding: 5px 10px; border-radius: 16px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
     .quick-amt-chip:active { background: #b71c1c; color: white; }
@@ -524,7 +520,7 @@
     <div style="padding: 20px;">
       <div class="form-group">
         <label><span>📢 नया नोटिस लिखें (सभी को दिखेगा)</span></label>
-        <textarea id="inp-notice-text" class="form-input" rows="5"></textarea>
+        <textarea id="inp-notice-text" class="form-input auto-hindi-field" rows="5"></textarea>
       </div>
       <button class="btn btn-green" onclick="saveNoticeBoard()">📢 लाइव नोटिस जारी करें</button>
     </div>
@@ -940,8 +936,7 @@
 
       <div class="form-group">
         <label>
-          <span>दानदाता का नाम *</span>
-          <button type="button" class="mic-btn" id="mic-r-name" onclick="startVoiceInput('r-name')">🎤 बोलकर लिखें</button>
+          <span>दानदाता का नाम * <small style="color:#b71c1c; font-weight:normal;">(Hinglish लिखें, Space पर स्वतः हिंदी होगा)</small></span>
         </label>
         <input type="text" id="r-name" class="form-input auto-hindi-field" placeholder="उदा. Ramesh Kumar या रमेश कुमार" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
@@ -951,8 +946,7 @@
       </div>
       <div class="form-group">
         <label>
-          <span>पता / ग्राम</span>
-          <button type="button" class="mic-btn" id="mic-r-addr" onclick="startVoiceInput('r-addr')">🎤 बोलकर लिखें</button>
+          <span>पता / ग्राम <small style="color:#b71c1c; font-weight:normal;">(Hinglish लिखें, Space पर हिंदी)</small></span>
         </label>
         <input type="text" id="r-addr" class="form-input auto-hindi-field" placeholder="ग्राम, पोस्ट, जिला" value="मारकुंडी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
@@ -1024,8 +1018,7 @@
 
       <div class="form-group">
         <label>
-          <span>दानदाता का नाम *</span>
-          <button type="button" class="mic-btn" id="mic-ed-name" onclick="startVoiceInput('ed-name')">🎤 बोलकर लिखें</button>
+          <span>दानदाता का नाम * <small style="color:#b71c1c; font-weight:normal;">(Hinglish लिखें, Space पर हिंदी)</small></span>
         </label>
         <input type="text" id="ed-name" class="form-input auto-hindi-field" placeholder="दानदाता का नाम" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
@@ -1035,8 +1028,7 @@
       </div>
       <div class="form-group">
         <label>
-          <span>पता / ग्राम</span>
-          <button type="button" class="mic-btn" id="mic-ed-addr" onclick="startVoiceInput('ed-addr')">🎤 बोलकर लिखें</button>
+          <span>पता / ग्राम <small style="color:#b71c1c; font-weight:normal;">(Hinglish लिखें, Space पर हिंदी)</small></span>
         </label>
         <input type="text" id="ed-addr" class="form-input auto-hindi-field" placeholder="ग्राम, पोस्ट, जिला" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
@@ -1408,7 +1400,7 @@
 
     <div id="admin-exp-filter-box" style="padding: 10px 14px; background: #fdf2e9; border-bottom: 1.5px solid #f0b27a; display: flex; flex-direction: column; gap: 8px;">
       <div style="font-size: 11.5px; font-weight: bold; color: #b71c1c;">🔍 खर्च फ़िल्टर व खोज (Admin Filter)</div>
-      <div style="display: flex; gap: 8px;">
+      <div style="display: gap: 8px;">
         <select id="sel-exp-user-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderExpensesList()">
           <option value="ALL">👥 सभी के खर्च (All)</option>
         </select>
@@ -1441,12 +1433,12 @@
     </div>
     <div style="padding: 20px;">
       <div class="form-group">
-        <label><span>कार्यकर्ता का नाम *</span></label>
-        <input type="text" id="nu-name" class="form-input auto-hindi-field" placeholder="नाम लिखें" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
+        <label><span>कार्यकर्ता का नाम * <small style="color:#b71c1c; font-weight:normal;">(Hinglish लिखें, Space पर हिंदी)</small></span></label>
+        <input type="text" id="nu-name" class="form-input auto-hindi-field" placeholder="उदा. Ramesh Kumar" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
         <label><span>समिति पदनाम (Designation) *</span></label>
-        <input type="text" id="nu-role" class="form-input auto-hindi-field" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष, व्यवस्थापक" value="व्यवस्था सहयोगी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
+        <input type="text" id="nu-role" class="form-input auto-hindi-field" placeholder="उदा. व्यवस्था सहयोगी, कोषाध्यक्ष" value="व्यवस्था सहयोगी" lang="hi" inputmode="text" autocomplete="off" spellcheck="false" />
       </div>
       <div class="form-group">
         <label><span>मोबाइल नंबर *</span></label>
@@ -1567,27 +1559,24 @@
   } catch(e) {}
 
   // =========================================================================
-  // 100% OFFLINE PHONETIC HINGLISH TO HINDI ENGINE (NO CORS ERROR)
+  // FAST CLIENT-SIDE HINGLISH TO HINDI TRANSLITERATION ENGINE
   // =========================================================================
   var PHONETIC_CONSONANTS = {
-    'k': 'क', 'kh': 'ख', 'g': 'ग', 'gh': 'घ',
-    'ch': 'च', 'chh': 'छ', 'j': 'ज', 'jh': 'झ',
-    't': 'ट', 'th': 'ठ', 'd': 'ड', 'dh': 'ढ', 'n': 'न',
-    't': 'त', 'th': 'थ', 'd': 'द', 'dh': 'ध',
-    'p': 'प', 'ph': 'फ', 'f': 'फ़', 'b': 'ब', 'bh': 'भ', 'm': 'म',
-    'y': 'य', 'r': 'र', 'l': 'ल', 'v': 'व', 'w': 'व',
-    'sh': 'श', 'shh': 'ष', 's': 'स', 'h': 'ह',
-    'gy': 'ज्ञ', 'tr': 'त्र', 'ksh': 'क्ष'
+    'kh': 'ख', 'gh': 'घ', 'chh': 'छ', 'jh': 'झ', 'th': 'थ', 'dh': 'ध',
+    'ph': 'फ', 'bh': 'भ', 'sh': 'श', 'shh': 'ष', 'gy': 'ज्ञ', 'tr': 'त्र', 'ksh': 'क्ष',
+    'ch': 'च', 'k': 'क', 'g': 'ग', 'j': 'ज', 't': 'त', 'd': 'द', 'n': 'न',
+    'p': 'प', 'f': 'फ़', 'b': 'ब', 'm': 'म', 'y': 'य', 'r': 'र', 'l': 'ल',
+    'v': 'व', 'w': 'व', 's': 'स', 'h': 'ह'
   };
 
   var PHONETIC_VOWELS = {
-    'a': '', 'aa': 'ा', 'i': 'ि', 'ee': 'ी', 'u': 'ु', 'oo': 'ू',
-    'e': 'े', 'ai': 'ै', 'o': 'ो', 'au': 'ौ', 'an': 'ं', 'ah': 'ः'
+    'aa': 'ा', 'ee': 'ी', 'oo': 'ू', 'ai': 'ै', 'au': 'ौ',
+    'a': '', 'i': 'ि', 'u': 'ु', 'e': 'े', 'o': 'ो'
   };
 
   var INITIAL_VOWELS = {
-    'a': 'अ', 'aa': 'आ', 'i': 'इ', 'ee': 'ई', 'u': 'उ', 'oo': 'ऊ',
-    'e': 'ए', 'ai': 'ऐ', 'o': 'ओ', 'au': 'औ'
+    'aa': 'आ', 'ee': 'ई', 'oo': 'ऊ', 'ai': 'ऐ', 'au': 'औ',
+    'a': 'अ', 'i': 'इ', 'u': 'उ', 'e': 'ए', 'o': 'ओ'
   };
 
   var COMMON_HINDI_NAMES = {
@@ -1623,7 +1612,7 @@
       if (PHONETIC_CONSONANTS[c3]) {
         res += PHONETIC_CONSONANTS[c3];
         i += 3;
-        i = handleVowel(low, i, res);
+        i = handleVowel(low, i);
         continue;
       }
 
@@ -1632,26 +1621,27 @@
       if (PHONETIC_CONSONANTS[c2]) {
         res += PHONETIC_CONSONANTS[c2];
         i += 2;
-        i = handleVowel(low, i, res);
+        i = handleVowel(low, i);
         continue;
       }
 
       var c1 = low.charAt(i);
-      if (i === 0 && INITIAL_VOWELS[c1]) {
-        if (low.substring(0, 2) === 'aa') {
-          res += 'आ';
+      if (i === 0) {
+        if (INITIAL_VOWELS[c2]) {
+          res += INITIAL_VOWELS[c2];
           i += 2;
-        } else {
+          continue;
+        } else if (INITIAL_VOWELS[c1]) {
           res += INITIAL_VOWELS[c1];
           i += 1;
+          continue;
         }
-        continue;
       }
 
       if (PHONETIC_CONSONANTS[c1]) {
         res += PHONETIC_CONSONANTS[c1];
         i += 1;
-        i = handleVowel(low, i, res);
+        i = handleVowel(low, i);
         continue;
       }
 
@@ -1659,7 +1649,7 @@
       i++;
     }
 
-    function handleVowel(str, idx, curRes) {
+    function handleVowel(str, idx) {
       if (idx >= str.length) return idx;
       var v2 = str.substring(idx, idx + 2);
       if (PHONETIC_VOWELS[v2] !== undefined) {
@@ -1682,14 +1672,14 @@
       if (el.getAttribute('data-hindi-attached')) return;
       el.setAttribute('data-hindi-attached', 'true');
 
-      // 1. Mobile & Desktop Space/Enter Key Trigger
+      // 1. Space या Enter दबाते ही स्वतः हिंदी में बदलें
       el.addEventListener('keydown', function(e) {
         if (e.key === ' ' || e.keyCode === 32 || e.key === 'Enter' || e.keyCode === 13) {
           processTransliteration(el, e.key === ' ' ? ' ' : '');
         }
       });
 
-      // 2. Mobile onInput & Blur Fallback
+      // 2. इनपुट फील्ड से बाहर निकलते ही हिंदी में बदलें
       el.addEventListener('blur', function() {
         processTransliteration(el, '');
       });
@@ -1698,7 +1688,7 @@
 
   function processTransliteration(el, trailingChar) {
     var text = el.value;
-    if (!/[a-zA-Z]/.test(text)) return; // No English characters
+    if (!/[a-zA-Z]/.test(text)) return;
 
     var words = text.split(/(\s+)/);
     for (var i = 0; i < words.length; i++) {
@@ -1707,54 +1697,6 @@
       }
     }
     el.value = words.join('') + trailingChar;
-  }
-
-  // =========================================================================
-  // VOICE TYPING (MIC) FEATURE IN HINDI
-  // =========================================================================
-  function startVoiceInput(targetInputId) {
-    var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("⚠️ आपके ब्राउज़र में वॉइस टाइपिंग सपोर्ट नहीं है। कृपया Google Chrome का उपयोग करें।");
-      return;
-    }
-
-    var micBtn = document.getElementById('mic-' + targetInputId);
-    var targetInput = document.getElementById(targetInputId);
-    var recognition = new SpeechRecognition();
-    recognition.lang = 'hi-IN';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    if (micBtn) {
-      micBtn.classList.add('listening');
-      micBtn.innerText = "🔴 बोलिए...";
-    }
-
-    recognition.onresult = function(event) {
-      var speechResult = event.results[0][0].transcript;
-      if (targetInput) {
-        targetInput.value = (targetInput.value ? targetInput.value + ' ' : '') + speechResult;
-      }
-    };
-
-    recognition.onspeechend = function() {
-      recognition.stop();
-      if (micBtn) {
-        micBtn.classList.remove('listening');
-        micBtn.innerText = "🎤 बोलकर लिखें";
-      }
-    };
-
-    recognition.onerror = function() {
-      recognition.stop();
-      if (micBtn) {
-        micBtn.classList.remove('listening');
-        micBtn.innerText = "🎤 बोलकर लिखें";
-      }
-    };
-
-    recognition.start();
   }
 
   function numberToHindiWords(num) {
@@ -1835,7 +1777,6 @@
     alert("✅ कोड काउंटर सफलतापूर्वक रीसेट हो गया! अब बनने वाला नया कार्यकर्ता 'A' कोड प्राप्त करेगा।");
   }
 
-  // Unicode/Hindi Safe Hash Generation
   function generateSecureReceiptSignature(r) {
     var payload = encodeURIComponent(r.no || '') + "_" + (r.amt || 0) + "_" + (r.phone || '') + "_" + encodeURIComponent(r.code || '');
     if (window.CryptoJS && CryptoJS.HmacSHA256) {
@@ -2224,9 +2165,6 @@
     alert(msg);
   }
 
-  // =========================================================================
-  // ADMIN DIRECT RECEIPT EDIT & PERMANENT DELETE FUNCTIONS
-  // =========================================================================
   function selectEditReceiptType(t) {
     editSelectedType = t;
     document.getElementById('ed-pill-cash').classList.toggle('active', t === 'CASH');
