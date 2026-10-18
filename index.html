@@ -2,11 +2,11 @@
 <html lang="hi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content" />
   <title>नवयुवा दुर्गा पूजा समिति - चंदा, नोटिस व हैंडओवर ऐप</title>
   <meta name="theme-color" content="#b71c1c" />
 
-  <!-- Google Fonts: Noto Sans Devanagari for clean Hindi rendering -->
+  <!-- Google Fonts: Noto Sans Devanagari -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -34,12 +34,33 @@
       padding: 0; 
       font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
     }
-    html, body { width: 100%; min-height: 100%; background-color: #f1f2f6; overflow-x: hidden; }
-    body { display: flex; justify-content: center; }
-    #app { width: 100%; max-width: 460px; min-height: 100vh; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; position: relative; }
+    
+    html, body { 
+      width: 100%; 
+      min-height: 100%; 
+      background-color: #f1f2f6; 
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body { 
+      display: flex; 
+      justify-content: center; 
+      touch-action: manipulation;
+    }
 
-    /* Strict Screen Display Control */
-    .screen { display: none !important; flex-direction: column; width: 100%; min-height: 100vh; }
+    #app { 
+      width: 100%; 
+      max-width: 460px; 
+      min-height: 100dvh; 
+      background: #ffffff; 
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
+      display: flex; 
+      flex-direction: column; 
+      position: relative; 
+    }
+
+    /* Screen Display Control */
+    .screen { display: none !important; flex-direction: column; width: 100%; min-height: 100dvh; }
     .screen.active { display: flex !important; }
 
     /* Donor Direct View Styling */
@@ -66,14 +87,18 @@
 
     .form-group { margin-bottom: 13px; }
     .form-group label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: bold; color: #333; }
+    
     .form-input { 
       width: 100%; 
-      padding: 10px; 
+      padding: 11px 12px; 
       border: 1.5px solid #dcdde1; 
       border-radius: 8px; 
-      font-size: 16px; /* 16px prevents iOS/Android auto-zoom and keyboard flicker */
+      font-size: 16px; 
       outline: none; 
       background-color: #fff;
+      -webkit-appearance: none;
+      appearance: none;
+      touch-action: auto;
     }
     .form-input:focus { border-color: #d32f2f; }
 
@@ -348,7 +373,7 @@
     .pending-cancel-badge { background: #fff3e0; border: 2px solid #ff9800; color: #e65100; padding: 8px 10px; border-radius: 6px; font-weight: 900; text-align: center; margin-bottom: 8px; font-size: 13px; }
 
     /* Public Screen Specific */
-    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; padding: 20px; text-align: center; overflow: hidden; }
+    #screen-public-card { background: #f1f2f6; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100dvh; padding: 20px; text-align: center; overflow: hidden; }
     .pub-card { background: white; border-radius: 14px; padding: 28px 20px; border-top: 6px solid #b71c1c; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 360px; }
 
     @media print {
@@ -879,7 +904,6 @@
           <tbody id="aud-exp-tbody"></tbody>
         </table>
 
-        <!-- मोहर और हस्ताक्षर ब्लॉक -->
         <div id="audit-footer-signatures" style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 22px; padding: 6px 4px;">
           <div style="text-align: center;">
             <div class="seal-wrap" style="width: 58px; height: 58px; margin: 0 auto 2px auto;">
@@ -954,7 +978,6 @@
         <input type="text" id="r-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" value="मारकुंडी" />
       </div>
 
-      <!-- ऑफलाइन रसीद संख्या इनपुट (बाय डिफॉल्ट N/A) -->
       <div class="form-group">
         <label>ऑफलाइन रसीद संख्या (कागज़ी बुक नं.)</label>
         <input type="text" id="r-offline-no" class="form-input" placeholder="उदा. बुक रसीद नं. या N/A" value="N/A" />
@@ -999,7 +1022,7 @@
     </div>
   </div>
 
-  <!-- 5.1 EDIT RECEIPT SCREEN (MODAL/SCREEN) -->
+  <!-- 5.1 EDIT RECEIPT SCREEN -->
   <div id="screen-edit-receipt" class="screen">
     <div class="top-bar">
       <h2><button class="icon-btn" onclick="showScreen('screen-receipts-list')">⬅️</button> रसीद संशोधन (Edit)</h2>
@@ -1032,7 +1055,6 @@
         <input type="text" id="ed-addr" class="form-input" placeholder="ग्राम, पोस्ट, जिला" />
       </div>
 
-      <!-- एडिट में ऑफलाइन रसीद संख्या -->
       <div class="form-group">
         <label>ऑफलाइन रसीद संख्या (कागज़ी बुक नं.)</label>
         <input type="text" id="ed-offline-no" class="form-input" placeholder="उदा. बुक रसीद नं. या N/A" />
@@ -1315,7 +1337,6 @@
       </div>
     </div>
 
-    <!-- बटन कंटेनर -->
     <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
       <button class="btn btn-purple" id="btn-save-cert-pdf" style="font-size: 16px;" onclick="downloadCertificatePDF()">
         📥 Save PDF (सम्मान पत्र डाउनलोड करें)
@@ -1572,7 +1593,7 @@
   }
 
   // =========================================================================
-  // STRICT NON-REPEATING SEQUENTIAL CODE LOGIC (A, B, C ... Z, AA ...)
+  // SEQUENTIAL CODE LOGIC (A, B, C ... Z, AA ...)
   // =========================================================================
   function indexToExcelCode(index) {
     var code = '';
@@ -2304,7 +2325,15 @@
         if (callback) callback();
       });
   }
-  setInterval(fetchFromFirebase, 10000);
+
+  // केवल तब बैकग्राउंड सिंक चलाएँ जब यूजर टाइप न कर रहा हो (फ़ोकस व कीबोर्ड सुरक्षित रहता है)
+  setInterval(function() {
+    var activeEl = document.activeElement;
+    var isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
+    if (!isTyping) {
+      fetchFromFirebase();
+    }
+  }, 12000);
 
   function saveReceipt() {
     var name = document.getElementById('r-name').value.trim();
