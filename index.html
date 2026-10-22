@@ -507,7 +507,7 @@
       </div>
 
       <!-- VIP REPORT BUTTON -->
-      <button class="btn btn-orange" style="margin-bottom: 8px;" onclick="downloadVipDonorsPDF()">
+      <button class="btn btn-orange" id="btn-dl-vip-pdf" style="margin-bottom: 8px;" onclick="downloadVipDonorsPDF()">
         📜 ₹500+ दानदाता विशेष सूची (PDF)
       </button>
 
@@ -1425,7 +1425,7 @@
 
     <div id="admin-exp-filter-box" style="padding: 10px 14px; background: #fdf2e9; border-bottom: 1.5px solid #f0b27a; display: flex; flex-direction: column; gap: 8px;">
       <div style="font-size: 11.5px; font-weight: bold; color: #b71c1c;">🔍 खर्च फ़िल्टर व खोज (Admin Filter)</div>
-      <div style="display: gap: 8px;">
+      <div style="display: flex; gap: 8px;">
         <select id="sel-exp-user-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderExpensesList()">
           <option value="ALL">👥 सभी के खर्च (All)</option>
         </select>
@@ -2785,7 +2785,7 @@
   }
 
   // =========================================================================
-  // 500+ VIP DONORS REPORT PDF GENERATOR
+  // 500+ VIP DONORS REPORT PDF GENERATOR (100% CLEAR HINDI VIA HTML2CANVAS)
   // =========================================================================
   async function downloadVipDonorsPDF() {
     var vipDonors = receipts.filter(function(r) {
@@ -2805,136 +2805,158 @@
       return valB - valA;
     });
 
-    var jsPDF = window.jspdf.jsPDF;
-    var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-
-    var pageWidth = 210;
-    var pageHeight = 297;
-    var startX = 14;
-    var startY = 20;
-    var currentY = startY;
-    var pageNumber = 1;
-
-    function drawPageBorder() {
-      pdf.setDrawColor(183, 28, 28);
-      pdf.setLineWidth(1);
-      pdf.rect(6, 6, pageWidth - 12, pageHeight - 12);
-      pdf.setDrawColor(217, 119, 6);
-      pdf.setLineWidth(0.4);
-      pdf.rect(8, 8, pageWidth - 16, pageHeight - 16);
-
-      pdf.setFontSize(8.5);
-      pdf.setTextColor(100, 100, 100);
-      pdf.text("पृष्ठ " + pageNumber + " • नवयुवा दुर्गा पूजा समिति, मारकुंडी", pageWidth / 2, pageHeight - 10, { align: 'center' });
+    var btn = document.getElementById('btn-dl-vip-pdf');
+    var oldText = btn ? btn.innerText : "";
+    if (btn) {
+      btn.innerText = "⏳ PDF तैयार हो रही है...";
+      btn.disabled = true;
     }
-
-    function drawHeader() {
-      pdf.setFontSize(11);
-      pdf.setTextColor(183, 28, 28);
-      pdf.text("|| श्री गणेशाय नमः || जय माता दी ||", pageWidth / 2, currentY, { align: 'center' });
-      currentY += 6;
-
-      pdf.setFontSize(18);
-      pdf.setFont(undefined, 'bold');
-      pdf.text("नवयुवा दुर्गा पूजा समिति", pageWidth / 2, currentY, { align: 'center' });
-      currentY += 5;
-
-      pdf.setFontSize(11);
-      pdf.setFont(undefined, 'normal');
-      pdf.setTextColor(80, 80, 80);
-      pdf.text("रेलवे गेट, मारकुंडी, सोनभद्र (सत्र 2026)", pageWidth / 2, currentY, { align: 'center' });
-      currentY += 6;
-
-      pdf.setFillColor(183, 28, 28);
-      pdf.rect(startX, currentY, pageWidth - (startX * 2), 7, 'F');
-      pdf.setFontSize(12);
-      pdf.setTextColor(255, 235, 59);
-      pdf.setFont(undefined, 'bold');
-      pdf.text("★ विशेष दानदाता सूची (सहयोग राशि: ₹500 या अधिक) ★", pageWidth / 2, currentY + 5, { align: 'center' });
-      currentY += 12;
-    }
-
-    function drawTableHeader() {
-      pdf.setFillColor(254, 242, 242);
-      pdf.setDrawColor(254, 202, 202);
-      pdf.rect(startX, currentY, pageWidth - (startX * 2), 7, 'FD');
-
-      pdf.setFontSize(10);
-      pdf.setTextColor(183, 28, 28);
-      pdf.setFont(undefined, 'bold');
-
-      pdf.text("क्र.", startX + 2, currentY + 5);
-      pdf.text("रसीद नं.", startX + 12, currentY + 5);
-      pdf.text("दानदाता का नाम", startX + 36, currentY + 5);
-      pdf.text("पता / ग्राम", startX + 90, currentY + 5);
-      pdf.text("माध्यम", startX + 130, currentY + 5);
-      pdf.text("सहयोग राशि", pageWidth - startX - 2, currentY + 5, { align: 'right' });
-
-      currentY += 7;
-    }
-
-    drawPageBorder();
-    drawHeader();
-    drawTableHeader();
 
     var totalVipAmt = 0;
-    pdf.setFont(undefined, 'normal');
-    pdf.setFontSize(9.5);
-    pdf.setTextColor(33, 33, 33);
-
-    for (var i = 0; i < vipDonors.length; i++) {
-      var d = vipDonors[i];
+    vipDonors.forEach(function(d) {
       var val = (d.type === 'ITEM') ? (Number(d.itemVal) || 0) : (Number(d.amt) || 0);
       totalVipAmt += val;
+    });
 
-      if (currentY > pageHeight - 32) {
-        pdf.addPage();
-        pageNumber++;
-        currentY = startY;
-        drawPageBorder();
-        drawTableHeader();
+    var rowsPerPageFirst = 26;
+    var rowsPerPageSub = 32;
+    var pages = [];
+    var tempRows = [];
+    var maxForCurrentPage = rowsPerPageFirst;
+
+    for (var i = 0; i < vipDonors.length; i++) {
+      tempRows.push({ index: i + 1, data: vipDonors[i] });
+      if (tempRows.length === maxForCurrentPage || i === vipDonors.length - 1) {
+        pages.push(tempRows.slice());
+        tempRows = [];
+        maxForCurrentPage = rowsPerPageSub;
+      }
+    }
+
+    var tempContainer = document.createElement('div');
+    tempContainer.style.position = 'fixed';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '0';
+    tempContainer.style.width = '794px'; // Standard A4 width at 96 DPI
+    tempContainer.style.background = '#ffffff';
+    document.body.appendChild(tempContainer);
+
+    try {
+      var jsPDF = window.jspdf.jsPDF;
+      var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+      var totalPages = pages.length;
+
+      for (var p = 0; p < totalPages; p++) {
+        var pageRows = pages[p];
+        var isFirstPage = (p === 0);
+        var isLastPage = (p === totalPages - 1);
+
+        var pageHtml = `
+          <div id="vip-pdf-page-${p}" style="width: 794px; min-height: 1120px; padding: 32px 36px; box-sizing: border-box; background: #ffffff; position: relative; font-family: 'Noto Sans Devanagari', sans-serif;">
+            <div style="border: 2.5px solid #b71c1c; border-radius: 8px; padding: 5px; min-height: 1056px; box-sizing: border-box; position: relative;">
+              <div style="border: 1.5px dashed #d97706; border-radius: 6px; padding: 22px 20px 36px 20px; min-height: 1042px; box-sizing: border-box; position: relative;">
+                
+                ${isFirstPage ? `
+                  <div style="text-align: center; margin-bottom: 14px;">
+                    <div style="color: #b71c1c; font-size: 13px; font-weight: bold; letter-spacing: 0.5px;">|| श्री गणेशाय नमः || जय माता दी ||</div>
+                    <h1 style="color: #b71c1c; font-size: 26px; font-weight: 900; margin: 4px 0 2px 0;">नवयुवा दुर्गा पूजा समिति</h1>
+                    <div style="font-size: 13.5px; color: #455a64; font-weight: bold;">रेलवे गेट, मारकुंडी, सोनभद्र (सत्र 2026)</div>
+                    <div style="background: linear-gradient(135deg, #b71c1c, #d32f2f); color: #ffeb3b; padding: 6px 22px; border-radius: 20px; display: inline-block; font-size: 14px; font-weight: 900; margin-top: 8px; box-shadow: 0 2px 6px rgba(183,28,28,0.25);">
+                      ★ विशेष दानदाता सूची (सहयोग राशि: ₹500 या अधिक) ★
+                    </div>
+                  </div>
+                ` : `
+                  <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px dashed #ffb74d; padding-bottom: 8px; margin-bottom: 12px;">
+                    <div style="color: #b71c1c; font-weight: 900; font-size: 14px;">नवयुवा दुर्गा पूजा समिति, मारकुंडी (सत्र 2026)</div>
+                    <div style="color: #666; font-size: 12px; font-weight: bold;">★ ₹500+ दानदाता सूची (क्रमशः) ★</div>
+                  </div>
+                `}
+
+                <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px;">
+                  <thead>
+                    <tr style="background: #ffebee; color: #b71c1c; border-top: 1.5px solid #ffcdd2; border-bottom: 1.5px solid #ffcdd2;">
+                      <th style="padding: 7px 5px; text-align: center; width: 42px; font-weight: bold;">क्र.</th>
+                      <th style="padding: 7px 6px; text-align: left; width: 85px; font-weight: bold;">रसीद नं.</th>
+                      <th style="padding: 7px 8px; text-align: left; font-weight: bold;">दानदाता का नाम</th>
+                      <th style="padding: 7px 8px; text-align: left; width: 140px; font-weight: bold;">पता / ग्राम</th>
+                      <th style="padding: 7px 6px; text-align: center; width: 75px; font-weight: bold;">माध्यम</th>
+                      <th style="padding: 7px 8px; text-align: right; width: 110px; font-weight: bold;">सहयोग राशि</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${pageRows.map(function(item) {
+                      var d = item.data;
+                      var val = (d.type === 'ITEM') ? (Number(d.itemVal) || 0) : (Number(d.amt) || 0);
+                      var typeText = (d.type === 'ITEM') ? 'वस्तु' : ((d.type === 'ONLINE') ? 'UPI' : 'नकद');
+                      var amtShow = (d.type === 'ITEM') ? `${d.itemDesc} (₹${val})` : `₹${val}/-`;
+                      return `
+                        <tr style="border-bottom: 1px dashed #e0e0e0;">
+                          <td style="padding: 6.5px 4px; text-align: center; color: #555; font-weight: 600;">${item.index}</td>
+                          <td style="padding: 6.5px 6px; font-weight: bold; color: #37474f;">${d.no}</td>
+                          <td style="padding: 6.5px 8px; font-weight: 800; color: #1c1917;">${d.name}</td>
+                          <td style="padding: 6.5px 8px; color: #555;">${d.addr || 'मारकुंडी'}</td>
+                          <td style="padding: 6.5px 6px; text-align: center; color: #0284c7; font-weight: 700;">${typeText}</td>
+                          <td style="padding: 6.5px 8px; text-align: right; font-weight: 900; color: #b71c1c;">${amtShow}</td>
+                        </tr>
+                      `;
+                    }).join('')}
+                  </tbody>
+                </table>
+
+                ${isLastPage ? `
+                  <div style="background: #fff8e1; border: 1.5px solid #ffe082; border-radius: 8px; padding: 10px 14px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; font-weight: 900;">
+                    <span style="color: #b71c1c;">कुल ₹500+ दानदाता: ${vipDonors.length} व्यक्ति</span>
+                    <span style="color: #1b5e20;">महायोग: ₹${totalVipAmt}/-</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 36px; padding: 0 10px;">
+                    <div style="text-align: center;">
+                      <div style="font-size: 11px; color: #555;">दिनांक: <strong>${new Date().toLocaleDateString('hi-IN')}</strong></div>
+                      <div style="font-size: 11px; font-weight: bold; color: #444; margin-top: 4px;">कोषाध्यक्ष</div>
+                    </div>
+                    <div style="text-align: right;">
+                      <div style="font-size: 11px; color: #555;">सत्यापित एवं अनुमोदित</div>
+                      <div style="font-size: 13px; font-weight: 900; color: #b71c1c;">अध्यक्ष / सचिव</div>
+                    </div>
+                  </div>
+                ` : ''}
+
+                <div style="position: absolute; bottom: 12px; left: 0; right: 0; text-align: center; font-size: 11px; color: #777; font-weight: 600;">
+                  पृष्ठ ${p + 1} / ${totalPages} • नवयुवा दुर्गा पूजा समिति, मारकुंडी (सोनभद्र)
+                </div>
+
+              </div>
+            </div>
+          </div>
+        `;
+
+        tempContainer.innerHTML = pageHtml;
+        var pageElement = tempContainer.firstElementChild;
+
+        var canvas = await html2canvas(pageElement, {
+          scale: 2.2,
+          useCORS: true,
+          backgroundColor: '#ffffff',
+          logging: false
+        });
+
+        var imgData = canvas.toDataURL('image/jpeg', 0.96);
+        if (p > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
       }
 
-      var amtDisplay = (d.type === 'ITEM') ? (d.itemDesc + " (₹" + val + ")") : ("₹" + val + "/-");
-
-      pdf.setDrawColor(230, 230, 230);
-      pdf.setLineWidth(0.2);
-      pdf.line(startX, currentY + 6, pageWidth - startX, currentY + 6);
-
-      pdf.text(String(i + 1), startX + 2, currentY + 4.5);
-      pdf.text(d.no, startX + 12, currentY + 4.5);
-      pdf.text(d.name.length > 24 ? d.name.substring(0, 22) + "..." : d.name, startX + 36, currentY + 4.5);
-      pdf.text((d.addr || 'मारकुंडी').substring(0, 18), startX + 90, currentY + 4.5);
-      pdf.text(d.type === 'ITEM' ? 'वस्तु' : (d.type === 'ONLINE' ? 'UPI' : 'नकद'), startX + 130, currentY + 4.5);
-      
-      pdf.setFont(undefined, 'bold');
-      pdf.setTextColor(183, 28, 28);
-      pdf.text(amtDisplay, pageWidth - startX - 2, currentY + 4.5, { align: 'right' });
-      pdf.setFont(undefined, 'normal');
-      pdf.setTextColor(33, 33, 33);
-
-      currentY += 7;
+      pdf.save("विशेष_दानदाता_सूची_500_प्लस_2026.pdf");
+    } catch(err) {
+      console.error("VIP PDF Generation Error: ", err);
+      alert("PDF बनाने में त्रुटि आई, कृपया दोबारा प्रयास करें।");
+    } finally {
+      if (tempContainer && tempContainer.parentNode) {
+        tempContainer.parentNode.removeChild(tempContainer);
+      }
+      if (btn) {
+        btn.innerText = oldText;
+        btn.disabled = false;
+      }
     }
-
-    if (currentY > pageHeight - 25) {
-      pdf.addPage();
-      pageNumber++;
-      drawPageBorder();
-      currentY = startY;
-    }
-
-    currentY += 4;
-    pdf.setFillColor(255, 248, 225);
-    pdf.setDrawColor(255, 204, 128);
-    pdf.rect(startX, currentY, pageWidth - (startX * 2), 8, 'FD');
-
-    pdf.setFontSize(10.5);
-    pdf.setFont(undefined, 'bold');
-    pdf.setTextColor(183, 28, 28);
-    pdf.text("कुल ₹500+ दानदाता: " + vipDonors.length + " व्यक्ति", startX + 4, currentY + 5.5);
-    pdf.text("महायोग: ₹" + totalVipAmt + "/-", pageWidth - startX - 4, currentY + 5.5, { align: 'right' });
-
-    pdf.save("विशेष_दानदाता_सूची_500_प्लस_2026.pdf");
   }
 
   function adminSettleCash(code, name, pending) {
