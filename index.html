@@ -506,6 +506,11 @@
         </div>
       </div>
 
+      <!-- VIP REPORT BUTTON -->
+      <button class="btn btn-orange" style="margin-bottom: 8px;" onclick="downloadVipDonorsPDF()">
+        📜 ₹500+ दानदाता विशेष सूची (PDF)
+      </button>
+
       <button class="btn btn-purple" style="margin-bottom: 8px;" onclick="openAuditReportScreen()">
         📑 समिति संपूर्ण ऑडिट रिपोर्ट (बैलेंस शीट)
       </button>
@@ -1420,7 +1425,7 @@
 
     <div id="admin-exp-filter-box" style="padding: 10px 14px; background: #fdf2e9; border-bottom: 1.5px solid #f0b27a; display: flex; flex-direction: column; gap: 8px;">
       <div style="font-size: 11.5px; font-weight: bold; color: #b71c1c;">🔍 खर्च फ़िल्टर व खोज (Admin Filter)</div>
-      <div style="display: flex; gap: 8px;">
+      <div style="display: gap: 8px;">
         <select id="sel-exp-user-filter" class="form-input" style="padding: 6px 8px; font-size: 13px;" onchange="renderExpensesList()">
           <option value="ALL">👥 सभी के खर्च (All)</option>
         </select>
@@ -2326,7 +2331,7 @@
       });
   }
 
-  // केवल तब बैकग्राउंड सिंक चलाएँ जब यूजर टाइप न कर रहा हो (फ़ोकस व कीबोर्ड सुरक्षित रहता है)
+  // केवल तब बैकग्राउंड सिंक चलाएँ जब यूजर टाइप न कर रहा हो
   setInterval(function() {
     var activeEl = document.activeElement;
     var isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA');
@@ -2777,6 +2782,159 @@
       btn.innerText = oldText;
       btn.disabled = false;
     }
+  }
+
+  // =========================================================================
+  // 500+ VIP DONORS REPORT PDF GENERATOR
+  // =========================================================================
+  async function downloadVipDonorsPDF() {
+    var vipDonors = receipts.filter(function(r) {
+      if (r.isCancelled) return false;
+      var donationVal = (r.type === 'ITEM') ? (Number(r.itemVal) || 0) : (Number(r.amt) || 0);
+      return donationVal >= 500;
+    });
+
+    if (vipDonors.length === 0) {
+      alert("₹500 या उससे अधिक का कोई भी वैध दानदाता रिकॉर्ड नहीं मिला!");
+      return;
+    }
+
+    vipDonors.sort(function(a, b) {
+      var valA = (a.type === 'ITEM') ? (Number(a.itemVal) || 0) : (Number(a.amt) || 0);
+      var valB = (b.type === 'ITEM') ? (Number(b.itemVal) || 0) : (Number(b.amt) || 0);
+      return valB - valA;
+    });
+
+    var jsPDF = window.jspdf.jsPDF;
+    var pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+
+    var pageWidth = 210;
+    var pageHeight = 297;
+    var startX = 14;
+    var startY = 20;
+    var currentY = startY;
+    var pageNumber = 1;
+
+    function drawPageBorder() {
+      pdf.setDrawColor(183, 28, 28);
+      pdf.setLineWidth(1);
+      pdf.rect(6, 6, pageWidth - 12, pageHeight - 12);
+      pdf.setDrawColor(217, 119, 6);
+      pdf.setLineWidth(0.4);
+      pdf.rect(8, 8, pageWidth - 16, pageHeight - 16);
+
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(100, 100, 100);
+      pdf.text("पृष्ठ " + pageNumber + " • नवयुवा दुर्गा पूजा समिति, मारकुंडी", pageWidth / 2, pageHeight - 10, { align: 'center' });
+    }
+
+    function drawHeader() {
+      pdf.setFontSize(11);
+      pdf.setTextColor(183, 28, 28);
+      pdf.text("|| श्री गणेशाय नमः || जय माता दी ||", pageWidth / 2, currentY, { align: 'center' });
+      currentY += 6;
+
+      pdf.setFontSize(18);
+      pdf.setFont(undefined, 'bold');
+      pdf.text("नवयुवा दुर्गा पूजा समिति", pageWidth / 2, currentY, { align: 'center' });
+      currentY += 5;
+
+      pdf.setFontSize(11);
+      pdf.setFont(undefined, 'normal');
+      pdf.setTextColor(80, 80, 80);
+      pdf.text("रेलवे गेट, मारकुंडी, सोनभद्र (सत्र 2026)", pageWidth / 2, currentY, { align: 'center' });
+      currentY += 6;
+
+      pdf.setFillColor(183, 28, 28);
+      pdf.rect(startX, currentY, pageWidth - (startX * 2), 7, 'F');
+      pdf.setFontSize(12);
+      pdf.setTextColor(255, 235, 59);
+      pdf.setFont(undefined, 'bold');
+      pdf.text("★ विशेष दानदाता सूची (सहयोग राशि: ₹500 या अधिक) ★", pageWidth / 2, currentY + 5, { align: 'center' });
+      currentY += 12;
+    }
+
+    function drawTableHeader() {
+      pdf.setFillColor(254, 242, 242);
+      pdf.setDrawColor(254, 202, 202);
+      pdf.rect(startX, currentY, pageWidth - (startX * 2), 7, 'FD');
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(183, 28, 28);
+      pdf.setFont(undefined, 'bold');
+
+      pdf.text("क्र.", startX + 2, currentY + 5);
+      pdf.text("रसीद नं.", startX + 12, currentY + 5);
+      pdf.text("दानदाता का नाम", startX + 36, currentY + 5);
+      pdf.text("पता / ग्राम", startX + 90, currentY + 5);
+      pdf.text("माध्यम", startX + 130, currentY + 5);
+      pdf.text("सहयोग राशि", pageWidth - startX - 2, currentY + 5, { align: 'right' });
+
+      currentY += 7;
+    }
+
+    drawPageBorder();
+    drawHeader();
+    drawTableHeader();
+
+    var totalVipAmt = 0;
+    pdf.setFont(undefined, 'normal');
+    pdf.setFontSize(9.5);
+    pdf.setTextColor(33, 33, 33);
+
+    for (var i = 0; i < vipDonors.length; i++) {
+      var d = vipDonors[i];
+      var val = (d.type === 'ITEM') ? (Number(d.itemVal) || 0) : (Number(d.amt) || 0);
+      totalVipAmt += val;
+
+      if (currentY > pageHeight - 32) {
+        pdf.addPage();
+        pageNumber++;
+        currentY = startY;
+        drawPageBorder();
+        drawTableHeader();
+      }
+
+      var amtDisplay = (d.type === 'ITEM') ? (d.itemDesc + " (₹" + val + ")") : ("₹" + val + "/-");
+
+      pdf.setDrawColor(230, 230, 230);
+      pdf.setLineWidth(0.2);
+      pdf.line(startX, currentY + 6, pageWidth - startX, currentY + 6);
+
+      pdf.text(String(i + 1), startX + 2, currentY + 4.5);
+      pdf.text(d.no, startX + 12, currentY + 4.5);
+      pdf.text(d.name.length > 24 ? d.name.substring(0, 22) + "..." : d.name, startX + 36, currentY + 4.5);
+      pdf.text((d.addr || 'मारकुंडी').substring(0, 18), startX + 90, currentY + 4.5);
+      pdf.text(d.type === 'ITEM' ? 'वस्तु' : (d.type === 'ONLINE' ? 'UPI' : 'नकद'), startX + 130, currentY + 4.5);
+      
+      pdf.setFont(undefined, 'bold');
+      pdf.setTextColor(183, 28, 28);
+      pdf.text(amtDisplay, pageWidth - startX - 2, currentY + 4.5, { align: 'right' });
+      pdf.setFont(undefined, 'normal');
+      pdf.setTextColor(33, 33, 33);
+
+      currentY += 7;
+    }
+
+    if (currentY > pageHeight - 25) {
+      pdf.addPage();
+      pageNumber++;
+      drawPageBorder();
+      currentY = startY;
+    }
+
+    currentY += 4;
+    pdf.setFillColor(255, 248, 225);
+    pdf.setDrawColor(255, 204, 128);
+    pdf.rect(startX, currentY, pageWidth - (startX * 2), 8, 'FD');
+
+    pdf.setFontSize(10.5);
+    pdf.setFont(undefined, 'bold');
+    pdf.setTextColor(183, 28, 28);
+    pdf.text("कुल ₹500+ दानदाता: " + vipDonors.length + " व्यक्ति", startX + 4, currentY + 5.5);
+    pdf.text("महायोग: ₹" + totalVipAmt + "/-", pageWidth - startX - 4, currentY + 5.5, { align: 'right' });
+
+    pdf.save("विशेष_दानदाता_सूची_500_प्लस_2026.pdf");
   }
 
   function adminSettleCash(code, name, pending) {
